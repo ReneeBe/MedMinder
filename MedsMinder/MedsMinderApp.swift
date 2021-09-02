@@ -9,9 +9,10 @@ import SwiftUI
 
 @main
 struct MedsMinderApp: App {
+    @State private var medications: [Med] = Med.data
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            MainView( meds: $medications)
         }
     }
 }
