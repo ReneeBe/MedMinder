@@ -9,10 +9,18 @@ import SwiftUI
 
 @main
 struct MedsMinderApp: App {
-    @State private var medications: [Med] = Med.data
+    @ObservedObject private var data = MedData()
+    
     var body: some Scene {
         WindowGroup {
-            MainView( meds: $medications)
+            NavigationView {
+                MainView(meds: $data.meds) {
+                    data.save()
+                }
+            }
+            .onAppear {
+                data.load()
+            }
         }
     }
 }
