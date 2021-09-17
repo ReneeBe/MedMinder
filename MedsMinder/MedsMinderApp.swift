@@ -17,6 +17,7 @@ struct MedsMinderApp: App {
                 MainView(meds: $data.meds) {
                     data.save()
                 }
+                .navigationBarHidden(true)
             }
             .onAppear {
                 data.load()
