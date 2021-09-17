@@ -16,7 +16,9 @@ struct MedImage: View {
             .font(.largeTitle)
 //            .imageScale(.large)
             .foregroundColor(med.color)
-            .background(Circle().strokeBorder(Color(.systemGray), lineWidth: 3))
+            .background(
+                Circle().strokeBorder(Color(.systemGray), lineWidth: 3)
+            )
             .overlay(Text(med.engraving))
     }
     

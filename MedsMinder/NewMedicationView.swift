@@ -29,10 +29,10 @@ struct NewMedicationView: View {
                     TextField("Input Medication Name", text: $medData.name)
                          .padding(.horizontal)
                          .padding(.top, 25)
-                    Image(systemName: "pills")
+                    Image(systemName: medData.shape[0] != "" ? medData.shape[0] : "pills")
                          .font(.largeTitle)
                          .imageScale(.large)
-                         .foregroundColor(medData.color != nil ? medData.color : Color(.systemGray2))
+                         .foregroundColor(medData.color)
                          .overlay(
                               ZStack {
                                    Text(medData.engraving).bold()
@@ -50,11 +50,11 @@ struct NewMedicationView: View {
                    .padding()
                }
                Divider()
-               HStack {
-                   Spacer()
+//               HStack {
+//                   Spacer()
 //                    ColorPicker("Pill color", selection: $medData.color)
 //                       .padding(.horizontal)
-               }
+//               }
                Divider()
                Group {
                    HStack {
@@ -67,18 +67,17 @@ struct NewMedicationView: View {
                        ForEach(medShapes, id: \.self) {
                          let shape = $0[0]
                          let size = $0[1]
-//                         let description = size == "3" ? "large" : size == "1" ? "small" : "medium"
+//                         let sizeDescription = size == "3" ? "large" : size == "1" ? "small" : "medium"
                          let selected: Bool = medData.shape == [shape, size]
                          Button(action: {
                               medData.shape = [shape, size]
                          }) {
                               ZStack {
-                                   Image(systemName: "\(medData.shape[0])")
+                                   Image(systemName: shape)
                                        .foregroundColor(.white)
                                        .font(.title)
                                        .imageScale(size == "3" ? .large : size == "1" ? .small : .medium)
-                                        .accessibility(label: Text("a /(medData.description) /(medData.shape)"))
-                                   Image(systemName: "\(medData.shape[0])")
+                                   Image(systemName: "\(shape)")
                                         .foregroundColor(.gray)
                                         .font(.largeTitle)
                                         .imageScale(size == "3" ? .large : size == "1" ? .small : .medium)
