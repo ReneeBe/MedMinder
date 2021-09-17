@@ -13,15 +13,18 @@ struct MedImage: View {
     var body: some View {
         Image(systemName: med.shape[0])
             .foregroundColor(med.color)
-            .font(.largeTitle)
-//            .imageScale(.large)
-            .foregroundColor(med.color)
+            .font(Font.largeTitle.weight(.ultraLight))
             .background(
-                Circle().strokeBorder(Color(.systemGray), lineWidth: 3)
+                    Image(systemName: med.shape[0])
+                        .foregroundColor(Color(.systemGray))
+                        .font(Font.largeTitle.weight(.black))
             )
-            .overlay(Text(med.engraving))
+            .overlay(
+                Text(med.engraving)
+                    .font(.callout)
+                    .foregroundColor(Color(.systemGray))
+            )
     }
-    
 }
 
 

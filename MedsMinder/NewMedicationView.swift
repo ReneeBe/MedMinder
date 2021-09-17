@@ -16,7 +16,7 @@ struct NewMedicationView: View {
         var id: MedType { self }
     }
      var medShapes: [ [String] ] = [
-    ["circle", "3"], ["circle", "2"], ["circle","1"], ["capsule", "3"], ["capsule","1"], ["oval", "2"], ["oval", "3"], ["rhombus", "3"]
+    ["circle.fill", "3"], ["circle.fill", "2"], ["circle.fill","1"], ["capsule.fill", "3"], ["capsule.fill","1"], ["oval.fill", "2"], ["oval.fill", "3"], ["rhombus.fill", "3"]
     ]
      
     public var fourColumnGrid = [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())]
