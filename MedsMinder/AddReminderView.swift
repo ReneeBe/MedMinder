@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct AddReminderView: View {
-    @Environment (\.presentationMode) var presentationMode
+    @Binding var showAddReminderView: Bool
     var med: Med
     @State var selectedDosageDetails: String = "Scheduled Intake"
     @State var dosage: Double = 0.5
@@ -24,8 +24,6 @@ struct AddReminderView: View {
                 VStack {
                     MedImage(med: med)
                         .padding()
-//                        .frame(width: 50, height: 50, alignment: .center)
-
                     Text("Medication Name")
                     Picker("Dosage Category", selection: $selectedDosageDetails) {
                         Text("Scheduled Intake").tag("Scheduled Intake")
@@ -94,29 +92,29 @@ struct AddReminderView: View {
                     }.listStyle(InsetGroupedListStyle())
             }
             .foregroundColor(Color(.darkGray))
-//            .background(Color(.systemGray3).opacity(0.04).ignoresSafeArea())
             .navigationBarTitle(Text("Add Reminder"), displayMode: .inline)
             .navigationBarItems(
                 leading:
-                    Button(action: {self.presentationMode.wrappedValue.dismiss()
-
-                    }) {
-                        Text("Cancel")
-                    },
+                    Button(action: { showAddReminderView = false }, label: {Text("Cancel")}
+                    ),
                 trailing:
                     Button(action: {print("Save")
                     }) {
                         Text("Save")
                     }
-            )}
+                )
+            }
         }
     }
 }
 
-struct AddReminderView_Previews: PreviewProvider {
-    static var pill: Med = Med.data[1]
-    
-    static var previews: some View {
-        AddReminderView(med: pill)
-    }
-}
+//struct AddReminderView_Previews: PreviewProvider {
+//    static var pill: Med = Med.data[1]
+//    static var isPresent: Bool = true
+//    
+//    static var previews: some View {
+//        AddReminderView(isPresented: isPresent, med: pill)
+//    }
+//}
+
+//            .background(Color(.systemGray3).opacity(0.04).ignoresSafeArea())

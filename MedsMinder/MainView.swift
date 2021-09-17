@@ -11,6 +11,7 @@ struct MainView: View {
     @Binding var meds: [Med]
     @Environment(\.scenePhase) private var scenePhase
     @State private var showNewMedPopover = false
+    @State var showAddReminderView = false
     @State private var newMedData = Med.Data()
     public let saveAction: () -> Void
     var progressValue: Double = 270
@@ -24,7 +25,8 @@ struct MainView: View {
                         Image(systemName: "timer")
                         Text("Scheduled")
                         Spacer()
-                    }.font(.headline)
+                    }
+                    .font(.headline)
                     .padding(.leading)
                     .padding(.top)
                     Divider()
@@ -32,7 +34,7 @@ struct MainView: View {
                         VStack(alignment: .center, spacing: 5) {
                             ForEach(meds) { med in
                                 if med.frequencyInMinutes > 0 {
-                                    RowView(med: med, keyword: "scheduled", progress: progressValue)
+                                    RowView(showAddReminderView: showAddReminderView, med: med, keyword: "scheduled", progress: progressValue)
                                 }
                             }
                         }
@@ -47,7 +49,7 @@ struct MainView: View {
                     ScrollView {
                         ForEach(meds) { med in
                             if med.frequencyInMinutes == 0 {
-                                RowView(med: med, keyword: "demand", progress: progressValue)
+                                RowView(showAddReminderView: showAddReminderView, med: med, keyword: "demand", progress: progressValue)
                             }
                         }
                     }
@@ -64,27 +66,28 @@ struct MainView: View {
                             showNewMedPopover.toggle()
                     }) {
                         Image(systemName: "plus")
-            })
-            .sheet(isPresented: $showNewMedPopover) {
-                NavigationView {
-                    NewMedicationView(medData: $newMedData)
-                        .navigationTitle("New Medication")
-                        .navigationBarItems(
-                            leading:
-                                Button(action: {
-                                    showNewMedPopover.toggle()
-                                }, label: {
-                                    Text("Close")
-                                })
-                            , trailing:
-                                Button("Add") {
-                                    let newMed = Med(name: newMedData.name, details: "Every Evening", format: newMedData.format, color: newMedData.color, shape: newMedData.shape, engraving: newMedData.engraving, dosage: Double(1), frequencyInMinutes: Int(180))
-                                    meds.append(newMed)
-                                    showNewMedPopover.toggle()
-                                }
-                        )
                     }
-                }
+                    .sheet(isPresented: $showNewMedPopover) {
+                        NavigationView {
+                            NewMedicationView(medData: $newMedData)
+                                .navigationBarTitle("New Medication", displayMode: .inline)
+                                .navigationBarItems(
+                                    leading:
+                                        Button(action: {
+                                            showNewMedPopover.toggle()
+                                        }, label: {
+                                            Text("Close")
+                                        })
+                                    , trailing:
+                                        Button("Add") {
+                                            let newMed = Med(name: newMedData.name, details: "Every Evening", format: newMedData.format, color: newMedData.color, shape: newMedData.shape, engraving: newMedData.engraving, dosage: Double(1), frequencyInMinutes: Int(180))
+                                            meds.append(newMed)
+                                            showNewMedPopover.toggle()
+                                })
+                        }
+                    }
+            )
+            .navigationBarBackButtonHidden(true)
             .onChange(of: scenePhase) { phase in
                 if phase == .inactive { saveAction() }
             }
@@ -97,7 +100,6 @@ struct MainView: View {
 //        }
     }
 }
-
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {

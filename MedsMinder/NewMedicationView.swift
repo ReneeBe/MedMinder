@@ -9,6 +9,7 @@ import SwiftUI
 
 struct NewMedicationView: View {
      @Binding var medData: Med.Data
+     @State var color = Color(.systemPink)
      enum MedType:String, CaseIterable, Identifiable {
         case tablet
         case capsule
@@ -50,11 +51,11 @@ struct NewMedicationView: View {
                    .padding()
                }
                Divider()
-//               HStack {
-//                   Spacer()
+               HStack {
+                   Spacer()
 //                    ColorPicker("Pill color", selection: $medData.color)
 //                       .padding(.horizontal)
-//               }
+               }
                Divider()
                Group {
                    HStack {

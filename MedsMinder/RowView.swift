@@ -8,15 +8,13 @@
 import SwiftUI
 
 struct RowView: View {
-    @State private var showPopover = false
+    @State var showAddReminderView: Bool
     var med: Med
     var keyword: String
     var progress: Double
-
     
     var body: some View {
         HStack {
-            
             if med.dosage == 0.5 {
                 MedImage(med: med)
                     .padding()
@@ -25,15 +23,20 @@ struct RowView: View {
                 MedImage(med: med)
                     .padding()
             }
-            Button(action: { self.showPopover = true}) {
-                VStack(alignment: .leading) {
-                    Text(med.name)
-                        .font(.title2).fontWeight(.semibold)
-                    Text(med.details)
-                        .font(.callout)
-                }.foregroundColor(Color(.darkGray))
-            }.sheet(isPresented: $showPopover, content:  {
-                AddReminderView(med: med)
+            Button(action: {
+                self.showAddReminderView = true
+                print("show popover!"); print(showAddReminderView); print(med)
+            }) {
+                    VStack(alignment: .leading) {
+                        Text(med.name)
+                            .font(.title2).fontWeight(.semibold)
+                        Text(med.details)
+                            .font(.callout)
+                    }
+                    .foregroundColor(Color(.darkGray))
+            }
+            .sheet(isPresented: $showAddReminderView, content: {
+                AddReminderView(showAddReminderView: $showAddReminderView, med: med)
             })
             Spacer()
             Button(action: {print("\(med.name) taken!")}, label: {
@@ -63,8 +66,8 @@ struct RowView_Previews: PreviewProvider {
 
     static var previews: some View {
         VStack {
-            RowView(med: medOne, keyword: "scheduled", progress: 270)
-            RowView(med: medTwo, keyword: "", progress: 270)
+            RowView(showAddReminderView: true, med: medOne, keyword: "scheduled", progress: 270)
+            RowView(showAddReminderView: true, med: medTwo, keyword: "", progress: 270)
         }
     }
 }
