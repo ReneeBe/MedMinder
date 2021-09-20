@@ -47,7 +47,7 @@ struct NewMedicationView: View {
                               Text(med.rawValue)
                          }
                     }
-                   .pickerStyle(SegmentedPickerStyle())
+                    .pickerStyle(SegmentedPickerStyle())
                    .padding()
                }
                Divider()

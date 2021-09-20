@@ -7,6 +7,16 @@
 
 import SwiftUI
 
+struct TimeRowView: View {
+    var body: some View {
+        HStack {
+            Text("First Intake")
+            Spacer()
+            DatePicker("", selection: /*@START_MENU_TOKEN@*/.constant(Date())/*@END_MENU_TOKEN@*/, displayedComponents:.hourAndMinute)
+        }
+    }
+}
+
 struct AddReminderView: View {
     @Binding var showAddReminderView: Bool
     var med: Med
@@ -15,6 +25,15 @@ struct AddReminderView: View {
     @State var delay: Int = 0
     @State var allowSnooze: Bool = true
     @State var notes: String = ""
+
+    enum intakeTypes: String, CaseIterable, Identifiable {
+        case scheduled = "Scheduled Intake"
+        case demand = "On Demand"
+
+        var id: String { self.rawValue }
+    }
+
+    
     
     var body: some View {
         NavigationView {
@@ -24,15 +43,19 @@ struct AddReminderView: View {
                 VStack {
                     MedImage(med: med)
                         .padding()
-                    Text("Medication Name")
+                    Text(med.name)
                     Picker("Dosage Category", selection: $selectedDosageDetails) {
-                        Text("Scheduled Intake").tag("Scheduled Intake")
-                        Text("On Demand").tag("On demand")
+                        ForEach(intakeTypes.allCases) { intake in
+                            Text("\(intake.rawValue)").tag(intake)
+                        }
                     }
                     .pickerStyle(SegmentedPickerStyle())
-                    .padding(10)
+                    .padding()
                     List {
                         Section {
+//                            ForEach(med.)
+//
+                            
                             HStack {
                                 Text("First Intake")
                                 Spacer()
@@ -98,7 +121,9 @@ struct AddReminderView: View {
                     Button(action: { showAddReminderView = false }, label: {Text("Cancel")}
                     ),
                 trailing:
-                    Button(action: {print("Save")
+                    Button(action: {
+                        print("save")
+
                     }) {
                         Text("Save")
                     }
@@ -108,13 +133,12 @@ struct AddReminderView: View {
     }
 }
 
-//struct AddReminderView_Previews: PreviewProvider {
-//    static var pill: Med = Med.data[1]
-//    static var isPresent: Bool = true
-//    
-//    static var previews: some View {
-//        AddReminderView(isPresented: isPresent, med: pill)
-//    }
-//}
+struct AddReminderView_Previews: PreviewProvider {
+    static var pill: Med = Med.data[1]
+    
+    static var previews: some View {
+        AddReminderView(showAddReminderView: .constant(true), med: pill)
+    }
+}
 
 //            .background(Color(.systemGray3).opacity(0.04).ignoresSafeArea())

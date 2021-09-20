@@ -18,8 +18,9 @@ struct Med: Identifiable, Codable {
     var engraving: String
     var dosage: Double
     var frequencyInMinutes: Int
+    var reminders: [Reminder]
     
-    init(id: UUID = UUID(), name: String, details: String, format: String, color: Color?, shape: [String], engraving: String, dosage: Double, frequencyInMinutes: Int ) {
+    init(id: UUID = UUID(), name: String, details: String, format: String, color: Color?, shape: [String], engraving: String, dosage: Double, frequencyInMinutes: Int, reminders: [Reminder] = []) {
         self.id = id
         self.name = name
         self.details = details
@@ -29,6 +30,7 @@ struct Med: Identifiable, Codable {
         self.engraving = engraving
         self.dosage = dosage
         self.frequencyInMinutes = frequencyInMinutes
+        self.reminders = reminders
     }
 }
 
@@ -52,6 +54,7 @@ extension Med {
         var engraving: String = ""
         var dosage: Double = 0.00
         var frequencyInMinutes: Int = 300
+
     }
     var data: Data {
         return Data(name: name, details: details, format: format, color: color, shape: shape, engraving: engraving, dosage: Double(dosage), frequencyInMinutes: Int(frequencyInMinutes))

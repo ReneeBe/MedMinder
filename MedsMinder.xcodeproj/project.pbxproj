@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E736FF7426F8CB0C00A16653 /* Reminder.swift in Sources */ = {isa = PBXBuildFile; fileRef = E736FF7326F8CB0C00A16653 /* Reminder.swift */; };
 		E74C6DAB26DFD8A1001FE596 /* MedsMinderApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E74C6DAA26DFD8A1001FE596 /* MedsMinderApp.swift */; };
 		E74C6DAD26DFD8A1001FE596 /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E74C6DAC26DFD8A1001FE596 /* MainView.swift */; };
 		E74C6DAF26DFD8A6001FE596 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E74C6DAE26DFD8A6001FE596 /* Assets.xcassets */; };
@@ -23,6 +24,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		E736FF7326F8CB0C00A16653 /* Reminder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reminder.swift; sourceTree = "<group>"; };
 		E74C6DA726DFD8A1001FE596 /* MedsMinder.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MedsMinder.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E74C6DAA26DFD8A1001FE596 /* MedsMinderApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MedsMinderApp.swift; sourceTree = "<group>"; };
 		E74C6DAC26DFD8A1001FE596 /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
@@ -51,6 +53,13 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		E736FF7726F8CB5100A16653 /* Data */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Data;
+			sourceTree = "<group>";
+		};
 		E74C6D9E26DFD8A1001FE596 = {
 			isa = PBXGroup;
 			children = (
@@ -79,6 +88,8 @@
 				E7AFF6F726E2DBAB003B37B2 /* ProgressBar.swift */,
 				E74C6DC826E00072001FE596 /* Med.swift */,
 				E7DE71B026F249EC00BA7C95 /* MedData.swift */,
+				E736FF7326F8CB0C00A16653 /* Reminder.swift */,
+				E736FF7726F8CB5100A16653 /* Data */,
 				E7DE71AC26F239CA00BA7C95 /* MedImage.swift */,
 				E7DE71A926F15E1B00BA7C95 /* Color+Codable.swift */,
 				E74C6DAE26DFD8A6001FE596 /* Assets.xcassets */,
@@ -168,6 +179,7 @@
 				E7AFF6F526E180B8003B37B2 /* NewMedicationView.swift in Sources */,
 				E74C6DAD26DFD8A1001FE596 /* MainView.swift in Sources */,
 				E74C6DCD26E004B8001FE596 /* RowView.swift in Sources */,
+				E736FF7426F8CB0C00A16653 /* Reminder.swift in Sources */,
 				E74C6DC926E00073001FE596 /* Med.swift in Sources */,
 				E7DE71B126F249EC00BA7C95 /* MedData.swift in Sources */,
 				E754287326EA787E0041D5DF /* MainNavigationBar.swift in Sources */,
