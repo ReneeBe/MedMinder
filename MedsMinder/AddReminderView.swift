@@ -19,7 +19,7 @@ struct TimeRowView: View {
 
 struct AddReminderView: View {
     @Binding var showAddReminderView: Bool
-    var med: Med
+    @Binding var med: Med
     @State var selectedDosageDetails: String = "Scheduled Intake"
     @State var dosage: Double = 0.5
     @State var delay: Int = 0
@@ -123,7 +123,9 @@ struct AddReminderView: View {
                 trailing:
                     Button(action: {
                         print("save")
-
+                        let newReminder = Reminder(medName: med.name, intakeType: selectedDosageDetails, intakeTimes: [""], intakeAmount: Double(1.0), delay: Int(delay), allowSnooze: false, notes: notes)
+                        med.reminders.insert(newReminder, at: 0)
+                        showAddReminderView.toggle()
                     }) {
                         Text("Save")
                     }
@@ -137,7 +139,7 @@ struct AddReminderView_Previews: PreviewProvider {
     static var pill: Med = Med.data[1]
     
     static var previews: some View {
-        AddReminderView(showAddReminderView: .constant(true), med: pill)
+        AddReminderView(showAddReminderView: .constant(true), med: .constant(pill))
     }
 }
 

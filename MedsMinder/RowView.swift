@@ -9,7 +9,7 @@ import SwiftUI
 
 struct RowView: View {
     @State var showAddReminderView: Bool
-    var med: Med
+    @State var med: Med
     var keyword: String
     var progress: Double
     
@@ -36,7 +36,7 @@ struct RowView: View {
                     .foregroundColor(Color(.darkGray))
             }
             .sheet(isPresented: $showAddReminderView, content: {
-                AddReminderView(showAddReminderView: $showAddReminderView, med: med)
+                AddReminderView(showAddReminderView: $showAddReminderView, med: $med)
             })
             Spacer()
             Button(action: {print("\(med.name) taken!")}, label: {
