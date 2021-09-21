@@ -9,7 +9,7 @@ import SwiftUI
 
 struct NewMedicationView: View {
      @Binding var medData: Med.Data
-     @State var color = Color(.systemPink)
+     @Binding var color: Color
      enum MedType:String, CaseIterable, Identifiable {
         case tablet
         case capsule
@@ -33,7 +33,7 @@ struct NewMedicationView: View {
                     Image(systemName: medData.shape[0] != "" ? medData.shape[0] : "pills")
                          .font(.largeTitle)
                          .imageScale(.large)
-                         .foregroundColor(medData.color)
+                         .foregroundColor(color)
                          .overlay(
                               ZStack {
                                    Text(medData.engraving).bold()
@@ -53,8 +53,9 @@ struct NewMedicationView: View {
                Divider()
                HStack {
                    Spacer()
+                    ColorPicker("Pill color", selection: $color)
 //                    ColorPicker("Pill color", selection: $medData.color)
-//                       .padding(.horizontal)
+                       .padding(.horizontal)
                }
                Divider()
                Group {
@@ -122,6 +123,6 @@ struct NewMedicationView: View {
 
 struct NewMedicationView_Previews: PreviewProvider {
     static var previews: some View {
-          NewMedicationView(medData: .constant(Med.data[0].data))
+     NewMedicationView(medData: .constant(Med.data[0].data), color: .constant(Color(.systemGreen)))
     }
 }

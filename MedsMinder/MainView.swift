@@ -13,6 +13,7 @@ struct MainView: View {
     @State private var showNewMedPopover = false
     @State var showAddReminderView = false
     @State private var newMedData = Med.Data()
+    @State private var color: Color = Color(.systemYellow)
     public let saveAction: () -> Void
     var progressValue: Double = 270
     
@@ -69,7 +70,7 @@ struct MainView: View {
                     }
                     .sheet(isPresented: $showNewMedPopover) {
                         NavigationView {
-                            NewMedicationView(medData: $newMedData)
+                            NewMedicationView(medData: $newMedData, color: $color)
                                 .navigationBarTitle("New Medication", displayMode: .inline)
                                 .navigationBarItems(
                                     leading:
@@ -80,7 +81,8 @@ struct MainView: View {
                                         })
                                     , trailing:
                                         Button("Add") {
-                                            let newMed = Med(name: newMedData.name, details: "Every Evening", format: newMedData.format, color: newMedData.color, shape: newMedData.shape, engraving: newMedData.engraving, dosage: Double(1), frequencyInMinutes: Int(180), reminders: [])
+                                            let newMed = Med(name: newMedData.name, details: "Every Evening", format: newMedData.format, color: color, shape: newMedData.shape, engraving: newMedData.engraving, dosage: Double(1), frequencyInMinutes: Int(180), reminders: [])
+//                                            let newMed = Med(name: newMedData.name, details: "Every Evening", format: newMedData.format, color: newMedData.color, shape: newMedData.shape, engraving: newMedData.engraving, dosage: Double(1), frequencyInMinutes: Int(180), reminders: [])
                                             meds.append(newMed)
                                             showNewMedPopover.toggle()
                                 })

@@ -30,12 +30,12 @@ struct TimeRowView: View {
 struct AddReminderView: View {
     @Binding var showAddReminderView: Bool
     @Binding var med: Med
-    @State var intakeType: String = "Scheduled Intake"
-    @State var dosage: Double = 0.5
+    @State var intakeType: String
+    @State var times: [Date]
+    @State var dosage: Double
     @State var delay: Int = 0
     @State var allowSnooze: Bool = true
     @State var notes: String = ""
-    @State var times: [Date]
     
     func formatter(date: Date) -> String {
         let dateMaker = DateFormatter()
@@ -137,8 +137,9 @@ struct AddReminderView: View {
                     Button(action: {
                         print("save")
 //                        times = times.sorted()
-                        let newReminder = Reminder(medName: med.name, intakeType: intakeType, intakeTimes: times, intakeAmount: Double(1.0), delay: Int(delay), allowSnooze: false, notes: notes)
+                        let newReminder = Reminder(medName: med.name, intakeType: intakeType, intakeTimes: times, intakeAmount: Double(dosage), delay: Int(delay), allowSnooze: allowSnooze, notes: notes)
                         med.reminders.insert(newReminder, at: 0)
+                        med.dosage = Double(dosage)
                         showAddReminderView.toggle()
                     }) {
                         Text("Save")
@@ -154,7 +155,7 @@ struct AddReminderView_Previews: PreviewProvider {
     static var previousReminders: [Date] = Med.data[1].reminders[0].intakeTimes != [] ? Med.data[1].reminders[0].intakeTimes : [Foundation.Date()]
     
     static var previews: some View {
-        AddReminderView(showAddReminderView: .constant(true), med: .constant(pill), times: previousReminders)
+        AddReminderView(showAddReminderView: .constant(true), med: .constant(pill), intakeType: "Scheduled Intake", times: previousReminders, dosage: 1.0)
     }
 }
 
