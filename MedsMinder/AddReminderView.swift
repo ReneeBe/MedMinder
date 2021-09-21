@@ -6,13 +6,23 @@
 //
 
 import SwiftUI
+import Foundation
+
 
 struct TimeRowView: View {
+    @Binding var selectedTime: Date
+    func formatter() -> String {
+        let dateMaker = DateFormatter()
+        dateMaker.timeStyle = .short
+        let dateString = dateMaker.string(from: Date())
+        return dateString
+    }
+
     var body: some View {
         HStack {
-            Text("First Intake")
+            Text("Intake")
             Spacer()
-            DatePicker("", selection: /*@START_MENU_TOKEN@*/.constant(Date())/*@END_MENU_TOKEN@*/, displayedComponents:.hourAndMinute)
+            DatePicker("", selection: self.$selectedTime, displayedComponents:.hourAndMinute)
         }
     }
 }
@@ -20,11 +30,19 @@ struct TimeRowView: View {
 struct AddReminderView: View {
     @Binding var showAddReminderView: Bool
     @Binding var med: Med
-    @State var selectedDosageDetails: String = "Scheduled Intake"
+    @State var intakeType: String = "Scheduled Intake"
     @State var dosage: Double = 0.5
     @State var delay: Int = 0
     @State var allowSnooze: Bool = true
     @State var notes: String = ""
+    @State var times: [Date]
+    
+    func formatter(date: Date) -> String {
+        let dateMaker = DateFormatter()
+        dateMaker.timeStyle = .short
+        let dateString = dateMaker.string(from: date)
+        return dateString
+    }
 
     enum intakeTypes: String, CaseIterable, Identifiable {
         case scheduled = "Scheduled Intake"
@@ -33,7 +51,6 @@ struct AddReminderView: View {
         var id: String { self.rawValue }
     }
 
-    
     
     var body: some View {
         NavigationView {
@@ -44,7 +61,7 @@ struct AddReminderView: View {
                     MedImage(med: med)
                         .padding()
                     Text(med.name)
-                    Picker("Dosage Category", selection: $selectedDosageDetails) {
+                    Picker("Dosage Category", selection: $intakeType) {
                         ForEach(intakeTypes.allCases) { intake in
                             Text("\(intake.rawValue)").tag(intake)
                         }
@@ -53,27 +70,23 @@ struct AddReminderView: View {
                     .padding()
                     List {
                         Section {
-//                            ForEach(med.)
-//
-                            
-                            HStack {
-                                Text("First Intake")
-                                Spacer()
-                                DatePicker("", selection: /*@START_MENU_TOKEN@*/.constant(Date())/*@END_MENU_TOKEN@*/, displayedComponents:.hourAndMinute)
+                            ForEach(0..<times.count, id: \.self) { i in
+                                TimeRowView(selectedTime: self.$times[i])
                             }
                             HStack {
-                                Text("Second Intake")
-                                DatePicker("", selection: /*@START_MENU_TOKEN@*/.constant(Date())/*@END_MENU_TOKEN@*/, displayedComponents:.hourAndMinute)
-                            }
-                            HStack {
-                                Button(action: {print("add intake")}) {
+                                Button(action: {
+                                    print("add intake")
+                                    times.append(Foundation.Date())
+                                    print(times)
+                                }) {
                                     HStack {
                                         Image(systemName: "plus.circle.fill").foregroundColor(Color(.systemGreen))
                                         Text("Add Intake")
                                     }
                                 }
                             }
-                        }.listRowBackground(Color(.systemGray5))
+                        }
+                        .listRowBackground(Color(.systemGray5))
                         Section {
                             HStack {
                                 Text("Amount Per Intake")
@@ -123,7 +136,8 @@ struct AddReminderView: View {
                 trailing:
                     Button(action: {
                         print("save")
-                        let newReminder = Reminder(medName: med.name, intakeType: selectedDosageDetails, intakeTimes: [""], intakeAmount: Double(1.0), delay: Int(delay), allowSnooze: false, notes: notes)
+//                        times = times.sorted()
+                        let newReminder = Reminder(medName: med.name, intakeType: intakeType, intakeTimes: times, intakeAmount: Double(1.0), delay: Int(delay), allowSnooze: false, notes: notes)
                         med.reminders.insert(newReminder, at: 0)
                         showAddReminderView.toggle()
                     }) {
@@ -137,9 +151,10 @@ struct AddReminderView: View {
 
 struct AddReminderView_Previews: PreviewProvider {
     static var pill: Med = Med.data[1]
+    static var previousReminders: [Date] = Med.data[1].reminders[0].intakeTimes != [] ? Med.data[1].reminders[0].intakeTimes : [Foundation.Date()]
     
     static var previews: some View {
-        AddReminderView(showAddReminderView: .constant(true), med: .constant(pill))
+        AddReminderView(showAddReminderView: .constant(true), med: .constant(pill), times: previousReminders)
     }
 }
 

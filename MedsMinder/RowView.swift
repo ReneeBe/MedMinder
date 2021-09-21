@@ -10,8 +10,10 @@ import SwiftUI
 struct RowView: View {
     @State var showAddReminderView: Bool
     @State var med: Med
+//    @State var times: [Date]
     var keyword: String
     var progress: Double
+    
     
     var body: some View {
         HStack {
@@ -36,7 +38,8 @@ struct RowView: View {
                     .foregroundColor(Color(.darkGray))
             }
             .sheet(isPresented: $showAddReminderView, content: {
-                AddReminderView(showAddReminderView: $showAddReminderView, med: $med)
+                let times = med.reminders != [] ? med.reminders[0].intakeTimes : [Foundation.Date()]
+                AddReminderView(showAddReminderView: $showAddReminderView, med: $med, times: times)
             })
             Spacer()
             Button(action: {print("\(med.name) taken!")}, label: {

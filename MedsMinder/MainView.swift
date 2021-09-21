@@ -80,7 +80,7 @@ struct MainView: View {
                                         })
                                     , trailing:
                                         Button("Add") {
-                                            let newMed = Med(name: newMedData.name, details: "Every Evening", format: newMedData.format, color: newMedData.color, shape: newMedData.shape, engraving: newMedData.engraving, dosage: Double(1), frequencyInMinutes: Int(180))
+                                            let newMed = Med(name: newMedData.name, details: "Every Evening", format: newMedData.format, color: newMedData.color, shape: newMedData.shape, engraving: newMedData.engraving, dosage: Double(1), frequencyInMinutes: Int(180), reminders: [])
                                             meds.append(newMed)
                                             showNewMedPopover.toggle()
                                 })

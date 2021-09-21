@@ -13,18 +13,18 @@ import SwiftUI
 //let dateString = formatter.string(from: Date())
 
 
-struct Reminder: Identifiable, Codable  {
+struct Reminder: Identifiable, Codable, Hashable  {
     let id: UUID
     var medName: String
     var intakeType: String
-    var intakeTimes: [String]
+    var intakeTimes: [Date]
     var intakeAmount: Double
     var delay: Int
     var allowSnooze: Bool
     var notes: String
 
     
-    init(id: UUID = UUID(), medName: String, intakeType: String, intakeTimes: [String], intakeAmount: Double, delay: Int, allowSnooze: Bool, notes: String ) {
+    init(id: UUID = UUID(), medName: String, intakeType: String, intakeTimes: [Date], intakeAmount: Double, delay: Int, allowSnooze: Bool, notes: String ) {
         self.id = id
         self.medName = medName
         self.intakeType = intakeType
