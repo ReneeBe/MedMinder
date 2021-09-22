@@ -12,7 +12,7 @@ struct MainView: View {
     @Environment(\.scenePhase) private var scenePhase
     @State private var showNewMedPopover = false
     @State var showAddReminderView = false
-    @State private var newMedData = Med.Data()
+    @State private var newMedData = Med.Data(format: "tablet")
     @State private var color: Color = Color(.systemYellow)
     public let saveAction: () -> Void
     var progressValue: Double = 270
@@ -46,9 +46,11 @@ struct MainView: View {
                     }
                     .padding(.leading)
                     .font(.headline)
+                    
                     Divider()
+                    
                     ScrollView {
-                        ForEach(meds) { med in
+                        ForEach(meds) {med in
                             if med.frequencyInMinutes == 0 {
                                 RowView(showAddReminderView: showAddReminderView, med: med, keyword: "demand", progress: progressValue)
                             }
@@ -82,7 +84,6 @@ struct MainView: View {
                                     , trailing:
                                         Button("Add") {
                                             let newMed = Med(name: newMedData.name, details: "Every Evening", format: newMedData.format, color: color, shape: newMedData.shape, engraving: newMedData.engraving, dosage: Double(1), frequencyInMinutes: Int(180), reminders: [])
-//                                            let newMed = Med(name: newMedData.name, details: "Every Evening", format: newMedData.format, color: newMedData.color, shape: newMedData.shape, engraving: newMedData.engraving, dosage: Double(1), frequencyInMinutes: Int(180), reminders: [])
                                             meds.append(newMed)
                                             showNewMedPopover.toggle()
                                 })
@@ -94,12 +95,6 @@ struct MainView: View {
                 if phase == .inactive { saveAction() }
             }
         }
-//        private func binding(for med: Med) -> Binding<Med> {
-//            guard let medIndex = meds.firstIndex(where: { $0.id == med.id }) else {
-//                fatalError("Can't find med in array")
-//            }
-//            return $meds[medIndex]
-//        }
     }
 }
 
@@ -108,3 +103,11 @@ struct ContentView_Previews: PreviewProvider {
         MainView(meds: .constant(Med.data), saveAction: {})
     }
 }
+
+
+//        private func binding(for med: Med) -> Binding<Med> {
+//            guard let medIndex = meds.firstIndex(where: { $0.id == med.id }) else {
+//                fatalError("Can't find med in array")
+//            }
+//            return $meds[medIndex]
+//        }

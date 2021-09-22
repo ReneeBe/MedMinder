@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		E736FF7426F8CB0C00A16653 /* Reminder.swift in Sources */ = {isa = PBXBuildFile; fileRef = E736FF7326F8CB0C00A16653 /* Reminder.swift */; };
+		E736FF8126FB6E6000A16653 /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E736FF8026FB6E6000A16653 /* CloudKit.framework */; };
 		E74C6DAB26DFD8A1001FE596 /* MedsMinderApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E74C6DAA26DFD8A1001FE596 /* MedsMinderApp.swift */; };
 		E74C6DAD26DFD8A1001FE596 /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E74C6DAC26DFD8A1001FE596 /* MainView.swift */; };
 		E74C6DAF26DFD8A6001FE596 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E74C6DAE26DFD8A6001FE596 /* Assets.xcassets */; };
@@ -25,6 +26,8 @@
 
 /* Begin PBXFileReference section */
 		E736FF7326F8CB0C00A16653 /* Reminder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reminder.swift; sourceTree = "<group>"; };
+		E736FF7D26FB6C3300A16653 /* MedsMinder.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MedsMinder.entitlements; sourceTree = "<group>"; };
+		E736FF8026FB6E6000A16653 /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
 		E74C6DA726DFD8A1001FE596 /* MedsMinder.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MedsMinder.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E74C6DAA26DFD8A1001FE596 /* MedsMinderApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MedsMinderApp.swift; sourceTree = "<group>"; };
 		E74C6DAC26DFD8A1001FE596 /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
@@ -47,6 +50,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E736FF8126FB6E6000A16653 /* CloudKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -60,11 +64,20 @@
 			path = Data;
 			sourceTree = "<group>";
 		};
+		E736FF7F26FB6E6000A16653 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				E736FF8026FB6E6000A16653 /* CloudKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		E74C6D9E26DFD8A1001FE596 = {
 			isa = PBXGroup;
 			children = (
 				E74C6DA926DFD8A1001FE596 /* MedsMinder */,
 				E74C6DA826DFD8A1001FE596 /* Products */,
+				E736FF7F26FB6E6000A16653 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -79,6 +92,7 @@
 		E74C6DA926DFD8A1001FE596 /* MedsMinder */ = {
 			isa = PBXGroup;
 			children = (
+				E736FF7D26FB6C3300A16653 /* MedsMinder.entitlements */,
 				E74C6DAA26DFD8A1001FE596 /* MedsMinderApp.swift */,
 				E74C6DAC26DFD8A1001FE596 /* MainView.swift */,
 				E754287226EA787E0041D5DF /* MainNavigationBar.swift */,
@@ -315,6 +329,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = MedsMinder/MedsMinder.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"MedsMinder/Preview Content\"";
 				DEVELOPMENT_TEAM = U52GMQH3J6;
@@ -337,6 +352,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = MedsMinder/MedsMinder.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"MedsMinder/Preview Content\"";
 				DEVELOPMENT_TEAM = U52GMQH3J6;

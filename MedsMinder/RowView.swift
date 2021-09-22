@@ -26,7 +26,10 @@ struct RowView: View {
             }
             Button(action: {
                 self.showAddReminderView = true
-                print("show popover!"); print(showAddReminderView); print(med)
+                print("show popover!");
+                print(showAddReminderView);
+                print("intakeType:");
+                print(med.reminders != [] ? med.reminders[0].intakeType : "none yet");
             }) {
                     VStack(alignment: .leading) {
                         Text(med.name)
@@ -44,7 +47,7 @@ struct RowView: View {
             })
             Spacer()
             Button(action: {print("\(med.name) taken!")}, label: {
-                if keyword == "scheduled" {
+                if med.reminders != [] && med.reminders[0].intakeType == "Scheduled Intake"  {
                     Text("TAKE")
                         .padding(7)
                         .font(Font.body.weight(.bold))

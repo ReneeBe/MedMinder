@@ -10,11 +10,12 @@ import SwiftUI
 struct NewMedicationView: View {
      @Binding var medData: Med.Data
      @Binding var color: Color
-     enum MedType:String, CaseIterable, Identifiable {
-        case tablet
-        case capsule
-        case liquid
-        var id: MedType { self }
+     enum medType:String, CaseIterable, Identifiable {
+          case tablet = "tablet"
+          case capsule = "capsule"
+          case liquid = "liquid"
+          
+          var id: String { self.rawValue }
     }
      var medShapes: [ [String] ] = [
     ["circle.fill", "3"], ["circle.fill", "2"], ["circle.fill","1"], ["capsule.fill", "3"], ["capsule.fill","1"], ["oval.fill", "2"], ["oval.fill", "3"], ["rhombus.fill", "3"]
@@ -29,35 +30,40 @@ struct NewMedicationView: View {
                Group {
                     TextField("Input Medication Name", text: $medData.name)
                          .padding(.horizontal)
-                         .padding(.top, 25)
+//                         .padding(.top, 25)
                     Image(systemName: medData.shape[0] != "" ? medData.shape[0] : "pills")
-                         .font(.largeTitle)
-                         .imageScale(.large)
+                         .resizable()
+                         .scaledToFit()
                          .foregroundColor(color)
+                         .frame(width: 75, height: 75)
                          .overlay(
                               ZStack {
                                    Text(medData.engraving).bold()
                                         .shadow(color: Color.white, radius: 3)
                                         .shadow(color: Color.white, radius: 3)
                               }
-                              .frame(width: 200, height: 75)
                          )
+//                         .padding(.vertical)
+
                     Picker("Medication Format", selection: $medData.format) {
-                         ForEach(MedType.allCases) { med in
+                         ForEach(medType.allCases) { med in
                               Text(med.rawValue)
                          }
                     }
                     .pickerStyle(SegmentedPickerStyle())
                    .padding()
                }
+               
                Divider()
+               
                HStack {
                    Spacer()
                     ColorPicker("Pill color", selection: $color)
-//                    ColorPicker("Pill color", selection: $medData.color)
                        .padding(.horizontal)
                }
+               
                Divider()
+               
                Group {
                    HStack {
                        Text("Shape")
@@ -94,7 +100,9 @@ struct NewMedicationView: View {
                        }
                    }
                }
+               
                Divider()
+               
                Group {
                     HStack {
                          Text("Engraving")

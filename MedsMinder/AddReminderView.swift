@@ -112,7 +112,7 @@ struct AddReminderView: View {
                                     Text("1 hr").tag(60)
                                     Text("1.5 hrs").tag(90)
                                     Text("2 hrs").tag(120)
-                                }.accessibility(label: Text("Dosage Per Intake"))
+                                }.accessibility(label: Text("Allowed Intake Delay"))
                             }
                             Menu("Priority") {
                                 Text("Low")
@@ -140,6 +140,8 @@ struct AddReminderView: View {
                         let newReminder = Reminder(medName: med.name, intakeType: intakeType, intakeTimes: times, intakeAmount: Double(dosage), delay: Int(delay), allowSnooze: allowSnooze, notes: notes)
                         med.reminders.insert(newReminder, at: 0)
                         med.dosage = Double(dosage)
+//                        let updateToScheduled = intakeType == "Scheduled Intake" ? true : false
+//                        med.showAsScheduled = updateToScheduled
                         showAddReminderView.toggle()
                     }) {
                         Text("Save")
