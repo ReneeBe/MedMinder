@@ -17,12 +17,10 @@ struct Med: Identifiable, Codable {
     var shape: [String]
     var engraving: String
     var dosage: Double
-    var frequencyInMinutes: Int
+    var scheduled: Bool?
     var reminders: [Reminder]
-    var showAsScheduled: Bool?
     
-    init(id: UUID = UUID(), name: String, details: String, format: String, color: Color?, shape: [String], engraving: String, dosage: Double, frequencyInMinutes: Int,  reminders: [Reminder] = []
-         , showAsScheduled: Bool
+    init(id: UUID = UUID(), name: String, details: String, format: String, color: Color?, shape: [String], engraving: String, dosage: Double, scheduled: Bool, reminders: [Reminder] = []
     ) {
         self.id = id
         self.name = name
@@ -32,21 +30,17 @@ struct Med: Identifiable, Codable {
         self.shape = shape
         self.engraving = engraving
         self.dosage = dosage
-        self.frequencyInMinutes = frequencyInMinutes
+        self.scheduled = scheduled
         self.reminders = reminders
-        self.showAsScheduled = showAsScheduled
     }
 }
 
 extension Med {
     static var data: [Med] {
         [
-            Med(name: "Medication", details: "Every Morning", format: "tablet", color: .white, shape: ["circle.fill", "1"], engraving: "ABC", dosage: 1, frequencyInMinutes: 180, reminders: [], showAsScheduled: true),
-            Med(name: "Medication", details: "3 Times A Day", format: "tablet", color: Color(.systemGreen), shape: ["circle.fill", "3"], engraving: "123", dosage: 1, frequencyInMinutes: 180, reminders: [], showAsScheduled: true),
-            Med(name: "1/2 Medication", details: "Taken 2 Hours Ago", format: "tablet", color: .white, shape: ["circle.fill", "2"], engraving: "XYZ", dosage: 0.5, frequencyInMinutes: 0, reminders: [], showAsScheduled: true)
-//            Med(name: "Medication", details: "Every Morning", format: "tablet", color: .white, shape: ["circle.fill", "1"], engraving: "ABC", dosage: 1, frequencyInMinutes: 180, reminders: [], showAsScheduled: false),
-//            Med(name: "Medication", details: "3 Times A Day", format: "tablet", color: Color(.systemGreen), shape: ["circle.fill", "3"], engraving: "123", dosage: 1, frequencyInMinutes: 180, reminders: [], showAsScheduled: false),
-//            Med(name: "1/2 Medication", details: "Taken 2 Hours Ago", format: "tablet", color: .white, shape: ["circle.fill", "2"], engraving: "XYZ", dosage: 0.5, frequencyInMinutes: 0, reminders: [], showAsScheduled: false)
+            Med(name: "Medication", details: "Every Morning", format: "tablet", color: .white, shape: ["circle.fill", "1"], engraving: "ABC", dosage: 1, scheduled: true, reminders: []),
+            Med(name: "Medication", details: "3 Times A Day", format: "tablet", color: Color(.systemGreen), shape: ["circle.fill", "3"], engraving: "123", dosage: 1, scheduled: true, reminders: []),
+            Med(name: "1/2 Medication", details: "Taken 2 Hours Ago", format: "tablet", color: .white, shape: ["circle.fill", "2"], engraving: "XYZ", dosage: 0.5, scheduled: false, reminders: [])
         ]
     }
 }
@@ -60,14 +54,13 @@ extension Med {
         var shape: [String] = [""]
         var engraving: String = ""
         var dosage: Double = 0.00
-        var frequencyInMinutes: Int = 300
+        var scheduled: Bool? = false
         var reminders: [Reminder] = []
-        var showAsScheduled: Bool? = false
     }
     var data: Data {
-//        return Data(name: name, details: details, format: format, color: color, shape: shape, engraving: engraving, dosage: Double(dosage), frequencyInMinutes: Int(frequencyInMinutes), reminders: reminders)
 
-        return Data(name: name, details: details, format: format, color: color, shape: shape, engraving: engraving, dosage: Double(dosage), frequencyInMinutes: Int(frequencyInMinutes), reminders: reminders, showAsScheduled: showAsScheduled)
+
+        return Data(name: name, details: details, format: format, color: color, shape: shape, engraving: engraving, dosage: Double(dosage), scheduled: scheduled, reminders: reminders)
     }
     mutating func update(from data: Data) {
         name = data.name
@@ -77,8 +70,7 @@ extension Med {
         shape = data.shape
         engraving = data.engraving
         dosage = Double(data.dosage)
-        frequencyInMinutes = Int(data.frequencyInMinutes)
+        scheduled = data.scheduled
         reminders = data.reminders
-        showAsScheduled = data.showAsScheduled
     }
 }

@@ -34,12 +34,9 @@ struct MainView: View {
                     ScrollView {
                         VStack(alignment: .center, spacing: 5) {
                             ForEach(meds) { med in
-                                if med.frequencyInMinutes > 0 {
+                                if med.scheduled! {
                                     RowView(showAddReminderView: showAddReminderView, med: med, keyword: "scheduled", progress: progressValue)
                                 }
-//                                if med.frequencyInMinutes > 0 {
-//                                    RowView(showAddReminderView: showAddReminderView, med: med, keyword: "scheduled", progress: progressValue)
-//                                }
                             }
                         }
                     }
@@ -54,7 +51,7 @@ struct MainView: View {
                     
                     ScrollView {
                         ForEach(meds) {med in
-                            if med.frequencyInMinutes == 0 {
+                            if med.scheduled! == false {
                                 RowView(showAddReminderView: showAddReminderView, med: med, keyword: "demand", progress: progressValue)
                             }
                         }
@@ -86,8 +83,7 @@ struct MainView: View {
                                         })
                                     , trailing:
                                         Button("Add") {
-//                                            let newMed = Med(name: newMedData.name, details: "Every Evening", format: newMedData.format, color: color, shape: newMedData.shape, engraving: newMedData.engraving, dosage: Double(1), frequencyInMinutes: Int(180), reminders: [])
-                                            let newMed = Med(name: newMedData.name, details: "Every Evening", format: newMedData.format, color: color, shape: newMedData.shape, engraving: newMedData.engraving, dosage: Double(1), frequencyInMinutes: Int(180), reminders: [], showAsScheduled: false)
+                                            let newMed = Med(name: newMedData.name, details: "Every Evening", format: newMedData.format, color: color, shape: newMedData.shape, engraving: newMedData.engraving, dosage: Double(1), scheduled: false, reminders: [])
                                             meds.append(newMed)
                                             showNewMedPopover.toggle()
                                 })

@@ -47,7 +47,7 @@ struct RowView: View {
             })
             Spacer()
             Button(action: {print("\(med.name) taken!")}, label: {
-                if med.reminders != [] && med.reminders[0].intakeType == "Scheduled Intake"  {
+                if med.scheduled! {
                     Text("TAKE")
                         .padding(7)
                         .font(Font.body.weight(.bold))

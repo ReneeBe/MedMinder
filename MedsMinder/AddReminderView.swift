@@ -139,7 +139,7 @@ struct AddReminderView: View {
                         let newReminder = Reminder(medName: med.name, intakeType: intakeType, intakeTimes: times, intakeAmount: Double(dosage), delay: Int(delay), allowSnooze: allowSnooze, notes: notes)
                         med.reminders.insert(newReminder, at: 0)
                         med.dosage = Double(dosage)
-                        med.showAsScheduled = intakeType == "Scheduled Intake" ? true : false
+                        med.scheduled = intakeType == "Scheduled Intake" ? true : false
                         showAddReminderView.toggle()
                     }) {
                         Text("Save")
