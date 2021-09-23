@@ -46,27 +46,27 @@ struct Reminder: Identifiable, Codable, Hashable  {
 //    }
 //}
 //
-//extension Reminder {
-//    struct Data {
-//        var medName: String = ""
-//        var intakeType: String = ""
-//        var intakeTimes: [String] = [""]
-//        var intakeAmount: Double = 0.00
-//        var delay: Int = 300
-//        var allowSnooze: Bool = false
-//        var notes: String = ""
-//    }
-//
-//    var data: Data {
-//        return Data(medName: medName, intakeType: intakeType, intakeTimes: intakeTimes, intakeAmount: Double(intakeAmount), delay: Int(delay), allowSnooze: allowSnooze, notes: notes)
-//    }
-//    mutating func update(from data: Data) {
-//        medName = data.medName
-//        intakeType = data.intakeType
-//        intakeTimes = data.intakeTimes
-//        intakeAmount = Double(data.intakeAmount)
-//        delay = Int(data.delay)
-//        allowSnooze = data.allowSnooze
-//        notes = data.notes
-//    }
-//}
+extension Reminder {
+    struct Data {
+        var medName: String = ""
+        var intakeType: String = ""
+        var intakeTimes: [Date] = []
+        var intakeAmount: Double = 0.00
+        var delay: Int = 300
+        var allowSnooze: Bool = false
+        var notes: String = ""
+    }
+
+    var data: Data {
+        return Data(medName: medName, intakeType: intakeType, intakeTimes: intakeTimes, intakeAmount: Double(intakeAmount), delay: Int(delay), allowSnooze: allowSnooze, notes: notes)
+    }
+    mutating func update(from data: Data) {
+        medName = data.medName
+        intakeType = data.intakeType
+        intakeTimes = data.intakeTimes
+        intakeAmount = Double(data.intakeAmount)
+        delay = Int(data.delay)
+        allowSnooze = data.allowSnooze
+        notes = data.notes
+    }
+}

@@ -100,12 +100,9 @@
 				E74C6DCC26E004B7001FE596 /* RowView.swift */,
 				E7AFF6F426E180B8003B37B2 /* NewMedicationView.swift */,
 				E7AFF6F726E2DBAB003B37B2 /* ProgressBar.swift */,
-				E74C6DC826E00072001FE596 /* Med.swift */,
-				E7DE71B026F249EC00BA7C95 /* MedData.swift */,
-				E736FF7326F8CB0C00A16653 /* Reminder.swift */,
+				E7D2EE7926FD024B00DE882D /* Model */,
 				E736FF7726F8CB5100A16653 /* Data */,
 				E7DE71AC26F239CA00BA7C95 /* MedImage.swift */,
-				E7DE71A926F15E1B00BA7C95 /* Color+Codable.swift */,
 				E74C6DAE26DFD8A6001FE596 /* Assets.xcassets */,
 				E74C6DB326DFD8A6001FE596 /* Info.plist */,
 				E74C6DB026DFD8A6001FE596 /* Preview Content */,
@@ -119,6 +116,17 @@
 				E74C6DB126DFD8A6001FE596 /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		E7D2EE7926FD024B00DE882D /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				E7DE71B026F249EC00BA7C95 /* MedData.swift */,
+				E74C6DC826E00072001FE596 /* Med.swift */,
+				E736FF7326F8CB0C00A16653 /* Reminder.swift */,
+				E7DE71A926F15E1B00BA7C95 /* Color+Codable.swift */,
+			);
+			path = Model;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

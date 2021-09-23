@@ -9,9 +9,8 @@ import SwiftUI
 
 struct RowView: View {
     @State var showAddReminderView: Bool
-    @State var med: Med
-    var keyword: String
-    var progress: Double
+    @Binding var med: Med
+    var progress: Double = 270
     
     
     var body: some View {
@@ -69,8 +68,8 @@ struct RowView_Previews: PreviewProvider {
 
     static var previews: some View {
         VStack {
-            RowView(showAddReminderView: true, med: medOne, keyword: "scheduled", progress: 270)
-            RowView(showAddReminderView: true, med: medTwo, keyword: "", progress: 270)
+            RowView(showAddReminderView: true, med: .constant(medOne))
+            RowView(showAddReminderView: true, med: .constant(medTwo))
         }
     }
 }

@@ -10,7 +10,7 @@ import SwiftUI
 @main
 struct MedsMinderApp: App {
     @ObservedObject private var data = MedData()
-    
+
     var body: some Scene {
         WindowGroup {
             NavigationView {

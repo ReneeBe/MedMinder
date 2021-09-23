@@ -15,7 +15,6 @@ struct MainView: View {
     @State private var newMedData = Med.Data(format: "tablet")
     @State private var color: Color = Color(.systemYellow)
     public let saveAction: () -> Void
-    var progressValue: Double = 270
     
     var body: some View {
         NavigationView {
@@ -31,9 +30,9 @@ struct MainView: View {
                     .padding(.leading)
                     .padding(.top)
                     Divider()
-                    ForEach(meds) { med in
-                        if med.scheduled! {
-                            RowView(showAddReminderView: showAddReminderView, med: med, keyword: "scheduled", progress: progressValue)
+                    ForEach(0..<meds.count, id: \.self) { i in
+                        if meds[i].scheduled! {
+                            RowView(showAddReminderView: showAddReminderView, med: self.$meds[i])
                         }
                     }
                     HStack (alignment: .top){
@@ -44,9 +43,9 @@ struct MainView: View {
                     .padding(.leading)
                     .padding(.top)
                     Divider()
-                    ForEach(meds) {med in
-                        if med.scheduled! == false {
-                            RowView(showAddReminderView: showAddReminderView, med: med, keyword: "demand", progress: progressValue)
+                    ForEach(0..<meds.count, id: \.self) {i in
+                        if meds[i].scheduled! == false {
+                            RowView(showAddReminderView: showAddReminderView, med: self.$meds[i])
                         }
                     }
                 }
@@ -89,6 +88,12 @@ struct MainView: View {
             }
         }
     }
+    private func binding(for med: Med) -> Binding<Med> {
+        guard let medIndex = meds.firstIndex(where: { $0.id == med.id }) else {
+            fatalError("Can't find med in array")
+        }
+        return $meds[medIndex]
+    }
 }
 
 struct ContentView_Previews: PreviewProvider {
@@ -98,9 +103,3 @@ struct ContentView_Previews: PreviewProvider {
 }
 
 
-//        private func binding(for med: Med) -> Binding<Med> {
-//            guard let medIndex = meds.firstIndex(where: { $0.id == med.id }) else {
-//                fatalError("Can't find med in array")
-//            }
-//            return $meds[medIndex]
-//        }

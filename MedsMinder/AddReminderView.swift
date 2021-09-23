@@ -9,24 +9,6 @@ import SwiftUI
 import Foundation
 
 
-struct TimeRowView: View {
-    @Binding var selectedTime: Date
-    func formatter() -> String {
-        let dateMaker = DateFormatter()
-        dateMaker.timeStyle = .short
-        let dateString = dateMaker.string(from: Date())
-        return dateString
-    }
-
-    var body: some View {
-        HStack {
-            Text("Intake")
-            Spacer()
-            DatePicker("", selection: self.$selectedTime, displayedComponents:.hourAndMinute)
-        }
-    }
-}
-
 struct AddReminderView: View {
     @Binding var showAddReminderView: Bool
     @Binding var med: Med
@@ -37,20 +19,12 @@ struct AddReminderView: View {
     @State var allowSnooze: Bool = true
     @State var notes: String = ""
     
-    func formatter(date: Date) -> String {
-        let dateMaker = DateFormatter()
-        dateMaker.timeStyle = .short
-        let dateString = dateMaker.string(from: date)
-        return dateString
-    }
-
     enum intakeTypes: String, CaseIterable, Identifiable {
         case scheduled = "Scheduled Intake"
         case demand = "On Demand"
 
         var id: String { self.rawValue }
     }
-
     
     var body: some View {
         NavigationView {
@@ -71,13 +45,23 @@ struct AddReminderView: View {
                     List {
                         Section {
                             ForEach(0..<times.count, id: \.self) { i in
-                                TimeRowView(selectedTime: self.$times[i])
+                                HStack {
+                                    Text("Intake")
+                                    Spacer()
+                                    DatePicker("", selection: self.$times[i], displayedComponents:.hourAndMinute)
+                                    Button(action:
+                                            {
+                                                print("delete")
+                                            }
+                                    ) {
+                                        Image(systemName: "minus.circle.fill").foregroundColor(Color(.systemRed))
+                                            .accessibility(label: Text("delete intake"))
+                                    }
+                                }
                             }
                             HStack {
                                 Button(action: {
-                                    print("add intake")
                                     times.append(Foundation.Date())
-                                    print(times)
                                 }) {
                                     HStack {
                                         Image(systemName: "plus.circle.fill").foregroundColor(Color(.systemGreen))
@@ -140,7 +124,9 @@ struct AddReminderView: View {
                         med.reminders.insert(newReminder, at: 0)
                         med.dosage = Double(dosage)
                         med.scheduled = intakeType == "Scheduled Intake" ? true : false
-                        showAddReminderView.toggle()
+                        showAddReminderView = false
+                        med.update(from: med.data)
+                        print(med.reminders[0].intakeTimes)
                     }) {
                         Text("Save")
                     }
@@ -148,7 +134,11 @@ struct AddReminderView: View {
             }
         }
     }
+    mutating func delete(at index: Int) {
+        times.remove(at: index)
+    }
 }
+
 
 struct AddReminderView_Previews: PreviewProvider {
     static var pill: Med = Med.data[1]
