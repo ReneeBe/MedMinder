@@ -11,7 +11,7 @@ struct MainView: View {
     @Binding var meds: [Med]
     @Environment(\.scenePhase) private var scenePhase
     @State private var showNewMedPopover = false
-    @State var showAddReminderView = false
+    @State private var showAddReminderView = false
     @State private var newMedData = Med.Data(format: "tablet")
     @State private var color: Color = Color(.systemYellow)
     public let saveAction: () -> Void
@@ -37,6 +37,9 @@ struct MainView: View {
                                 if med.frequencyInMinutes > 0 {
                                     RowView(showAddReminderView: showAddReminderView, med: med, keyword: "scheduled", progress: progressValue)
                                 }
+//                                if med.frequencyInMinutes > 0 {
+//                                    RowView(showAddReminderView: showAddReminderView, med: med, keyword: "scheduled", progress: progressValue)
+//                                }
                             }
                         }
                     }
@@ -83,7 +86,8 @@ struct MainView: View {
                                         })
                                     , trailing:
                                         Button("Add") {
-                                            let newMed = Med(name: newMedData.name, details: "Every Evening", format: newMedData.format, color: color, shape: newMedData.shape, engraving: newMedData.engraving, dosage: Double(1), frequencyInMinutes: Int(180), reminders: [])
+//                                            let newMed = Med(name: newMedData.name, details: "Every Evening", format: newMedData.format, color: color, shape: newMedData.shape, engraving: newMedData.engraving, dosage: Double(1), frequencyInMinutes: Int(180), reminders: [])
+                                            let newMed = Med(name: newMedData.name, details: "Every Evening", format: newMedData.format, color: color, shape: newMedData.shape, engraving: newMedData.engraving, dosage: Double(1), frequencyInMinutes: Int(180), reminders: [], showAsScheduled: false)
                                             meds.append(newMed)
                                             showNewMedPopover.toggle()
                                 })

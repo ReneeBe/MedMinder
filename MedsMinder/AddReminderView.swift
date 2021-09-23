@@ -136,12 +136,10 @@ struct AddReminderView: View {
                 trailing:
                     Button(action: {
                         print("save")
-//                        times = times.sorted()
                         let newReminder = Reminder(medName: med.name, intakeType: intakeType, intakeTimes: times, intakeAmount: Double(dosage), delay: Int(delay), allowSnooze: allowSnooze, notes: notes)
                         med.reminders.insert(newReminder, at: 0)
                         med.dosage = Double(dosage)
-//                        let updateToScheduled = intakeType == "Scheduled Intake" ? true : false
-//                        med.showAsScheduled = updateToScheduled
+                        med.showAsScheduled = intakeType == "Scheduled Intake" ? true : false
                         showAddReminderView.toggle()
                     }) {
                         Text("Save")
@@ -160,5 +158,3 @@ struct AddReminderView_Previews: PreviewProvider {
         AddReminderView(showAddReminderView: .constant(true), med: .constant(pill), intakeType: "Scheduled Intake", times: previousReminders, dosage: 1.0)
     }
 }
-
-//            .background(Color(.systemGray3).opacity(0.04).ignoresSafeArea())
