@@ -21,7 +21,7 @@ struct MainView: View {
         NavigationView {
             ZStack {
                 Color(.systemBlue).opacity(0.06).ignoresSafeArea()
-                VStack {
+                ScrollView {
                     HStack (alignment: .top){
                         Image(systemName: "timer")
                         Text("Scheduled")
@@ -31,33 +31,26 @@ struct MainView: View {
                     .padding(.leading)
                     .padding(.top)
                     Divider()
-                    ScrollView {
-                        VStack(alignment: .center, spacing: 5) {
-                            ForEach(meds) { med in
-                                if med.scheduled! {
-                                    RowView(showAddReminderView: showAddReminderView, med: med, keyword: "scheduled", progress: progressValue)
-                                }
-                            }
+                    ForEach(meds) { med in
+                        if med.scheduled! {
+                            RowView(showAddReminderView: showAddReminderView, med: med, keyword: "scheduled", progress: progressValue)
                         }
                     }
                     HStack (alignment: .top){
                         Text("On Demand")
                         Spacer()
                     }
-                    .padding(.leading)
                     .font(.headline)
-                    
+                    .padding(.leading)
+                    .padding(.top)
                     Divider()
-                    
-                    ScrollView {
-                        ForEach(meds) {med in
-                            if med.scheduled! == false {
-                                RowView(showAddReminderView: showAddReminderView, med: med, keyword: "demand", progress: progressValue)
-                            }
+                    ForEach(meds) {med in
+                        if med.scheduled! == false {
+                            RowView(showAddReminderView: showAddReminderView, med: med, keyword: "demand", progress: progressValue)
                         }
                     }
-                    .padding(15)
                 }
+                .padding(15)
                 .foregroundColor(Color(.darkGray))
             }
             .navigationBarTitle("Reminder")
@@ -86,9 +79,9 @@ struct MainView: View {
                                             let newMed = Med(name: newMedData.name, details: "Every Evening", format: newMedData.format, color: color, shape: newMedData.shape, engraving: newMedData.engraving, dosage: Double(1), scheduled: false, reminders: [])
                                             meds.append(newMed)
                                             showNewMedPopover.toggle()
-                                })
+                                        })
                         }
-                    }
+                }
             )
             .navigationBarBackButtonHidden(true)
             .onChange(of: scenePhase) { phase in

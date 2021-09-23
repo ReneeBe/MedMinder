@@ -26,10 +26,6 @@ struct RowView: View {
             }
             Button(action: {
                 self.showAddReminderView = true
-                print("show popover!");
-                print(showAddReminderView);
-                print("intakeType:");
-                print(med.reminders != [] ? med.reminders[0].intakeType : "none yet");
             }) {
                     VStack(alignment: .leading) {
                         Text(med.name)
