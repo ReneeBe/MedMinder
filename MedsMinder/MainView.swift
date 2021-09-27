@@ -88,12 +88,12 @@ struct MainView: View {
             }
         }
     }
-    private func binding(for med: Med) -> Binding<Med> {
-        guard let medIndex = meds.firstIndex(where: { $0.id == med.id }) else {
-            fatalError("Can't find med in array")
-        }
-        return $meds[medIndex]
-    }
+//    private func binding(for med: Med) -> Binding<Med> {
+//        guard let medIndex = meds.firstIndex(where: { $0.id == med.id }) else {
+//            fatalError("Can't find med in array")
+//        }
+//        return $meds[medIndex]
+//    }
 }
 
 struct ContentView_Previews: PreviewProvider {

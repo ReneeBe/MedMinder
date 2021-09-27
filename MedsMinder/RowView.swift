@@ -38,7 +38,7 @@ struct RowView: View {
                 let times = med.reminders != [] ? med.reminders[0].intakeTimes : [Foundation.Date()]
                 let intakeType = med.reminders != [] ? med.reminders[0].intakeType : "Scheduled Intake"
                 let dosage = med.dosage
-                AddReminderView(showAddReminderView: $showAddReminderView, med: $med, intakeType: intakeType, times: times, dosage: dosage)
+                AddReminderView(showAddReminderView: $showAddReminderView, med: $med, intakeType: intakeType, times: times, dosage: dosage, indices: [])
             })
             Spacer()
             Button(action: {print("\(med.name) taken!")}, label: {

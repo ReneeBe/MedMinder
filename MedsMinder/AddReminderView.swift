@@ -18,6 +18,7 @@ struct AddReminderView: View {
     @State var delay: Int = 0
     @State var allowSnooze: Bool = true
     @State var notes: String = ""
+    @State var indices: [Int] = []
     
     enum intakeTypes: String, CaseIterable, Identifiable {
         case scheduled = "Scheduled Intake"
@@ -45,19 +46,23 @@ struct AddReminderView: View {
                     List {
                         Section {
                             ForEach(0..<times.count, id: \.self) { i in
-                                HStack {
-                                    Text("Intake")
-                                    Spacer()
-                                    DatePicker("", selection: self.$times[i], displayedComponents:.hourAndMinute)
-                                    Button(action:
-                                            {
-                                                print("delete")
-                                            }
-                                    ) {
-                                        Image(systemName: "minus.circle.fill").foregroundColor(Color(.systemRed))
-                                            .accessibility(label: Text("delete intake"))
+                                if !indices.contains(i) {
+                                    HStack {
+                                        Text("Intake")
+                                        Spacer()
+                                        DatePicker("", selection: self.$times[i], displayedComponents:.hourAndMinute)
+                                        Button(action:
+                                                {
+                                                    print("delete")
+                                                    hideTimes(index: i)
+                                                }
+                                        ) {
+                                            Image(systemName: "minus.circle.fill").foregroundColor(Color(.systemRed))
+                                                .accessibility(label: Text("delete intake"))
+                                        }
                                     }
                                 }
+
                             }
                             HStack {
                                 Button(action: {
@@ -120,7 +125,10 @@ struct AddReminderView: View {
                 trailing:
                     Button(action: {
                         print("save")
-                        let newReminder = Reminder(medName: med.name, intakeType: intakeType, intakeTimes: times, intakeAmount: Double(dosage), delay: Int(delay), allowSnooze: allowSnooze, notes: notes)
+                        indices.sort(by: >)
+                        let tidiedTimes = delete()
+                        let newReminder = Reminder(medName: med.name, intakeType: intakeType, intakeTimes: tidiedTimes ?? [Foundation.Date()], intakeAmount: Double(dosage), delay: Int(delay), allowSnooze: allowSnooze, notes: notes)
+//                        let newReminder = Reminder(medName: med.name, intakeType: intakeType, intakeTimes: times, intakeAmount: Double(dosage), delay: Int(delay), allowSnooze: allowSnooze, notes: notes)
                         med.reminders.insert(newReminder, at: 0)
                         med.dosage = Double(dosage)
                         med.scheduled = intakeType == "Scheduled Intake" ? true : false
@@ -134,8 +142,17 @@ struct AddReminderView: View {
             }
         }
     }
-    mutating func delete(at index: Int) {
-        times.remove(at: index)
+    func hideTimes(index: Int) {
+        indices.append(index)
+    }
+    func delete() -> [Date]? {
+        var copy: [Date]? = []
+        for index in 0..<times.count {
+            if !indices.contains(index) {
+                copy?.append(times[index])
+            }
+        }
+        return copy
     }
 }
 
@@ -145,6 +162,6 @@ struct AddReminderView_Previews: PreviewProvider {
     static var previousReminders: [Date] = Med.data[1].reminders[0].intakeTimes != [] ? Med.data[1].reminders[0].intakeTimes : [Foundation.Date()]
     
     static var previews: some View {
-        AddReminderView(showAddReminderView: .constant(true), med: .constant(pill), intakeType: "Scheduled Intake", times: previousReminders, dosage: 1.0)
+        AddReminderView(showAddReminderView: .constant(true), med: .constant(pill), intakeType: "Scheduled Intake", times: previousReminders, dosage: 1.0, indices: [])
     }
 }
