@@ -8,7 +8,6 @@
 import SwiftUI
 import Foundation
 
-
 struct AddReminderView: View {
     @Binding var showAddReminderView: Bool
     @Binding var med: Med
@@ -53,7 +52,6 @@ struct AddReminderView: View {
                                         DatePicker("", selection: self.$times[i], displayedComponents:.hourAndMinute)
                                         Button(action:
                                                 {
-                                                    print("delete")
                                                     hideTimes(index: i)
                                                 }
                                         ) {
@@ -62,7 +60,6 @@ struct AddReminderView: View {
                                         }
                                     }
                                 }
-
                             }
                             HStack {
                                 Button(action: {
@@ -152,6 +149,7 @@ struct AddReminderView: View {
                 copy?.append(times[index])
             }
         }
+        copy!.sort()
         return copy
     }
 }
