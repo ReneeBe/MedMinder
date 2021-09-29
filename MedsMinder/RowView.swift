@@ -9,6 +9,7 @@ import SwiftUI
 
 struct RowView: View {
     @State var showAddReminderView: Bool
+    @Binding var permissionGranted: Bool
     @Binding var med: Med
     var progress: Double = 270
     
@@ -38,7 +39,7 @@ struct RowView: View {
                 let times = med.reminders != [] ? med.reminders[0].intakeTimes : [Foundation.Date()]
                 let intakeType = med.reminders != [] ? med.reminders[0].intakeType : "Scheduled Intake"
                 let dosage = med.dosage
-                AddReminderView(showAddReminderView: $showAddReminderView, med: $med, intakeType: intakeType, times: times, dosage: dosage, indices: [])
+                AddReminderView(showAddReminderView: $showAddReminderView, med: $med, intakeType: intakeType, times: times, dosage: dosage, indices: [], permissionGranted: $permissionGranted)
             })
             Spacer()
             Button(action: {print("\(med.name) taken!")}, label: {
@@ -68,8 +69,8 @@ struct RowView_Previews: PreviewProvider {
 
     static var previews: some View {
         VStack {
-            RowView(showAddReminderView: true, med: .constant(medOne))
-            RowView(showAddReminderView: true, med: .constant(medTwo))
+            RowView(showAddReminderView: false, permissionGranted: .constant(true), med: .constant(medOne))
+            RowView(showAddReminderView: false, permissionGranted: .constant(true), med: .constant(medTwo))
         }
     }
 }

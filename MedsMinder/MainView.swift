@@ -6,12 +6,14 @@
 //
 
 import SwiftUI
+import UserNotifications
 
 struct MainView: View {
     @Binding var meds: [Med]
     @Environment(\.scenePhase) private var scenePhase
     @State private var showNewMedPopover = false
     @State private var showAddReminderView = false
+    @Binding var permissionGranted: Bool
     @State private var newMedData = Med.Data(format: "tablet")
     @State private var color: Color = Color(.systemYellow)
     public let saveAction: () -> Void
@@ -32,7 +34,7 @@ struct MainView: View {
                     Divider()
                     ForEach(0..<meds.count, id: \.self) { i in
                         if meds[i].scheduled! {
-                            RowView(showAddReminderView: showAddReminderView, med: self.$meds[i])
+                            RowView(showAddReminderView: showAddReminderView, permissionGranted: $permissionGranted, med: self.$meds[i])
                         }
                     }
                     HStack (alignment: .top){
@@ -45,7 +47,7 @@ struct MainView: View {
                     Divider()
                     ForEach(0..<meds.count, id: \.self) {i in
                         if meds[i].scheduled! == false {
-                            RowView(showAddReminderView: showAddReminderView, med: self.$meds[i])
+                            RowView(showAddReminderView: showAddReminderView, permissionGranted: $permissionGranted, med: self.$meds[i])
                         }
                     }
                 }
@@ -98,7 +100,7 @@ struct MainView: View {
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        MainView(meds: .constant(Med.data), saveAction: {})
+        MainView(meds: .constant(Med.data), permissionGranted: .constant(false), saveAction: {})
     }
 }
 

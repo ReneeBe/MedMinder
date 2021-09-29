@@ -18,7 +18,9 @@ struct AddReminderView: View {
     @State var allowSnooze: Bool = true
     @State var notes: String = ""
     @State var indices: [Int] = []
-    
+    @Binding var permissionGranted: Bool
+    @State var showNotificationPermissions: Bool = false
+
     enum intakeTypes: String, CaseIterable, Identifiable {
         case scheduled = "Scheduled Intake"
         case demand = "On Demand"
@@ -112,33 +114,46 @@ struct AddReminderView: View {
                             }
                         }.listRowBackground(Color(.systemGray5))
                     }.listStyle(InsetGroupedListStyle())
+                    
             }
             .foregroundColor(Color(.darkGray))
             .navigationBarTitle(Text("Add Reminder"), displayMode: .inline)
             .navigationBarItems(
                 leading:
-                    Button(action: { showAddReminderView = false }, label: {Text("Cancel")}
-                    ),
+                    Button(action: {
+                        showAddReminderView = false
+
+                    }, label: {Text("Cancel")} ),
                 trailing:
                     Button(action: {
-                        print("save")
                         indices.sort(by: >)
-                        let tidiedTimes = delete()
-                        let newReminder = Reminder(medName: med.name, intakeType: intakeType, intakeTimes: tidiedTimes ?? [Foundation.Date()], intakeAmount: Double(dosage), delay: Int(delay), allowSnooze: allowSnooze, notes: notes)
-//                        let newReminder = Reminder(medName: med.name, intakeType: intakeType, intakeTimes: times, intakeAmount: Double(dosage), delay: Int(delay), allowSnooze: allowSnooze, notes: notes)
+                        let newReminder = Reminder(medName: med.name, intakeType: intakeType, intakeTimes: delete() ?? [Foundation.Date()], intakeAmount: Double(dosage), delay: Int(delay), allowSnooze: allowSnooze, notes: notes)
                         med.reminders.insert(newReminder, at: 0)
                         med.dosage = Double(dosage)
                         med.scheduled = intakeType == "Scheduled Intake" ? true : false
-                        showAddReminderView = false
                         med.update(from: med.data)
-                        print(med.reminders[0].intakeTimes)
-                    }) {
-                        Text("Save")
-                    }
+                        if permissionGranted == false {
+                            UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) { success, error in
+                                if success {
+                                    print("All set!")
+                                    permissionGranted = true
+                                    showNotificationPermissions = false
+                                    showAddReminderView = false
+                                } else if let error = error {
+                                    print(error.localizedDescription)
+                                }
+                            }
+                        } else {
+                            showAddReminderView = false
+                        }
+                    }, label: {Text("Save")} )
+
+
                 )
             }
         }
     }
+
     func hideTimes(index: Int) {
         indices.append(index)
     }
@@ -160,6 +175,6 @@ struct AddReminderView_Previews: PreviewProvider {
     static var previousReminders: [Date] = Med.data[1].reminders[0].intakeTimes != [] ? Med.data[1].reminders[0].intakeTimes : [Foundation.Date()]
     
     static var previews: some View {
-        AddReminderView(showAddReminderView: .constant(true), med: .constant(pill), intakeType: "Scheduled Intake", times: previousReminders, dosage: 1.0, indices: [])
+        AddReminderView(showAddReminderView: .constant(true), med: .constant(pill), intakeType: "Scheduled Intake", times: previousReminders, dosage: 1.0, indices: [], permissionGranted: .constant(true))
     }
 }
