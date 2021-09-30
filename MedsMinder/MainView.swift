@@ -10,6 +10,7 @@ import UserNotifications
 
 struct MainView: View {
     @Binding var meds: [Med]
+    @ObservedObject var notificationsBuilder = LocalNotificationManager()
     @Environment(\.scenePhase) private var scenePhase
     @State private var showNewMedPopover = false
     @State private var showAddReminderView = false
@@ -72,6 +73,8 @@ struct MainView: View {
                                     leading:
                                         Button(action: {
                                             showNewMedPopover.toggle()
+                                            print("hello from mainview! \(meds)")
+
                                         }, label: {
                                             Text("Close")
                                         })
@@ -87,9 +90,15 @@ struct MainView: View {
             .navigationBarBackButtonHidden(true)
             .onChange(of: scenePhase) { phase in
                 if phase == .inactive { saveAction() }
+                notificationsBuilder.scheduleNotifications(data: meds)
+            }
+            .onAppear {
+                notificationsBuilder.scheduleNotifications(data: meds)
             }
         }
     }
+    
+    
 //    private func binding(for med: Med) -> Binding<Med> {
 //        guard let medIndex = meds.firstIndex(where: { $0.id == med.id }) else {
 //            fatalError("Can't find med in array")

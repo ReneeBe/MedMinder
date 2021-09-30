@@ -19,7 +19,6 @@ struct AddReminderView: View {
     @State var notes: String = ""
     @State var indices: [Int] = []
     @Binding var permissionGranted: Bool
-    @State var showNotificationPermissions: Bool = false
 
     enum intakeTypes: String, CaseIterable, Identifiable {
         case scheduled = "Scheduled Intake"
@@ -122,7 +121,6 @@ struct AddReminderView: View {
                 leading:
                     Button(action: {
                         showAddReminderView = false
-
                     }, label: {Text("Cancel")} ),
                 trailing:
                     Button(action: {
@@ -137,7 +135,6 @@ struct AddReminderView: View {
                                 if success {
                                     print("All set!")
                                     permissionGranted = true
-                                    showNotificationPermissions = false
                                     showAddReminderView = false
                                 } else if let error = error {
                                     print(error.localizedDescription)
@@ -147,8 +144,6 @@ struct AddReminderView: View {
                             showAddReminderView = false
                         }
                     }, label: {Text("Save")} )
-
-
                 )
             }
         }

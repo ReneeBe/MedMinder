@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E70CCED32704D384003EE8B3 /* NotificationsData.swift in Sources */ = {isa = PBXBuildFile; fileRef = E70CCED22704D384003EE8B3 /* NotificationsData.swift */; };
 		E736FF7426F8CB0C00A16653 /* Reminder.swift in Sources */ = {isa = PBXBuildFile; fileRef = E736FF7326F8CB0C00A16653 /* Reminder.swift */; };
 		E736FF8126FB6E6000A16653 /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E736FF8026FB6E6000A16653 /* CloudKit.framework */; };
 		E74C6DAB26DFD8A1001FE596 /* MedsMinderApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E74C6DAA26DFD8A1001FE596 /* MedsMinderApp.swift */; };
@@ -26,6 +27,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		E70CCED22704D384003EE8B3 /* NotificationsData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationsData.swift; sourceTree = "<group>"; };
 		E736FF7326F8CB0C00A16653 /* Reminder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reminder.swift; sourceTree = "<group>"; };
 		E736FF7D26FB6C3300A16653 /* MedsMinder.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MedsMinder.entitlements; sourceTree = "<group>"; };
 		E736FF8026FB6E6000A16653 /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
@@ -95,6 +97,7 @@
 				E74C6DCC26E004B7001FE596 /* RowView.swift */,
 				E7C349B327035337006DB517 /* Notifications.swift */,
 				E7AFF6F426E180B8003B37B2 /* NewMedicationView.swift */,
+				E70CCED22704D384003EE8B3 /* NotificationsData.swift */,
 				E7AFF6F726E2DBAB003B37B2 /* ProgressBar.swift */,
 				E7DE71AC26F239CA00BA7C95 /* MedImage.swift */,
 				E7D2EE7926FD024B00DE882D /* Model */,
@@ -201,6 +204,7 @@
 				E7C349B427035337006DB517 /* Notifications.swift in Sources */,
 				E7DE71B126F249EC00BA7C95 /* MedData.swift in Sources */,
 				E754287326EA787E0041D5DF /* MainNavigationBar.swift in Sources */,
+				E70CCED32704D384003EE8B3 /* NotificationsData.swift in Sources */,
 				E7AFF6F226E180A7003B37B2 /* AddReminderView.swift in Sources */,
 				E74C6DAB26DFD8A1001FE596 /* MedsMinderApp.swift in Sources */,
 				E7DE71AA26F15E1D00BA7C95 /* Color+Codable.swift in Sources */,

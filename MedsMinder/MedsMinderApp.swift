@@ -9,9 +9,11 @@ import SwiftUI
 
 @main
 struct MedsMinderApp: App {
-    @ObservedObject private var data = MedData()
+    @ObservedObject var data = MedData()
     @State var permissionGranted: Bool = false
-    
+    @ObservedObject var notificationsBuilder = LocalNotificationManager()
+
+
     var body: some Scene {
         WindowGroup {
             NavigationView {
@@ -23,6 +25,7 @@ struct MedsMinderApp: App {
             .onAppear {
                 data.load()
                 self.checkPermissions()
+                notificationsBuilder.scheduleNotifications(data: data.meds)
             }
         }
     }
@@ -40,5 +43,8 @@ struct MedsMinderApp: App {
             }
         }
     }
+    
+
+    
     
 }

@@ -26,6 +26,7 @@ struct RowView: View {
             }
             Button(action: {
                 self.showAddReminderView = true
+                print("permissionGranted?: \(permissionGranted)")
             }) {
                     VStack(alignment: .leading) {
                         Text(med.name)
@@ -36,7 +37,7 @@ struct RowView: View {
                     .foregroundColor(Color(.darkGray))
             }
             .sheet(isPresented: $showAddReminderView, content: {
-                let times = med.reminders != [] ? med.reminders[0].intakeTimes : [Foundation.Date()]
+                let times = med.reminders != [] ? med.reminders[0].intakeTimes : []
                 let intakeType = med.reminders != [] ? med.reminders[0].intakeType : "Scheduled Intake"
                 let dosage = med.dosage
                 AddReminderView(showAddReminderView: $showAddReminderView, med: $med, intakeType: intakeType, times: times, dosage: dosage, indices: [], permissionGranted: $permissionGranted)
