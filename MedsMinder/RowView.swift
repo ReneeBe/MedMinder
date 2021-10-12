@@ -43,7 +43,11 @@ struct RowView: View {
                 AddReminderView(showAddReminderView: $showAddReminderView, med: $med, intakeType: intakeType, times: times, dosage: dosage, indices: [], permissionGranted: $permissionGranted)
             })
             Spacer()
-            Button(action: {print("\(med.name) taken!")}, label: {
+            Button(action: {
+                print("\(med.name) taken!")
+                let newHistory = History(date: Date(), dosage: med.dosage)
+                med.history.append(newHistory)
+            }, label: {
                 if med.scheduled! {
                     Text("TAKE")
                         .padding(7)

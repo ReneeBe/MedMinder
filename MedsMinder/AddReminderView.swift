@@ -54,6 +54,7 @@ struct AddReminderView: View {
                                         Button(action:
                                                 {
                                                     hideTimes(index: i)
+                                
                                                 }
                                         ) {
                                             Image(systemName: "minus.circle.fill").foregroundColor(Color(.systemRed))
@@ -111,6 +112,14 @@ struct AddReminderView: View {
                                 Spacer()
                                 TextEditor(text: $notes)
                             }
+                            if med.history.count > 0 {
+                                HStack {
+                                    Text("History:")
+                                    Spacer()
+                                    Text(verbatim: String(med.history[0].dosage))
+                                }
+                            }
+
                         }.listRowBackground(Color(.systemGray5))
                     }.listStyle(InsetGroupedListStyle())
                     
@@ -152,6 +161,9 @@ struct AddReminderView: View {
     func hideTimes(index: Int) {
         indices.append(index)
     }
+    
+//    let reminderComponents = Calendar.current.dateComponents([.hour, .minute], from: Foundation.Date())
+    
     func delete() -> [Date]? {
         var copy: [Date]? = []
         for index in 0..<times.count {
@@ -159,7 +171,18 @@ struct AddReminderView: View {
                 copy?.append(times[index])
             }
         }
-        copy!.sort()
+        
+        var reformattedTimes = copy!.map { Calendar.current.dateComponents([.hour, .minute], from: $0) }
+    
+        
+        
+        reformattedTimes.sort {
+            return ($0.hour ?? 00, $0.minute ?? 00) < ($1.hour ?? 01, $1.minute ?? 01)
+        }
+        
+        copy = reformattedTimes.map { (Calendar.current.date(from: $0) ?? Foundation.Date())}
+            
+//        }
         return copy
     }
 }

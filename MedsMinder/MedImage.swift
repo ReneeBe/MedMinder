@@ -29,6 +29,8 @@ struct MedImage: View {
 
 
 
+
+
 struct MedImage_Previews: PreviewProvider {
     static var medOne: Med = Med.data[1]
 

@@ -6,30 +6,43 @@
 //
 
 import SwiftUI
+import CloudKit
+import UIKit
+
 
 @main
 struct MedsMinderApp: App {
-    @ObservedObject var data = MedData()
+    @ObservedObject var localData = MedData()
+//    @ObservedObject var data = ViewModel()
     @State var permissionGranted: Bool = false
     @ObservedObject var notificationsBuilder = LocalNotificationManager()
+    static let data = ViewModel()
 
-
+    
     var body: some Scene {
         WindowGroup {
             NavigationView {
-                MainView(meds: $data.meds, permissionGranted: $permissionGranted) {
-                    data.save()
-                }
+                MainView(permissionGranted: $permissionGranted).environmentObject(MedsMinderApp.data)
+//                MainView(meds: $data.medData, permissionGranted: $permissionGranted
+//                ).environmentObject(MedsMinderApp.data)
+//                {
+//                    data.saveRecord(meds: data.medData)
+//                    print("saved! \(data.medData)")
+//                    localData.save()
+//                }
                 .navigationBarHidden(true)
             }
             .onAppear {
-                data.load()
+                MedsMinderApp.data.getData()
+                print("getting data from the cloud:")
+                print(MedsMinderApp.data.medData)
+                localData.load()
                 self.checkPermissions()
-                notificationsBuilder.scheduleNotifications(data: data.meds)
+                notificationsBuilder.scheduleNotifications(data: MedsMinderApp.data.medData)
             }
         }
     }
-    
+
     func checkPermissions() {
         let center = UNUserNotificationCenter.current()
         center.getNotificationSettings { settings in
@@ -43,8 +56,21 @@ struct MedsMinderApp: App {
             }
         }
     }
-    
+}
 
-    
-    
+extension View {
+    func snapshot() -> UIImage {
+        let controller = UIHostingController(rootView: self)
+        let view = controller.view
+
+        let targetSize = controller.view.intrinsicContentSize
+        view?.bounds = CGRect(origin: .zero, size: targetSize)
+        view?.backgroundColor = .clear
+
+        let renderer = UIGraphicsImageRenderer(size: targetSize)
+
+        return renderer.image { _ in
+            view?.drawHierarchy(in: controller.view.bounds, afterScreenUpdates: true)
+        }
+    }
 }

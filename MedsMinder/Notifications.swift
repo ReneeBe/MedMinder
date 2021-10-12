@@ -12,11 +12,6 @@ import UserNotifications
 public class LocalNotificationManager: ObservableObject {
     var notifications = [Notification]()
         
-//        = [
-//        Notification(id: "reminder-1", title: "Remember the milk!", datetime: DateComponents(calendar: Calendar.current, year: 2021, month: 9, day: 29, hour: 13, minute: 24)),
-//        Notification(id: "reminder-2", title: "Ask Bob from accounting", datetime: DateComponents(calendar: Calendar.current, year: 2021, month: 9, day: 29, hour: 13, minute: 26)),
-//        Notification(id: "reminder-3", title: "Send postcard to mom", datetime: DateComponents(calendar: Calendar.current, year: 2021, month: 9, day: 29, hour: 13, minute: 27))
-//    ]
     var permissionGranted: Bool = false
     
     func checkPermissions() {
@@ -72,7 +67,6 @@ public class LocalNotificationManager: ObservableObject {
     }
     
     func scheduleNotifications(data: [Med]) {
-        print("here we are in notifications, func scheduleNotifications \(data)")
         self.getNotifications(meds: data)
 
         for notification in notifications
@@ -96,22 +90,24 @@ public class LocalNotificationManager: ObservableObject {
     
     func getNotifications(meds: [Med]) {
         var count = 0
-        let today = Date()
+        let today = Foundation.Date()
         let todayComponents = Calendar.current.dateComponents([.year, .month, .day], from: today)
         print(todayComponents)
         
-        for med in meds {
-            if med.scheduled! {
-                let reminders = med.reminders[0].intakeTimes
-                
-                for reminder in reminders {
-                    count += 1
-                    let reminderComponents = Calendar.current.dateComponents([.hour, .minute], from: reminder)
-                    let newTime = Notification(id: "reminder #\(count)", title: "take \(med.name)", datetime: DateComponents(calendar: Calendar.current, year: todayComponents.year, month: todayComponents.month, day: todayComponents.day, hour: reminderComponents.hour, minute: reminderComponents.minute))
-                    notifications.append(newTime)
+        if meds.count > 0 {
+            for med in meds {
+                if med.scheduled ?? false && med.reminders.count > 0 {
+                    let reminders = med.reminders[0].intakeTimes
+                    for reminder in reminders {
+                        count += 1
+                        let reminderComponents = Calendar.current.dateComponents([.hour, .minute], from: reminder)
+                        let newTime = Notification(id: "reminder #\(count)", title: "Take \(med.name)", datetime: DateComponents(calendar: Calendar.current, year: todayComponents.year, month: todayComponents.month, day: todayComponents.day, hour: reminderComponents.hour, minute: reminderComponents.minute), image: med)
+                        notifications.append(newTime)
+                    }
                 }
             }
         }
+
     }
 }
 
@@ -121,4 +117,5 @@ public struct Notification {
     var id: String
     var title: String
     var datetime: DateComponents
+    var image: Med
 }

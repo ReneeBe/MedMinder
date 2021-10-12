@@ -60,6 +60,7 @@
 
 
 import Foundation
+import CloudKit
 
 class MedData: ObservableObject {
     private static var documentsFolder: URL {
