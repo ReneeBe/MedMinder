@@ -227,11 +227,8 @@ class ViewModel: ObservableObject {
             }
         }
         
-        print("were inside getData 3")
         database.add(medOperation)
 //        print(medOperation)
-        print("were inside getData 1 \(medData)")
-        print("were inside getData 2")
 
 
 //        { record, error in
@@ -256,6 +253,50 @@ class ViewModel: ObservableObject {
 //        }
     }
 
+    func deleteMeds(name: String, completionHandler: @escaping (Result<Void, Error>) -> Void) {
+         // In this contrived example, Contact records only store a name, so rather than requiring the
+         // unique ID to delete a Contact, we'll use the first ID that matches the name to delete.
+        let predicate = NSPredicate(format: "Name = %@", name)
+        let query = CKQuery(recordType: "Med", predicate: predicate)
+        var recordID = CKRecord.ID()
+        
+        database.perform(query, inZoneWith: nil) { records, error in
+            guard let records = records else { return }
+            recordID = records[0].recordID
+        }
+        
+
+        
+        
+//        guard let matchingID = medData.first(where: { name == value })?.key else {
+//             debugPrint("Contact not found on deletion for name: \(name)")
+//             completionHandler(.failure(PrivateSyncError.medNotFound))
+//             return
+//         }
+
+//         let recordID = CKRecord.ID(recordName: matchingID)
+         let deleteOperation = CKModifyRecordsOperation(recordIDsToDelete: [recordID])
+
+         deleteOperation.modifyRecordsCompletionBlock = { _, _, error in
+             if let error = error {
+                 completionHandler(.failure(error))
+                 debugPrint("Error deleting contact: \(error)")
+             } else {
+                 DispatchQueue.main.async {
+                    let index = self.medData.firstIndex(where: { $0.name == name })
+                    self.medData.remove(at: index!)
+//                    self.MedData.save(meds: meds)
+//                  self.saveLocalCache()
+                     completionHandler(.success(()))
+                 }
+             }
+         }
+
+         database.add(deleteOperation)
+     }
+
+    
+    
     // MARK: - Helpers
     private func reportError(_ error: Error) {
         guard let ckerror = error as? CKError else {
@@ -289,6 +330,11 @@ class ViewModel: ObservableObject {
         default:
             os_log("CKError: \(error.localizedDescription)")
         }
+    }
+    
+    
+    enum PrivateSyncError: Error {
+        case medNotFound
     }
 
 }

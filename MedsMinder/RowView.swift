@@ -13,7 +13,6 @@ struct RowView: View {
     @Binding var med: Med
     var progress: Double = 270
     
-    
     var body: some View {
         HStack {
             if med.dosage == 0.5 {
@@ -36,6 +35,7 @@ struct RowView: View {
                     }
                     .foregroundColor(Color(.darkGray))
             }
+            .buttonStyle(PlainButtonStyle())
             .sheet(isPresented: $showAddReminderView, content: {
                 let times = med.reminders != [] ? med.reminders[0].intakeTimes : []
                 let intakeType = med.reminders != [] ? med.reminders[0].intakeType : "Scheduled Intake"
@@ -62,9 +62,11 @@ struct RowView: View {
                         .padding(.horizontal, -20)
                 }
             })
+            .buttonStyle(BorderlessButtonStyle())
+
         }
         .padding()
-        Divider()
+//        Divider()
     }
 }
 

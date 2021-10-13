@@ -20,6 +20,7 @@ struct MainView: View {
     @Binding var permissionGranted: Bool
     @State private var newMedData = Med.Data(format: "tablet")
     @State private var color: Color = Color(.systemYellow)
+    @State private var showDeleteButton = false
 //    public let saveAction: () -> Void
     
 
@@ -28,7 +29,7 @@ struct MainView: View {
         NavigationView {
             ZStack {
                 Color(.systemBlue).opacity(0.06).ignoresSafeArea()
-                ScrollView {
+                List{
                     HStack (alignment: .top) {
                         Image(systemName: "timer")
                         Text("Scheduled")
@@ -37,12 +38,13 @@ struct MainView: View {
                     .font(.headline)
                     .padding(.leading)
                     .padding(.top)
-                    Divider()
+//                    Divider()
                     ForEach(0..<data.medData.count, id: \.self) { i in
                         if data.medData[i].scheduled! {
                             RowView(showAddReminderView: showAddReminderView, permissionGranted: $permissionGranted, med: self.$data.medData[i])
                         }
-                    }
+                    }.onDelete(perform: deleteMeds)
+                    
                     HStack (alignment: .top){
                         Text("On Demand")
                         Spacer()
@@ -50,21 +52,34 @@ struct MainView: View {
                     .font(.headline)
                     .padding(.leading)
                     .padding(.top)
-                    Divider()
-                    ForEach(0..<data.medData.count, id: \.self) {i in
+//                    Divider()
+                    ForEach(0..<data.medData.count, id: \.self) { i in
                         if data.medData[i].scheduled! == false {
                             RowView(showAddReminderView: showAddReminderView, permissionGranted: $permissionGranted, med: self.$data.medData[i])
-
                         }
                     }
+                    .onDelete(perform: self.deleteMeds)
                 }
-                .padding(15)
+                .listRowBackground(Color(.systemBlue).opacity(0.06))
                 .foregroundColor(Color(.darkGray))
+                .listStyle(InsetListStyle())
+//                .padding(15)
             }
             .navigationBarTitle("Reminder")
+            .navigationBarTitleDisplayMode(.large)
             .navigationBarItems(
                 leading:
-                    EditButton(),
+                    Button( action: {
+                        showDeleteButton.toggle()
+                    }) {
+                        if showDeleteButton {
+                            Text("Done")
+                        } else {
+                            Text("Edit")
+                        }
+                    },
+                    
+//                EditButton(),
                 trailing:
                     Button(action: {
                             showNewMedPopover.toggle()
@@ -116,80 +131,24 @@ struct MainView: View {
         }
     }
     
-    
-//    func doSubmission(med: Med) {
-//        let container = CKContainer.default()
-//        let database = container.privateCloudDatabase
-//        let medRecord = CKRecord(recordType: "Med")
-//
-//        medRecord.setValuesForKeys([
-////            "id": med.id,
-//            "name": med.name,
-//            "details": med.details,
-//            "format": med.format,
-////            "color": med.color!,
-//            "shape": med.shape,
-//            "engraving": med.engraving,
-//            "dosage": med.dosage,
-//            "scheduled": med.scheduled!,
-////            "reminders": med.reminders,
-////            "history": med.history
-//        ])
-//
-//
-//        CKContainer.default().accountStatus { accountStatus, error in
-//            if accountStatus == .noAccount {
-//                DispatchQueue.main.async {
-//                    let message =
-//                        """
-//                        Sign in to your iCloud account to write records.
-//                        On the Home screen, launch Settings, tap Sign in to your
-//                        iPhone/iPad, and enter your Apple ID. Turn iCloud Drive on.
-//                        """
-//                    let alert = UIAlertController(
-//                        title: "Sign in to iCloud",
-//                        message: message,
-//                        preferredStyle: .alert)
-//                    alert.addAction(UIAlertAction(title: "OK", style: .cancel))
-////                    self.present(alert, animated: true)
-//                }
-//            }
-//            else {
-//                let saveOperation = CKModifyRecordsOperation(recordsToSave: [medRecord])
-//                saveOperation.savePolicy = .allKeys
-//
-//                saveOperation.modifyRecordsCompletionBlock = { records, _, error in
-//
-//                    if let error = error {
-////                        completionHandler(.failure(error))
-//                        debugPrint("Error saving new contact: \(error)")
-//                    } else {
-//                        DispatchQueue.main.async {
-//                            records?.forEach { record in
-//                                if let name = record["name"] as? String {
-//                                    meds[record.name] = name
-//                                }
-//                            }
-//                            self.saveLocalCache()
-////                            completionHandler(.success(()))
-//                        }
-//                    }
-//                }
-//
-//                database.add(medRecord)
-//
-////                { medRecord, error in
-////                    if let error = error {
-////                        print("error: \(error)")
-////                        return
-////                    }
-////                }
-//            }
+//    private func deleteMeds(at offsets: IndexSet) {
+//        guard let firstIndex = offsets.first else {
+//            return
 //        }
 //
+//        let medName = data.medData[firstIndex].name
+//        data.deleteMeds(name: medName) { _ in }
 //    }
     
 
+    func deleteMeds(at offsets: IndexSet) {
+        guard let firstIndex = offsets.first else {
+            return
+        }
+        
+        let medName = data.medData[firstIndex].name
+        data.deleteMeds(name: medName) { _ in }
+    }
     
     
 //    private func binding(for med: Med) -> Binding<Med> {
