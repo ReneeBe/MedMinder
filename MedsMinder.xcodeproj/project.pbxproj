@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		E70CCED32704D384003EE8B3 /* NotificationsData.swift in Sources */ = {isa = PBXBuildFile; fileRef = E70CCED22704D384003EE8B3 /* NotificationsData.swift */; };
 		E72FAEBE270B48220016C80D /* History.swift in Sources */ = {isa = PBXBuildFile; fileRef = E72FAEBD270B48220016C80D /* History.swift */; };
 		E72FAED9270C8EFE0016C80D /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = E72FAED8270C8EFE0016C80D /* Config.swift */; };
 		E72FAEEB270CAEE70016C80D /* ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E72FAEEA270CAEE70016C80D /* ViewModel.swift */; };
@@ -30,7 +29,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		E70CCED22704D384003EE8B3 /* NotificationsData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationsData.swift; sourceTree = "<group>"; };
 		E72FAEBD270B48220016C80D /* History.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = History.swift; sourceTree = "<group>"; };
 		E72FAED8270C8EFE0016C80D /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 		E72FAEEA270CAEE70016C80D /* ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModel.swift; sourceTree = "<group>"; };
@@ -105,7 +103,6 @@
 				E74C6DCC26E004B7001FE596 /* RowView.swift */,
 				E7C349B327035337006DB517 /* Notifications.swift */,
 				E7AFF6F426E180B8003B37B2 /* NewMedicationView.swift */,
-				E70CCED22704D384003EE8B3 /* NotificationsData.swift */,
 				E7AFF6F726E2DBAB003B37B2 /* ProgressBar.swift */,
 				E7DE71AC26F239CA00BA7C95 /* MedImage.swift */,
 				E7D2EE7926FD024B00DE882D /* Model */,
@@ -213,7 +210,6 @@
 				E7C349B427035337006DB517 /* Notifications.swift in Sources */,
 				E7DE71B126F249EC00BA7C95 /* MedData.swift in Sources */,
 				E754287326EA787E0041D5DF /* MainNavigationBar.swift in Sources */,
-				E70CCED32704D384003EE8B3 /* NotificationsData.swift in Sources */,
 				E72FAEBE270B48220016C80D /* History.swift in Sources */,
 				E72FAEEB270CAEE70016C80D /* ViewModel.swift in Sources */,
 				E7AFF6F226E180A7003B37B2 /* AddReminderView.swift in Sources */,

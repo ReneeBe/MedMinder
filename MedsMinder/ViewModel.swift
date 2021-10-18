@@ -66,7 +66,21 @@ class ViewModel: ObservableObject {
     
     func updateAndSave(meds: [Med], completionHandler: ((Result<Void, Error>) -> Void)? = nil) {
         var newMeds = [CKRecord(recordType: "Med")]
+        
+//        var currentMeds
         for med in meds {
+            
+            let predicate = NSPredicate(format: "name = %@", med.name)
+            let query = CKQuery(recordType: "Med", predicate: predicate)
+            var recordID = CKRecord.ID()
+            
+            database.perform(query, inZoneWith: nil) { records, error in
+                guard let records = records else { return }
+                recordID = records[0].recordID
+            }
+            
+            
+            
             let newMed = CKRecord(recordType: "Med")
             newMed["name"] = med.name
             newMed["details"] = med.details
@@ -78,6 +92,12 @@ class ViewModel: ObservableObject {
             newMed["scheduled"] = med.scheduled == true ? 1 : 0
             newMeds.append(newMed)
         }
+        
+
+        
+        
+        
+        
         
         let saveOperation = CKModifyRecordsOperation(recordsToSave: newMeds)
         saveOperation.savePolicy = .allKeys
@@ -184,6 +204,45 @@ class ViewModel: ObservableObject {
         database.add(saveOperation)
     }
 
+//    func saveReminder(meds: [Med], completionHandler: ((Result<Void, Error>) -> Void)? = nil) {
+//        var newMeds = [CKRecord(recordType: "Med")]
+//        for med in meds {
+//            let newMed = CKRecord(recordType: "Med")
+//            newMed["name"] = med.name
+//            newMed["details"] = med.details
+//            newMed["format"] = med.format
+//    //        newMed["color"] = (UIColor(med.color!) as! __CKRecordObjCValue)
+//            newMed["shape"] = med.shape
+//            newMed["engraving"] = med.engraving
+//            newMed["dosage"] = med.dosage
+//            newMed["scheduled"] = med.scheduled == true ? 1 : 0
+//            newMeds.append(newMed)
+//        }
+//        
+//        let saveOperation = CKModifyRecordsOperation(recordsToSave: newMeds)
+//        saveOperation.savePolicy = .allKeys
+//
+//        saveOperation.perRecordCompletionBlock = { record, error in
+//            if let error = error {
+//                self.reportError(error)
+//            }
+//
+//            self.getData()
+//        }
+//
+//        saveOperation.modifyRecordsCompletionBlock = { _, _, error in
+//            if let error = error {
+//                self.reportError(error)
+//                completionHandler?(.failure(error))
+//            } else {
+//                // If a completion was supplied, like during tests, call it back now.
+//                completionHandler?(.success(()))
+//            }
+//        }
+//
+//        database.add(saveOperation)
+//    }
+    
 //    func updateRecords(meds: [Med], completionHandler: ((Result<Void, Error>) -> Void)? = nil) {
 ////        var allMeds = []
 //        for med in medData {
@@ -297,22 +356,43 @@ class ViewModel: ObservableObject {
             recordID = records[0].recordID
         }
         
-         let deleteOperation = CKModifyRecordsOperation(recordIDsToDelete: [recordID])
-
-         deleteOperation.modifyRecordsCompletionBlock = { _, _, error in
-             if let error = error {
-                 completionHandler(.failure(error))
-                 debugPrint("Error deleting contact: \(error)")
-             } else {
-                 DispatchQueue.main.async {
+        
+        database.delete(withRecordID: recordID) { (deletedRecordID, error) in
+            if let error = error {
+                completionHandler(.failure(error))
+                debugPrint("Error deleting med: \(error)")
+            } else {
+                DispatchQueue.main.async {
                     let index = self.medData.firstIndex(where: { $0.name == name })
+//                    print("here's the index: \(index)")
                     self.medData.remove(at: index!)
-                    print("here are the meds after the supposed deletion: \(self.medData)")
-                     completionHandler(.success(()))
-                 }
-             }
-         }
-         database.add(deleteOperation)
+                    print("record deleted!")
+                    completionHandler(.success(()))
+                }
+
+            }
+        }
+        
+//        self.getData()
+        
+//         let deleteOperation = CKModifyRecordsOperation(recordIDsToDelete: [recordID])
+//
+//         deleteOperation.modifyRecordsCompletionBlock = { _, _, error in
+//             if let error = error {
+//                 completionHandler(.failure(error))
+//                 debugPrint("Error deleting med: \(error)")
+//             } else {
+//                 DispatchQueue.main.async {
+//                    let currentRecord = self.medData
+//
+//                    let index = self.medData.firstIndex(where: { $0.name == name })
+//                    self.medData.remove(at: index)
+//                    print("here are the meds after the supposed deletion: \(self.medData)")
+//                     completionHandler(.success(()))
+//                 }
+//             }
+//         }
+//         database.add(deleteOperation)
      }
 
     
@@ -342,7 +422,7 @@ class ViewModel: ObservableObject {
         
         // Here, we will use the convenience "fetch" method on CKDatabase, instead of
         // CKFetchRecordsOperation, which is more flexible but also more complex.
-        database.fetch(withRecordID: recordID) { record, error in
+        database.fetch(withRecordID: recordID  ) { record, error in
             if let record = record {
                 os_log("Record with ID \(record.recordID.recordName) was fetched.")
                 if (record["medName"] as? String) != nil {
