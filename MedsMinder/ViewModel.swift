@@ -57,6 +57,8 @@ class ViewModel: ObservableObject {
         let reminderOperation = CKQueryOperation(query: reminderQuery)
         
         reminderOperation.recordFetchedBlock = { remRec in
+            guard remRec != nil else { return }
+
 //                guard let remRec = remRec else { return }
 //                for rec in remRec {
                 let reminder = Reminder(
@@ -131,7 +133,8 @@ class ViewModel: ObservableObject {
 
             reminderOperation.recordFetchedBlock = { remRec in
 //                if remRec
-                guard let remRec = remRec else { return }
+                guard remRec != nil else { return }
+//                guard let remRec = remRec else { return }
 //                for rec in remRec {
                     let reminder = Reminder(
                         medName: remRec["medName"] as! String,
@@ -387,11 +390,11 @@ class ViewModel: ObservableObject {
         for med in meds {
             let predicate = NSPredicate(format: "name = %@", med.name)
             let query = CKQuery(recordType: "Med", predicate: predicate)
-            var recordID = CKRecord.ID()
+//            var recordID = CKRecord.ID()
             
             database.perform(query, inZoneWith: nil) { records, error in
                 guard let records = records else { return }
-                recordID = records[0].recordID
+//                recordID = records[0].recordID
                 
                 let newMed = CKRecord(recordType: "Med")
                 newMed["name"] = med.name
