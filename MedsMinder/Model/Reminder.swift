@@ -17,18 +17,18 @@ struct Reminder: Identifiable, Codable, Hashable  {
     let id: UUID
     var medName: String
     var intakeType: String
-    var intakeTimes: [Date]
+    var intakeTime: Date
     var intakeAmount: Double
     var delay: Int
     var allowSnooze: Bool
     var notes: String
 
     
-    init(id: UUID = UUID(), medName: String, intakeType: String, intakeTimes: [Date], intakeAmount: Double, delay: Int, allowSnooze: Bool, notes: String ) {
+    init(id: UUID = UUID(), medName: String, intakeType: String, intakeTime: Date, intakeAmount: Double, delay: Int, allowSnooze: Bool, notes: String ) {
         self.id = id
         self.medName = medName
         self.intakeType = intakeType
-        self.intakeTimes = intakeTimes
+        self.intakeTime = intakeTime
         self.intakeAmount = intakeAmount
         self.delay = delay
         self.allowSnooze = allowSnooze
@@ -50,7 +50,7 @@ extension Reminder {
     struct Data {
         var medName: String = ""
         var intakeType: String = ""
-        var intakeTimes: [Date] = []
+        var intakeTime: Date = Date(     )
         var intakeAmount: Double = 0.00
         var delay: Int = 300
         var allowSnooze: Bool = false
@@ -58,12 +58,12 @@ extension Reminder {
     }
 
     var data: Data {
-        return Data(medName: medName, intakeType: intakeType, intakeTimes: intakeTimes, intakeAmount: Double(intakeAmount), delay: Int(delay), allowSnooze: allowSnooze, notes: notes)
+        return Data(medName: medName, intakeType: intakeType, intakeTime: intakeTime, intakeAmount: Double(intakeAmount), delay: Int(delay), allowSnooze: allowSnooze, notes: notes)
     }
     mutating func update(from data: Data) {
         medName = data.medName
         intakeType = data.intakeType
-        intakeTimes = data.intakeTimes
+        intakeTime = data.intakeTime
         intakeAmount = Double(data.intakeAmount)
         delay = Int(data.delay)
         allowSnooze = data.allowSnooze

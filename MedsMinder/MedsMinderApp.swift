@@ -16,13 +16,16 @@ struct MedsMinderApp: App {
 //    @ObservedObject var data = ViewModel()
     @State var permissionGranted: Bool = false
     @ObservedObject var notificationsBuilder = LocalNotificationManager()
-    static let data = ViewModel()
+    @StateObject var data = ViewModel()
+//    @State var showAllReminders: Bool = true
+//    @State var showAllMedications: Bool = false
 
     
     var body: some Scene {
         WindowGroup {
             NavigationView {
-                MainView(permissionGranted: $permissionGranted).environmentObject(MedsMinderApp.data)
+                ContentView(permissionGranted: $permissionGranted).environmentObject(data)
+//                MedicationsView(permissionGranted: $permissionGranted).environmentObject(MedsMinderApp.data)
 //                MainView(meds: $data.medData, permissionGranted: $permissionGranted
 //                ).environmentObject(MedsMinderApp.data)
 //                {
@@ -30,16 +33,40 @@ struct MedsMinderApp: App {
 //                    print("saved! \(data.medData)")
 //                    localData.save()
 //                }
+//                    .navigationBarItems(
+//                        leading: Button(action: {
+//                            showAllReminders = true
+//                            showAllMedications = false
+//                        }, label: {
+//                            Text("Reminders")
+//                        }),
+//                        trailing: Button(action: {
+//                            showAllMedications = true
+//                            showAllReminders = false
+//                        }, label: {
+//                            Text("Medications")
+//
+//                        })
+//                    )
                 .navigationBarHidden(true)
             }
             .onAppear {
-                MedsMinderApp.data.getData()
+                data.getAllData()
+//                data.getData()
                 print("getting data from the cloud:")
-                print(MedsMinderApp.data.medData)
+                print(data.medData)
                 localData.load()
                 self.checkPermissions()
-                notificationsBuilder.scheduleNotifications(data: MedsMinderApp.data.medData)
+                notificationsBuilder.scheduleNotifications(data: data.medData)
             }
+//            .onAppear {
+//                MedsMinderApp.data.getData()
+//                print("getting data from the cloud:")
+//                print(MedsMinderApp.data.medData)
+//                localData.load()
+//                self.checkPermissions()
+//                notificationsBuilder.scheduleNotifications(data: MedsMinderApp.data.medData)
+//            }
         }
     }
 

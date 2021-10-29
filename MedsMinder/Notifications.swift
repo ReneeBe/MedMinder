@@ -97,10 +97,10 @@ public class LocalNotificationManager: ObservableObject {
         if meds.count > 0 {
             for med in meds {
                 if med.scheduled ?? false && med.reminders.count > 0 {
-                    let reminders = med.reminders[0].intakeTimes
+                    let reminders = med.reminders
                     for reminder in reminders {
                         count += 1
-                        let reminderComponents = Calendar.current.dateComponents([.hour, .minute], from: reminder)
+                        let reminderComponents = Calendar.current.dateComponents([.hour, .minute], from: reminder.intakeTime)
                         let newTime = Notification(id: "reminder #\(count)", title: "Take \(med.name)", datetime: DateComponents(calendar: Calendar.current, year: todayComponents.year, month: todayComponents.month, day: todayComponents.day, hour: reminderComponents.hour, minute: reminderComponents.minute), image: med)
                         notifications.append(newTime)
                     }

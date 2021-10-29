@@ -1,27 +1,29 @@
 //
-//  RowView.swift
+//  ReminderRowView.swift
 //  MedsMinder
 //
-//  Created by Renee Berger on 9/1/21.
+//  Created by Renee Berger on 10/25/21.
 //
 
 import SwiftUI
 
-struct RowView: View {
+struct ReminderRowView: View {
     @State var showAddReminderView: Bool
     @Binding var permissionGranted: Bool
-    @Binding var med: Med
+    @Binding var reminder: Reminder
     @EnvironmentObject var data: ViewModel
     var progress: Double = 270
     
     var body: some View {
+        var med = data.medData.filter {$0.name == reminder.medName}
+
         HStack {
-            if med.dosage == 0.5 {
-                MedImage(med: med)
+            if med[0].dosage == 0.5 {
+                MedImage(med: med[0])
                     .padding()
                     .mask(Rectangle().padding(.top, 35))
             } else {
-                MedImage(med: med)
+                MedImage(med: med[0])
                     .padding()
             }
             Button(action: {
@@ -29,32 +31,27 @@ struct RowView: View {
                 print("permissionGranted?: \(permissionGranted)")
             }) {
                     VStack(alignment: .leading) {
-                        Text(med.name)
+                        Text(med[0].name)
                             .font(.title2).fontWeight(.semibold)
-                        Text(med.details)
+                        Text(med[0].details)
                             .font(.callout)
                     }
                     .foregroundColor(Color(.darkGray))
             }
             .buttonStyle(PlainButtonStyle())
 //            .sheet(isPresented: $showAddReminderView, content: {
-//                var times = []
-//                var intakeType = med.reminders != [] ? "Scheduled Intake" : "On Demand"
-//                if med.reminders != [] {
-//                    ForEach(med.reminders) { reminder in
-//                        times.append(reminder.intakeTime)
-//                    }
-//                }
+//                let times = med.reminders != [] ? med.reminders[0].intakeTimes : []
+//                let intakeType = med.reminders != [] ? med.reminders[0].intakeType : "Scheduled Intake"
 //                let dosage = med.dosage
 //                AddReminderView(showAddReminderView: $showAddReminderView, med: $med, intakeType: intakeType, times: times, dosage: dosage, indices: [], permissionGranted: $permissionGranted)
 //            })
             Spacer()
             Button(action: {
-                print("\(med.name) taken!")
-                let newHistory = History(date: Date(), dosage: med.dosage)
-                med.history.append(newHistory)
+                print("\(med[0].name) taken!")
+                let newHistory = History(date: Date(), dosage: med[0].dosage)
+                med[0].history.append(newHistory)
             }, label: {
-                if med.scheduled! {
+                if med[0].scheduled! {
                     Text("TAKE")
                         .padding(7)
                         .font(Font.body.weight(.bold))
@@ -73,17 +70,17 @@ struct RowView: View {
         }
         .padding()
 //        Divider()
+//    }
     }
 }
 
-struct RowView_Previews: PreviewProvider {
+struct ReminderRowView_Previews: PreviewProvider {
     static var medOne: Med = Med.data[1]
     static var medTwo: Med = Med.data[2]
-
+    
     static var previews: some View {
         VStack {
             RowView(showAddReminderView: false, permissionGranted: .constant(true), med: .constant(medOne), progress: 270)
             RowView(showAddReminderView: false, permissionGranted: .constant(true), med: .constant(medTwo), progress: 270)
-        }
-    }
+        }    }
 }

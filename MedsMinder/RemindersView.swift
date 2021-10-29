@@ -1,18 +1,17 @@
 //
-//  ContentView.swift
+//  RemindersView.swift
 //  MedsMinder
 //
-//  Created by Renee Berger on 9/1/21.
+//  Created by Renee Berger on 10/25/21.
 //
 
 import SwiftUI
 import UserNotifications
 import CloudKit
 
-
-struct MainView: View {
+struct RemindersView: View {
     @EnvironmentObject var data: ViewModel
-//    @Binding var meds: [Med]
+    //    @Binding var meds: [Med]
     @ObservedObject var notificationsBuilder = LocalNotificationManager()
     @Environment(\.scenePhase) private var scenePhase
     @State private var showNewMedPopover = false
@@ -21,130 +20,128 @@ struct MainView: View {
     @State private var newMedData = Med.Data(format: "tablet")
     @State private var color: Color = Color(.systemYellow)
     @State private var showDeleteButton = false
-    
-//    public let saveAction: () -> Void
-    
 
+    //    public let saveAction: () -> Void
     
     var body: some View {
-        NavigationView {
-            ZStack {
-                Color(.systemBlue).opacity(0.06).ignoresSafeArea()
+//        NavigationView {
+//            ZStack {
+//                Color(.systemBlue).opacity(0.06).ignoresSafeArea()
                 List{
-                    HStack (alignment: .top) {
-                        Image(systemName: "timer")
-                        Text("Scheduled")
-                        Spacer()
+//                    HStack (alignment: .top) {
+//                        Image(systemName: "timer")
+//                        Text("Scheduled")
+//                        Spacer()
+//                    }
+//                    .font(.headline)
+//                    .padding(.leading)
+//                    .padding(.top)
+    //                    Divider()
+                    ForEach(0..<data.reminderData.count, id: \.self) { i in
+//                        if data.reminderData[i].scheduled! {
+                        ReminderRowView(showAddReminderView: showAddReminderView, permissionGranted: $permissionGranted, reminder: self.$data.reminderData[i])
                     }
-                    .font(.headline)
-                    .padding(.leading)
-                    .padding(.top)
-//                    Divider()
-                    ForEach(0..<data.medData.count, id: \.self) { i in
-                        if data.medData[i].scheduled! {
-                            RowView(showAddReminderView: showAddReminderView, permissionGranted: $permissionGranted, med: self.$data.medData[i])
-                        }
-                    }.onDelete(perform: deleteMeds)
-                    
-                    HStack (alignment: .top){
-                        Text("On Demand")
-                        Spacer()
-                    }
-                    .font(.headline)
-                    .padding(.leading)
-                    .padding(.top)
-//                    Divider()
-                    ForEach(0..<data.medData.count, id: \.self) { i in
-                        if data.medData[i].scheduled! == false {
-                            RowView(showAddReminderView: showAddReminderView, permissionGranted: $permissionGranted, med: self.$data.medData[i])
-                        }
-                    }
-                    .onDelete(perform: self.deleteMeds)
+//                    }.onDelete(perform: deleteMeds)
+//
+//                    HStack (alignment: .top){
+//                        Text("On Demand")
+//                        Spacer()
+//                    }
+//                    .font(.headline)
+//                    .padding(.leading)
+//                    .padding(.top)
+//    //                    Divider()
+//                    ForEach(0..<data.medData.count, id: \.self) { i in
+//                        if data.medData[i].scheduled! == false {
+//                            RowView(showAddReminderView: showAddReminderView, permissionGranted: $permissionGranted, med: self.$data.medData[i])
+//                        }
+//                    }
+//                    .onDelete(perform: self.deleteMeds)
                 }
                 .listRowBackground(Color(.systemBlue).opacity(0.06))
                 .foregroundColor(Color(.darkGray))
                 .listStyle(InsetListStyle())
-//                .padding(15)
-            }
-            .navigationBarTitle("Reminder")
-            .navigationBarTitleDisplayMode(.large)
-            .navigationBarItems(
-                leading:
-                    Button( action: {
-                        showDeleteButton.toggle()
-                    }) {
-                        if showDeleteButton {
-                            Text("Done")
-                        } else {
-                            Text("Edit")
-                        }
-                    },
-                    
-//                EditButton(),
-                trailing:
-                    Button(action: {
-                            showNewMedPopover.toggle()
-                    }) {
-                        Image(systemName: "plus")
-                    }
-                    .sheet(isPresented: $showNewMedPopover) {
-                        NavigationView {
-                            NewMedicationView(medData: $newMedData, color: $color)
-                                .navigationBarTitle("New Medication", displayMode: .inline)
-                                .navigationBarItems(
-                                    leading:
-                                        Button(action: {
-                                            showNewMedPopover.toggle()
-                                            print("hello from mainview! \(data.medData)")
-
-                                        }, label: {
-                                            Text("Close")
-                                        })
-                                    , trailing:
-                                        Button("Add") {
-                                            let newMed = Med(name: newMedData.name, details: "Every Evening", format: newMedData.format, color: color, shape: newMedData.shape, engraving: newMedData.engraving, dosage: Double(1), scheduled: false, reminders: [], history: [])
-                                            data.medData.append(newMed)
-                                            print("we added to meds!: \(data.medData)")
-                                            data.saveRecord(meds: [newMed])
-//                                            saveAction()
-//                                            meds.saveRecord(newMed)
-//                                            doSubmission(med: newMed)
-                                            showNewMedPopover.toggle()
-                                        })
-                        }
-                }
-            )
-            .navigationBarBackButtonHidden(true)
-            .onChange(of: scenePhase) { phase in
-                if phase == .inactive {
-                    print("hello")
-//                    saveAction()
-                }
-                notificationsBuilder.scheduleNotifications(data: data.medData)
-//                doSubmission(med: Med)
-            }
-            .onAppear {
-                notificationsBuilder.scheduleNotifications(data: data.medData)
-//                meds.getData()
-//                doSubmission()
-
-            }
-        }
-    }
-    
-//    private func deleteMeds(at offsets: IndexSet) {
-//        guard let firstIndex = offsets.first else {
-//            return
-//        }
+    //                .padding(15)
+//            }
+//            .navigationBarTitle("Reminder")
+//            .navigationBarTitleDisplayMode(.large)
+//            .navigationBarItems(
+//                leading:
+//                    Button( action: {
+//                        showDeleteButton.toggle()
+//                    }) {
+//                        if showDeleteButton {
+//                            Text("Done")
+//                        } else {
+//                            Text("Edit")
+//                        }
+//                    },
 //
-//        let medName = data.medData[firstIndex].name
-//        data.deleteMeds(name: medName) { _ in }
-//    }
-    
-//    func createReminder(med: Med, reminder: Reminder, name: String) {
-//        data.getLastReminderOrCallCreateReminder(med: med, reminder: reminder, name: name)
-//    }
-    
+//    //                EditButton(),
+//                trailing:
+//                    Button(action: {
+//                            showNewMedPopover.toggle()
+//                    }) {
+//                        Image(systemName: "plus")
+//                    }
+//                    .sheet(isPresented: $showNewMedPopover) {
+//                        NavigationView {
+//                            NewMedicationView(medData: $newMedData, color: $color)
+//                                .navigationBarTitle("New Medication", displayMode: .inline)
+//                                .navigationBarItems(
+//                                    leading:
+//                                        Button(action: {
+//                                            showNewMedPopover.toggle()
+//                                            print("hello from mainview! \(data.medData)")
+//
+//                                        }, label: {
+//                                            Text("Close")
+//                                        })
+//                                    , trailing:
+//                                        Button("Add") {
+//                                            let newMed = Med(name: newMedData.name, details: "Every Evening", format: newMedData.format, color: color, shape: newMedData.shape, engraving: newMedData.engraving, dosage: Double(1), scheduled: false, reminders: [], history: [])
+//                                            data.medData.append(newMed)
+//                                            print("we added to meds!: \(data.medData)")
+//                                            data.saveRecord(meds: [newMed])
+//    //                                            saveAction()
+//    //                                            meds.saveRecord(newMed)
+//    //                                            doSubmission(med: newMed)
+//                                            showNewMedPopover.toggle()
+//                                        })
+//                        }
+//                }
+//            )
+//            .navigationBarBackButtonHidden(true)
+//            .onChange(of: scenePhase) { phase in
+//                if phase == .inactive {
+//                    print("hello")
+//    //                    saveAction()
+//                }
+//                notificationsBuilder.scheduleNotifications(data: data.medData)
+//    //                doSubmission(med: Med)
+//            }
+//            .onAppear {
+//                notificationsBuilder.scheduleNotifications(data: data.medData)
+//    //                meds.getData()
+//    //                doSubmission()
+//
+//            }
+//        }
+    }
+
+    //    private func deleteMeds(at offsets: IndexSet) {
+    //        guard let firstIndex = offsets.first else {
+    //            return
+    //        }
+    //
+    //        let medName = data.medData[firstIndex].name
+    //        data.deleteMeds(name: medName) { _ in }
+    //    }
+
+    //    func createReminder(med: Med, reminder: Reminder, name: String) {
+    //        data.getLastReminderOrCallCreateReminder(med: med, reminder: reminder, name: name)
+    //    }
+
 
     func deleteMeds(at offsets: IndexSet) {
         guard let firstIndex = offsets.first else {
@@ -155,21 +152,15 @@ struct MainView: View {
         print("we are in deleteMeds in mainview, here is medName aka the one youre trying to delete: \(medName)")
         data.deleteMeds(name: medName) { _ in }
     }
-    
-    
-//    private func binding(for med: Med) -> Binding<Med> {
-//        guard let medIndex = meds.firstIndex(where: { $0.id == med.id }) else {
-//            fatalError("Can't find med in array")
-//        }
-//        return $meds[medIndex]
-//    }
 }
 
-struct MainView_Previews: PreviewProvider {
+struct RemindersView_Previews: PreviewProvider {
     static var previews: some View {
-        MainView(permissionGranted: .constant(true))
+        RemindersView(permissionGranted: .constant(true))
     }
 }
+
+
 
 //
 //struct MainView: View {
@@ -368,5 +359,4 @@ struct MainView_Previews: PreviewProvider {
 //        MainView(meds: .constant(Med.data), permissionGranted: .constant(false), saveAction: {})
 //    }
 //}
-
 
