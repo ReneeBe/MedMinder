@@ -13,17 +13,16 @@ struct ReminderRowView: View {
     @Binding var reminder: Reminder
     @EnvironmentObject var data: ViewModel
     var progress: Double = 270
+    var med: Med
     
     var body: some View {
-        var med = data.medData.filter {$0.name == reminder.medName}
-
         HStack {
-            if med[0].dosage == 0.5 {
-                MedImage(med: med[0])
+            if med.dosage == 0.5 {
+                MedImage(med: med)
                     .padding()
                     .mask(Rectangle().padding(.top, 35))
             } else {
-                MedImage(med: med[0])
+                MedImage(med: med)
                     .padding()
             }
             Button(action: {
@@ -31,9 +30,9 @@ struct ReminderRowView: View {
                 print("permissionGranted?: \(permissionGranted)")
             }) {
                     VStack(alignment: .leading) {
-                        Text(med[0].name)
+                        Text(reminder.medName)
                             .font(.title2).fontWeight(.semibold)
-                        Text(med[0].details)
+                        Text(dateFormatting( date: reminder.intakeTime))
                             .font(.callout)
                     }
                     .foregroundColor(Color(.darkGray))
@@ -47,11 +46,16 @@ struct ReminderRowView: View {
 //            })
             Spacer()
             Button(action: {
-                print("\(med[0].name) taken!")
-                let newHistory = History(date: Date(), dosage: med[0].dosage)
-                med[0].history.append(newHistory)
+                print("\(reminder.medName) taken!")
+                let newHistory = History(date: Date(), dosage: reminder.intakeAmount)
+                if var currentMed = data.medData.first(where: {$0.name == reminder.medName}) {
+                    currentMed.history.append(newHistory)
+                    print(currentMed.history)
+                }
+//                currentMed.history.append(newHistory)
+//                print(currentMed.history)
             }, label: {
-                if med[0].scheduled! {
+//                if med[0].scheduled! {
                     Text("TAKE")
                         .padding(7)
                         .font(Font.body.weight(.bold))
@@ -60,10 +64,10 @@ struct ReminderRowView: View {
                             RoundedRectangle(cornerRadius: 15, style: .continuous)
                                 .fill(Color(.systemGray5))
                         )
-                } else {
-                    ProgressBar(progress: progress)
-                        .padding(.horizontal, -20)
-                }
+//                } else {
+//                    ProgressBar(progress: progress)
+//                        .padding(.horizontal, -20)
+//                }
             })
             .buttonStyle(BorderlessButtonStyle())
 
@@ -71,6 +75,13 @@ struct ReminderRowView: View {
         .padding()
 //        Divider()
 //    }
+    }
+    
+    func dateFormatting(date: Date) -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateStyle = .none
+        dateFormatter.timeStyle = .short
+        return dateFormatter.string(from: date)
     }
 }
 
@@ -82,5 +93,6 @@ struct ReminderRowView_Previews: PreviewProvider {
         VStack {
             RowView(showAddReminderView: false, permissionGranted: .constant(true), med: .constant(medOne), progress: 270)
             RowView(showAddReminderView: false, permissionGranted: .constant(true), med: .constant(medTwo), progress: 270)
-        }    }
+        }
+    }
 }

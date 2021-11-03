@@ -120,11 +120,11 @@ struct MainView: View {
                     print("hello")
 //                    saveAction()
                 }
-                notificationsBuilder.scheduleNotifications(data: data.medData)
+                notificationsBuilder.scheduleNotifications(reminderData: data.reminderData, medData: data.medData)
 //                doSubmission(med: Med)
             }
             .onAppear {
-                notificationsBuilder.scheduleNotifications(data: data.medData)
+                notificationsBuilder.scheduleNotifications(reminderData: data.reminderData, medData: data.medData)
 //                meds.getData()
 //                doSubmission()
 

@@ -8,6 +8,7 @@
 import SwiftUI
 import CloudKit
 import UIKit
+import UserNotifications
 
 
 @main
@@ -25,7 +26,9 @@ struct MedsMinderApp: App {
         WindowGroup {
             NavigationView {
                 ContentView(permissionGranted: $permissionGranted).environmentObject(data)
-//                MedicationsView(permissionGranted: $permissionGranted).environmentObject(MedsMinderApp.data)
+//                ContentView().environmentObject(data)
+
+                //                MedicationsView(permissionGranted: $permissionGranted).environmentObject(MedsMinderApp.data)
 //                MainView(meds: $data.medData, permissionGranted: $permissionGranted
 //                ).environmentObject(MedsMinderApp.data)
 //                {
@@ -51,13 +54,16 @@ struct MedsMinderApp: App {
                 .navigationBarHidden(true)
             }
             .onAppear {
-                data.getAllData()
+//                data.init()
+//                data.getMedData()
+//                data.getReminderData()
 //                data.getData()
-                print("getting data from the cloud:")
-                print(data.medData)
+//                print(data.medData)
+//                print(data.reminderData)
                 localData.load()
                 self.checkPermissions()
-                notificationsBuilder.scheduleNotifications(data: data.medData)
+                print("renee we disabled notifications builder but you cant delete anything else until you get it back its the next line below right here:")
+                notificationsBuilder.scheduleNotifications(reminderData: data.reminderData, medData: data.medData)
             }
 //            .onAppear {
 //                MedsMinderApp.data.getData()

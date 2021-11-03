@@ -105,18 +105,18 @@
 				E74C6DAA26DFD8A1001FE596 /* MedsMinderApp.swift */,
 				E74C6DAC26DFD8A1001FE596 /* MainView.swift */,
 				E70BBE4A2727077C0067EFD2 /* ContentView.swift */,
-				E75070DC27232F6A0001F259 /* MedicationsView.swift */,
-				E70BBE46272706A80067EFD2 /* RemindersView.swift */,
+				E7C349B327035337006DB517 /* Notifications.swift */,
 				E72FAED8270C8EFE0016C80D /* Config.swift */,
 				E72FAEEA270CAEE70016C80D /* ViewModel.swift */,
-				E754287226EA787E0041D5DF /* MainNavigationBar.swift */,
-				E7AFF6F126E180A7003B37B2 /* AddReminderView.swift */,
+				E75070DC27232F6A0001F259 /* MedicationsView.swift */,
 				E74C6DCC26E004B7001FE596 /* RowView.swift */,
+				E70BBE46272706A80067EFD2 /* RemindersView.swift */,
 				E70BBE4D272742930067EFD2 /* ReminderRowView.swift */,
-				E7C349B327035337006DB517 /* Notifications.swift */,
 				E7AFF6F426E180B8003B37B2 /* NewMedicationView.swift */,
+				E7AFF6F126E180A7003B37B2 /* AddReminderView.swift */,
 				E7AFF6F726E2DBAB003B37B2 /* ProgressBar.swift */,
 				E7DE71AC26F239CA00BA7C95 /* MedImage.swift */,
+				E754287226EA787E0041D5DF /* MainNavigationBar.swift */,
 				E7D2EE7926FD024B00DE882D /* Model */,
 				E74C6DAE26DFD8A6001FE596 /* Assets.xcassets */,
 				E74C6DB326DFD8A6001FE596 /* Info.plist */,
@@ -367,7 +367,7 @@
 				DEVELOPMENT_TEAM = U52GMQH3J6;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = MedsMinder/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -390,7 +390,7 @@
 				DEVELOPMENT_TEAM = U52GMQH3J6;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = MedsMinder/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

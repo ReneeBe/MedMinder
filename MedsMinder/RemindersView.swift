@@ -28,18 +28,10 @@ struct RemindersView: View {
 //            ZStack {
 //                Color(.systemBlue).opacity(0.06).ignoresSafeArea()
                 List{
-//                    HStack (alignment: .top) {
-//                        Image(systemName: "timer")
-//                        Text("Scheduled")
-//                        Spacer()
-//                    }
-//                    .font(.headline)
-//                    .padding(.leading)
-//                    .padding(.top)
-    //                    Divider()
                     ForEach(0..<data.reminderData.count, id: \.self) { i in
-//                        if data.reminderData[i].scheduled! {
-                        ReminderRowView(showAddReminderView: showAddReminderView, permissionGranted: $permissionGranted, reminder: self.$data.reminderData[i])
+                        let med: Med = findMed(reminder: self.data.reminderData[i])
+
+                        ReminderRowView(showAddReminderView: showAddReminderView, permissionGranted: $permissionGranted, reminder: self.$data.reminderData[i], med: med)
                     }
 //                    }.onDelete(perform: deleteMeds)
 //
@@ -143,6 +135,17 @@ struct RemindersView: View {
     //    }
 
 
+    func findMed(reminder: Reminder) ->  Med {
+        var currentMed: Med = Med.data[0]
+//        var currentMed: Med = data.medData[0] ?? Med.data[0]
+        if let foundMed = data.medData.first(where: {$0.name == reminder.medName}) {
+            print("we found the med! \(foundMed)")
+            currentMed = foundMed
+//            return currentMed
+        }
+        return currentMed
+    }
+    
     func deleteMeds(at offsets: IndexSet) {
         guard let firstIndex = offsets.first else {
             return

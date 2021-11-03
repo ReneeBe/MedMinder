@@ -57,7 +57,7 @@ struct MedicationsView: View {
                 .listStyle(InsetListStyle())
     //                .padding(15)
             }
-            .navigationBarTitle("Medications")
+//            .navigationBarTitle("Medications")
         }
         
     }

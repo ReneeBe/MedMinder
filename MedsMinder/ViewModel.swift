@@ -39,203 +39,61 @@ class ViewModel: ObservableObject {
         // Use a different unique record ID if testing.
 //        lastPersonRecordID = CKRecord.ID(recordName: isTesting ? "lastPersonTest" : "lastPerson")
 //        getLastPerson()
-        getAllData()
-//        getReminderData()
-//        getData()
-//        getReminderData()
+//        do {
+//            medData = try await getMedData()
+//////            try await getReminderData()
+//        } catch {
+//            print("error at init: /(error)")
+////            throw error
+//        }
+        getMedData()
+        getReminderData()
 //        medData.map { $0 }
 //            .assign(to: &$contactNames)
     }
 
     // MARK: - API
-    func getReminderData(completionHandler: ((Result<Void, Error>) -> Void)? = nil) {
-        var newReminders = [Reminder]()
-        let reminderPredicate = NSPredicate(value: true)
-        let reminderQuery = CKQuery(recordType: "Reminder", predicate: reminderPredicate)
-        reminderQuery.sortDescriptors = [NSSortDescriptor(key: "intakeTime", ascending: true)]
-
-        let reminderOperation = CKQueryOperation(query: reminderQuery)
-        
-        reminderOperation.recordFetchedBlock = { remRec in
-            guard remRec != nil else { return }
-
-//                guard let remRec = remRec else { return }
-//                for rec in remRec {
-                let reminder = Reminder(
-                    medName: remRec["medName"] as! String,
-                    intakeType: remRec["intakeType"] as! String,
-                    intakeTime: remRec["intakeTime"] as! Date,
-                    intakeAmount: remRec["intakeAmount"] as! Double,
-                    delay: remRec["delay"] as! Int,
-                    allowSnooze: (remRec["allowSnooze"] as! Int) != 0,
-                    notes: remRec["notes"] as! String? ?? ""
-                )
-                print(reminder)
-                print("we got reminder \(reminder)")
-//                medRecordReminders.append(reminder)
-                newReminders.append(reminder)
-            }
-//            print("medRecordReminders incoming:")
-//            print(medRecordReminders)
-            print("newReminders incoming")
-            print(newReminders)
-            
-//            }
-        
-        reminderOperation.queryCompletionBlock = { [unowned self] (cursor, error) in
-            DispatchQueue.main.async {
-                if error == nil {
-//                        print("newMeds before updating medData: \(newMeds)")
-//                        self.medData = newMeds
-//                    print("here are all the medRecordReminders we collected this time: \(medRecordReminders)")
-                    self.reminderData = newReminders
-//                        print("we got the data!: \(medData)")
-                    print("we got the data for reminders: \(reminderData)")
-//                    self.tableView.reloadData()
-                } else {
-                    print("we got an error in the completion block")
-                    let ac = UIAlertController(title: "Fetch failed", message: "There was a problem fetching the list of medications; please try again: \(error!.localizedDescription)", preferredStyle: .alert)
-                    print("please try again: \(error!.localizedDescription)")
-                    ac.addAction(UIAlertAction(title: "OK", style: .default))
-                }
-            }
-            
-        }
-    }
-    
-    
-    
-    func getAllData(completionHandler: ((Result<Void, Error>) -> Void)? = nil) {
+    func getMedData(completionHandler: ((Result<Void, Error>) -> Void)? = nil) {
         var newMeds = [Med]()
-        var newReminders = [Reminder]()
-//        var newHistory = [History]()
-        
         let predicate = NSPredicate(value: true)
-        
         let medQuery = CKQuery(recordType: "Med", predicate: predicate)
-
         medQuery.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: true)]
-        
+
         let medOperation = CKQueryOperation(query: medQuery)
         medOperation.desiredKeys = ["name", "details", "format", "color", "shape", "engraving", "dosage", "scheduled", "reminders", "reminderRef", "history"]
-//        let reminderOperation = CKQueryOperation(query: reminderQuery)
-        
-        medOperation.recordFetchedBlock = { record in
-//            let reminderRef = record["reminderRef"]
-            let currentMedRecordID = record.recordID
-            var medRecordReminders: [Reminder] = []
-            
-            let reminderPredicate = NSPredicate(format: "medReference CONTAINS %@", currentMedRecordID)
-            let reminderQuery = CKQuery(recordType: "Reminder", predicate: reminderPredicate)
-            reminderQuery.sortDescriptors = [NSSortDescriptor(key: "intakeTime", ascending: true)]
 
-            let reminderOperation = CKQueryOperation(query: reminderQuery)
-
-            reminderOperation.recordFetchedBlock = { remRec in
-//                if remRec
-                guard remRec != nil else { return }
-//                guard let remRec = remRec else { return }
-//                for rec in remRec {
-                    let reminder = Reminder(
-                        medName: remRec["medName"] as! String,
-                        intakeType: remRec["intakeType"] as! String,
-                        intakeTime: remRec["intakeTime"] as! Date,
-                        intakeAmount: remRec["intakeAmount"] as! Double,
-                        delay: remRec["delay"] as! Int,
-                        allowSnooze: (remRec["allowSnooze"] as! Int) != 0,
-                        notes: remRec["notes"] as! String? ?? ""
+        medOperation.recordMatchedBlock = { recordID, result in
+                // now, unwrap result, was there an error?
+            switch result {
+                case .success(let record):
+                    let med = Med(
+                        name: record["name"] as! String,
+                        details: record["details"] as! String,
+                        format: record["format"] as! String,
+                        color: record["color"] as! Color?,
+                        shape: record["shape"] as! [String],
+                        engraving: record["engraving"] as! String,
+                        dosage: record["dosage"] as! Double,
+                        scheduled: ((record["scheduled"] as! Int) != 0),
+                        history: record["history"] == nil ? [] : (record["history"] as! [History])
                     )
-                    print(reminder)
-                    print("we got reminder \(reminder)")
-                    medRecordReminders.append(reminder)
-                    newReminders.append(reminder)
-                }
-                print("medRecordReminders incoming:")
-                print(medRecordReminders)
-                print("newReminders incoming")
-                print(newReminders)
-
-//            }
-
-            reminderOperation.queryCompletionBlock = { [unowned self] (cursor, error) in
-                DispatchQueue.main.async {
-                    if error == nil {
-//                        print("newMeds before updating medData: \(newMeds)")
-//                        self.medData = newMeds
-                        print("here are all the medRecordReminders we collected this time: \(medRecordReminders)")
-                        self.reminderData = newReminders
-//                        print("we got the data!: \(medData)")
-                        print("we got the data for reminders: \(reminderData)")
-    //                    self.tableView.reloadData()
-                    } else {
-                        print("we got an error in the completion block")
-                        let ac = UIAlertController(title: "Fetch failed", message: "There was a problem fetching the list of medications; please try again: \(error!.localizedDescription)", preferredStyle: .alert)
-                        print("please try again: \(error!.localizedDescription)")
-                        ac.addAction(UIAlertAction(title: "OK", style: .default))
-                    }
-                }
-
+                    print(med)
+                    newMeds.append(med)
+            case .failure(let error):
+                print("error in fetching med record: \(error)")
             }
-            
-            self.database.add(reminderOperation)
-
-            
-//            if let reminds = reminderRef {
-//                for ref in reminds {
-//                    let refRecordID = ref.record.recordID
-//                    self.database.fetch(withRecordID: ref ) { rec, error in
-//                        guard let rec = rec else {return}
-//    //                    for record in records {
-//                            let reminder = Reminder(
-//                                medName: record["medName"] as! String,
-//                                intakeType: record["intakeType"] as! String,
-//                                intakeTime: record["intakeTime"] as! Date,
-//                                intakeAmount: record["intakeAmount"] as! Double,
-//                                delay: record["delay"] as! Int,
-//                                allowSnooze: (record["allowSnooze"] as! Int) != 0,
-//                                notes: record["notes"] as! String
-//                            )
-//                            print("we got reminder /(reminder)")
-//                            medRecordReminders.append(reminder)
-//                            newReminders.append(reminder)
-//                        }
-//                    }
-//            }
-
-                
-//            }
-//                print("about to share the reminders after coralling from cloudkit")
-//                print(medRecordReminders)
-                let med = Med(
-                    name: record["name"] as! String,
-                    details: record["details"] as! String,
-                    format: record["format"] as! String,
-                    color: record["color"] as! Color?,
-                    shape: record["shape"] as! [String],
-                    engraving: record["engraving"] as! String,
-                    dosage: record["dosage"] as! Double,
-                    scheduled: ((record["scheduled"] as! Int) != 0),
-//                    reminders: medRecordReminders.count == 0 ? [] : medRecordReminders,
-//                    reminderRef: record["reminderRef"] == nil ? [] : (record["reminderRef"] as! [CKRecord.Reference]),
-                    history: record["history"] == nil ? [] : (record["history"] as! [History])
-                )
-                print(med)
-                newMeds.append(med)
         }
-        
-        medOperation.queryCompletionBlock = { [unowned self] (cursor, error) in
+
+        medOperation.queryResultBlock = { result in
             DispatchQueue.main.async {
-                if error == nil {
-                    print("newMeds before updating medData: \(newMeds)")
-                    self.medData = newMeds
-//                    self.reminderData = newReminders
-                    print("we got the data!: \(medData)")
-//                    print("we got the data for reminders: \(reminderData)")
-//                    self.tableView.reloadData()
-                } else {
+                switch result {
+                case .success(_):
+                        self.medData = newMeds
+                        print("we got the data for meds!: \(self.medData)")
+                case .failure(let error):
                     print("we got an error in the completion block")
-                    let ac = UIAlertController(title: "Fetch failed", message: "There was a problem fetching the list of medications; please try again: \(error!.localizedDescription)", preferredStyle: .alert)
-                    print("please try again: \(error!.localizedDescription)")
+                    let ac = UIAlertController(title: "Fetch failed", message: "There was a problem fetching the list of medications; please try again: \(error.localizedDescription)", preferredStyle: .alert)
+                    print("please try again: \(error.localizedDescription)")
                     ac.addAction(UIAlertAction(title: "OK", style: .default))
                 }
             }
@@ -244,123 +102,50 @@ class ViewModel: ObservableObject {
     }
     
     
-//    func getAllTheData(completionHandler: ((Result<Void, Error>) -> Void)? = nil) {
-//        var newMeds = [Med]()
-//        var newReminders = [Reminder]()
-////        var newHistory = [History]()
-//
-//        let predicate = NSPredicate(value: true)
-//
-//        let medQuery = CKQuery(recordType: "Med", predicate: predicate)
-//
-//        medQuery.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: true)]
-//
-//        let medOperation = CKQueryOperation(query: medQuery)
-//        medOperation.desiredKeys = ["name", "details", "format", "color", "shape", "engraving", "dosage", "scheduled", "reminders", "reminderRef", "history"]
-////        let reminderOperation = CKQueryOperation(query: reminderQuery)
-//
-//        medOperation.recordFetchedBlock = { record in
-////            let reminderRef = record["reminderRef"]
-//            let currentMedRecordID = record.recordID
-//            var medRecordReminders: [Reminder] = []
-//
-//            let reminderPredicate = NSPredicate(format: "medReference CONTAINS %@", currentMedRecordID)
-//            let reminderQuery = CKQuery(recordType: "Reminder", predicate: reminderPredicate)
-//            reminderQuery.sortDescriptors = [NSSortDescriptor(key: "intakeTime", ascending: true)]
-//
-//            self.database.perform(reminderQuery, inZoneWith: nil) { [unowned self] records, error in
-//                if let error = error {
-//                    print("hello from inside reminderQuery in getalldata")
-//                    print(error.localizedDescription)
-//                } else {
-//                    print("hello renee were inside medoperation inside getalldata in the things are going okay place")
-//                    guard let records = records else {return}
-//                    for record in records {
-//                        let reminder = Reminder(
-//                            medName: record["medName"] as! String,
-//                            intakeType: record["intakeType"] as! String,
-//                            intakeTime: record["intakeTime"] as! Date,
-//                            intakeAmount: record["intakeAmount"] as! Double,
-//                            delay: record["delay"] as! Int,
-//                            allowSnooze: (record["allowSnooze"] as! Int) != 0,
-//                            notes: record["notes"] as! String? ?? ""
-//                        )
-//                        print(reminder)
-//                        print("we got reminder \(reminder)")
-//                        medRecordReminders.append(reminder)
-//                        newReminders.append(reminder)
-//                    }
-//                    print("medRecordReminders incoming:")
-//                    print(medRecordReminders)
-//                    print("newReminders incoming")
-//                    print(newReminders)
-//                }
-//
-//            }
-//
-////            if let reminds = reminderRef {
-////                for ref in reminds {
-////                    let refRecordID = ref.record.recordID
-////                    self.database.fetch(withRecordID: ref ) { rec, error in
-////                        guard let rec = rec else {return}
-////    //                    for record in records {
-////                            let reminder = Reminder(
-////                                medName: record["medName"] as! String,
-////                                intakeType: record["intakeType"] as! String,
-////                                intakeTime: record["intakeTime"] as! Date,
-////                                intakeAmount: record["intakeAmount"] as! Double,
-////                                delay: record["delay"] as! Int,
-////                                allowSnooze: (record["allowSnooze"] as! Int) != 0,
-////                                notes: record["notes"] as! String
-////                            )
-////                            print("we got reminder /(reminder)")
-////                            medRecordReminders.append(reminder)
-////                            newReminders.append(reminder)
-////                        }
-////                    }
-////            }
-//
-//
-////            }
-//                print("about to share the reminders after coralling from cloudkit")
-//                print(medRecordReminders)
-//                let med = Med(
-//                    name: record["name"] as! String,
-//                    details: record["details"] as! String,
-//                    format: record["format"] as! String,
-//                    color: record["color"] as! Color?,
-//                    shape: record["shape"] as! [String],
-//                    engraving: record["engraving"] as! String,
-//                    dosage: record["dosage"] as! Double,
-//                    scheduled: ((record["scheduled"] as! Int) != 0),
-//                    reminders: medRecordReminders.count == 0 ? [] : medRecordReminders,
-////                    reminderRef: record["reminderRef"] == nil ? [] : (record["reminderRef"] as! [CKRecord.Reference]),
-//                    history: record["history"] == nil ? [] : (record["history"] as! [History])
-//                )
-//                print(med)
-//                newMeds.append(med)
-//        }
-//
-//        medOperation.queryCompletionBlock = { [unowned self] (cursor, error) in
-//            DispatchQueue.main.async {
-//                if error == nil {
-//                    print("newMeds before updating medData: \(newMeds)")
-//                    self.medData = newMeds
-//                    self.reminderData = newReminders
-//                    print("we got the data!: \(medData)")
-//                    print("we got the data for reminders: \(reminderData)")
-////                    self.tableView.reloadData()
-//                } else {
-//                    print("we got an error in the completion block")
-//                    let ac = UIAlertController(title: "Fetch failed", message: "There was a problem fetching the list of medications; please try again: \(error!.localizedDescription)", preferredStyle: .alert)
-//                    print("please try again: \(error!.localizedDescription)")
-//                    ac.addAction(UIAlertAction(title: "OK", style: .default))
-//                }
-//            }
-//        }
-//        database.add(medOperation)
-//    }
-//
+    func getReminderData(completionHandler: ((Result<Void, Error>) -> Void)? = nil) {
+        var newReminders = [Reminder]()
+        let reminderPredicate = NSPredicate(value: true)
+        let reminderQuery = CKQuery(recordType: "Reminder", predicate: reminderPredicate)
+        reminderQuery.sortDescriptors = [NSSortDescriptor(key: "intakeTime", ascending: true)]
+
+        let reminderOperation = CKQueryOperation(query: reminderQuery)
+        
+        reminderOperation.recordMatchedBlock = { recordID, result in
+            switch result {
+                case .success(let record):
+                    let reminder = Reminder(
+                        medName: record["medName"] as! String,
+                        intakeType: record["intakeType"] as! String,
+                        intakeTime: record["intakeTime"] as! Date,
+                        intakeAmount: record["intakeAmount"] as! Double,
+                        delay: record["delay"] as! Int,
+                        allowSnooze: (record["allowSnooze"] as! Int) != 0,
+                        notes: record["notes"] as! String? ?? ""
+                    )
+                    print(reminder)
+                    newReminders.append(reminder)
+                case .failure(let error):
+                    print("error in fetching reminder record: \(error)")
+            }
+        }
+            
+        reminderOperation.queryResultBlock = { result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success(_):
+                    self.reminderData = newReminders
+                    print("we got the data for reminders: \(self.reminderData)")
+                case .failure(let error):
+                    print("we got an error in the completion block")
+                    let ac = UIAlertController(title: "Fetch failed", message: "There was a problem fetching the list of reminders; please try again: \(error.localizedDescription)", preferredStyle: .alert)
+                    print("please try again: \(error.localizedDescription)")
+                    ac.addAction(UIAlertAction(title: "OK", style: .default))
+                }
+            }
+        }
+        
+        database.add(reminderOperation)
+    }
     
     /// Saves the given name as the last person in the database.
     /// - Parameters:
@@ -393,7 +178,7 @@ class ViewModel: ObservableObject {
 //            var recordID = CKRecord.ID()
             
             database.perform(query, inZoneWith: nil) { records, error in
-                guard let records = records else { return }
+                guard records != nil else { return }
 //                recordID = records[0].recordID
                 
                 let newMed = CKRecord(recordType: "Med")

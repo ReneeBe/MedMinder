@@ -40,17 +40,25 @@ struct ContentView: View {
             .navigationBarTitleDisplayMode(.large)
             .navigationBarItems(
                 leading: Button(action: {
-                    showAllReminders = true
-                    showAllMedications = false
+                    showAllReminders.toggle()
+                    showAllMedications.toggle()
                 }, label: {
-                    Text("Reminders")
+                    if showAllReminders == false {
+                        Text("Reminders")
+                    } else {
+                        Text("Medications")
+                    }
                 }),
                 trailing: Button(action: {
-                    showAllMedications = true
-                    showAllReminders = false
+                    print("pushed the add button")
                 }, label: {
-                    Text("Medications")
-                    
+                    if showAllMedications == true {
+                        Image(systemName: "plus").accessibilityLabel(Text("Add Medication"))
+
+                        
+                    } else if showAllReminders == true {
+                        Image(systemName: "plus").accessibilityLabel(Text("Add Reminder"))
+                    }
                 })
             )
             .onChange(of: scenePhase) { phase in
@@ -58,11 +66,16 @@ struct ContentView: View {
                     print("hello")
 //                    saveAction()
                 }
-                notificationsBuilder.scheduleNotifications(data: data.medData)
+                notificationsBuilder.scheduleNotifications(reminderData: data.reminderData, medData: data.medData)
 //                doSubmission(med: Med)
             }
             .onAppear {
-                notificationsBuilder.scheduleNotifications(data: data.medData)
+//                data.init()
+//                data.getAllData()
+                data.getMedData()
+                data.getReminderData()
+                notificationsBuilder.requestAuthorization(reminderData: data.reminderData, medData: data.medData)
+                notificationsBuilder.scheduleNotifications(reminderData: data.reminderData, medData: data.medData)
 //                meds.getData()
 //                doSubmission()
 
