@@ -13,6 +13,7 @@ struct RowView: View {
     @Binding var med: Med
     @EnvironmentObject var data: ViewModel
     var progress: Double = 270
+    var timeRows: [GridItem] = Array(repeating: .init(.adaptive(minimum: 80)), count: 3)
     
     var body: some View {
         HStack {
@@ -31,8 +32,15 @@ struct RowView: View {
                     VStack(alignment: .leading) {
                         Text(med.name)
                             .font(.title2).fontWeight(.semibold)
-                        Text(med.details)
-                            .font(.callout)
+//                        Text(med.details)
+//                            .font(.callout)
+                        let times = getTimes()
+                        LazyHGrid(rows: timeRows, alignment: .top) {
+                            ForEach(0..<times.count, id: \.self) { i in
+                                Text(times[i])
+                                    .font(.caption2)
+                            }
+                        }
                     }
                     .foregroundColor(Color(.darkGray))
             }
@@ -65,15 +73,27 @@ struct RowView: View {
                         )
                 } else {
                     ProgressBar(progress: progress)
-                        .padding(.horizontal, -20)
+                        .padding(.horizontal, -10)
                 }
             })
             .buttonStyle(BorderlessButtonStyle())
-
         }
         .padding()
 //        Divider()
     }
+    
+    func dateFormatting(date: Date) -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateStyle = .none
+        dateFormatter.timeStyle = .short
+        return dateFormatter.string(from: date)
+    }
+    
+    func getTimes() -> [String] {
+        let reminders = data.reminderData.filter {$0.medName == med.name}
+        return reminders.map { dateFormatting(date: $0.intakeTime)}
+    }
+    
 }
 
 struct RowView_Previews: PreviewProvider {

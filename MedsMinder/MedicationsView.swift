@@ -17,7 +17,7 @@ struct MedicationsView: View {
     
     var body: some View {
         
-        NavigationView {
+//        NavigationView {
         
             ZStack {
                 Color(.systemBlue).opacity(0.06).ignoresSafeArea()
@@ -60,7 +60,7 @@ struct MedicationsView: View {
 //            .navigationBarTitle("Medications")
         }
         
-    }
+//    }
 }
 
 struct MedicationsView_Previews: PreviewProvider {
