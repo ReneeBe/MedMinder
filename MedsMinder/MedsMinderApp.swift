@@ -24,8 +24,13 @@ struct MedsMinderApp: App {
     
     var body: some Scene {
         WindowGroup {
-            NavigationView {
-                ContentView(permissionGranted: $permissionGranted).environmentObject(data)
+//            NavigationView {
+                ContentView(permissionGranted: $permissionGranted) {
+                    data.updateAndSave(meds: data.medData)
+                    print("saved! \(data.medData)")
+                    localData.save()
+                }
+                .environmentObject(data)
 //                ContentView().environmentObject(data)
 
                 //                MedicationsView(permissionGranted: $permissionGranted).environmentObject(MedsMinderApp.data)
@@ -51,8 +56,8 @@ struct MedsMinderApp: App {
 //
 //                        })
 //                    )
-                .navigationBarHidden(true)
-            }
+//                .navigationBarHidden(true)
+//            }
             .onAppear {
 //                data.init()
 //                data.getMedData()

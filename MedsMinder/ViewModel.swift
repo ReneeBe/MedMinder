@@ -75,6 +75,7 @@ class ViewModel: ObservableObject {
                         engraving: record["engraving"] as! String,
                         dosage: record["dosage"] as! Double,
                         scheduled: ((record["scheduled"] as! Int) != 0),
+//                        reminders: ((record["reminderRef"].count) as! Int),
                         history: record["history"] == nil ? [] : (record["history"] as! [History])
                     )
                     print(med)
@@ -460,7 +461,7 @@ class ViewModel: ObservableObject {
     
 /// Fetches the last reminder record
 /// - Parameter completionHandler: An optional handler to process completion `success` or `failure`.
-    func getLastReminderOrCallCreateReminder(med: Med, reminder: Reminder, name: String, completionHandler: ((Result<Void, Error>) -> Void)? = nil) {
+    func getLastReminderOrCallCreateReminder(med: Med, reminders: [Reminder], name: String, completionHandler: ((Result<Void, Error>) -> Void)? = nil) {
 //        var predicate: NSPredicate = nil
         let predicate = NSPredicate(format: "medName =%@", name)
         
@@ -496,7 +497,7 @@ class ViewModel: ObservableObject {
                 }
             }
             if record == nil {
-                self.createReminderRecord(med: med, reminder: reminder)
+                self.createReminderRecord(med: med, reminders: reminders)
             }
 
             if let error = error {
@@ -511,10 +512,10 @@ class ViewModel: ObservableObject {
         }
     }
     
-    func createReminderRecord(med: Med, reminder: Reminder) {
+    func createReminderRecord(med: Med, reminders: [Reminder]) {
         var medRecord = CKRecord(recordType: "Med")
         print("hellow this is the name we are getting: \(med)")
-        let predicate = NSPredicate(format: "name = %@", reminder.medName)
+        let predicate = NSPredicate(format: "name = %@", reminders[0].medName)
         
         let medQuery = CKQuery(recordType: "Med", predicate: predicate)
 //        var medRecordID = CKRecord.ID()
@@ -527,19 +528,27 @@ class ViewModel: ObservableObject {
             
             print("this is medRecordID: \(medRecordID)")
             let referenceToMedRecord = CKRecord.Reference(recordID: medRecordID, action: .deleteSelf)
-    //        var recordID = CKRecord.ID(rec)
-            let newReminder = CKRecord(recordType: "Reminder")
-            newReminder["medName"] = reminder.medName
-            newReminder["intakeType"] = reminder.intakeType
-            newReminder["intakeTime"] = reminder.intakeTime
-            newReminder["intakeAmount"] = reminder.intakeAmount
-            newReminder["delay"] = reminder.delay
-            newReminder["allowSnooze"] = reminder.allowSnooze
-            newReminder["notes"] = reminder.notes
-            newReminder["medReference"] = referenceToMedRecord
-//            newReminder.setParent(medRecord)
+            var newReminders: [CKRecord] = []
+            var newReferencesToReminders: [CKRecord.Reference] = []
             
-            let referenceToReminder = CKRecord.Reference(recordID: newReminder.recordID, action: .none)
+            for reminder in reminders {
+        //        var recordID = CKRecord.ID(rec)
+                let newReminder = CKRecord(recordType: "Reminder")
+                newReminder["medName"] = reminder.medName
+                newReminder["intakeType"] = reminder.intakeType
+                newReminder["intakeTime"] = reminder.intakeTime
+                newReminder["intakeAmount"] = reminder.intakeAmount
+                newReminder["delay"] = reminder.delay
+                newReminder["allowSnooze"] = reminder.allowSnooze
+                newReminder["notes"] = reminder.notes
+                newReminder["medReference"] = [referenceToMedRecord]
+    //            newReminder.setParent(medRecord)
+                newReminders.append(newReminder)
+                let referenceToReminder = CKRecord.Reference(recordID: newReminder.recordID, action: .none)
+                newReferencesToReminders.append(referenceToReminder)
+
+            }
+            
             print("here is medRecord before updating with reference: \(medRecord)")
     //        medRecord["reminders"] = [reminder]
             medRecord = CKRecord(recordType: "Med", recordID: medRecordID)
@@ -554,9 +563,10 @@ class ViewModel: ObservableObject {
             medRecord["scheduled"] = med.scheduled == true ? 1 : 0
 //            medRecord["reminders"] = med.reminders as __CKRecordObjCValue
 //            newMeds.append(newMed)
-            medRecord["reminderRef"] = [referenceToReminder]
-
-            let saveReminderOperation = CKModifyRecordsOperation(recordsToSave: [newReminder, medRecord])
+            medRecord["reminderRef"] = newReferencesToReminders
+            newReminders.append(medRecord)
+            
+            let saveReminderOperation = CKModifyRecordsOperation(recordsToSave: newReminders)
             saveReminderOperation.savePolicy = .allKeys
 
             saveReminderOperation.perRecordCompletionBlock = { record, error in
@@ -571,7 +581,7 @@ class ViewModel: ObservableObject {
                     self.reportError(error)
     //                completionHandler?(.failure(error))
                 } else {
-                    print(newReminder)
+                    print(newReminders)
                     print("we added a new reminder record!")
                     // If a completion was supplied, like during tests, call it back now.
     //                completionHandler?(.success(()))

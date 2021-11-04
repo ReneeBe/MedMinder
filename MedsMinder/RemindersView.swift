@@ -30,7 +30,6 @@ struct RemindersView: View {
                 List{
                     ForEach(0..<data.reminderData.count, id: \.self) { i in
                         let med: Med = findMed(reminder: self.data.reminderData[i])
-
                         ReminderRowView(showAddReminderView: showAddReminderView, permissionGranted: $permissionGranted, reminder: self.$data.reminderData[i], med: med)
                     }
 //                    }.onDelete(perform: deleteMeds)
@@ -55,7 +54,7 @@ struct RemindersView: View {
                 .listStyle(InsetListStyle())
     //                .padding(15)
 //            }
-//            .navigationBarTitle("Reminder")
+                .navigationBarTitle("Reminder", displayMode: .inline)
 //            .navigationBarTitleDisplayMode(.large)
 //            .navigationBarItems(
 //                leading:

@@ -45,17 +45,18 @@ struct RowView: View {
                     .foregroundColor(Color(.darkGray))
             }
             .buttonStyle(PlainButtonStyle())
-//            .sheet(isPresented: $showAddReminderView, content: {
-//                var times = []
-//                var intakeType = med.reminders != [] ? "Scheduled Intake" : "On Demand"
+            .sheet(isPresented: $showAddReminderView, content: {
+                let times: [Date] = collectReminderTimes()
+                let intakeType = med.reminders != [] ? "Scheduled Intake" : "On Demand"
 //                if med.reminders != [] {
 //                    ForEach(med.reminders) { reminder in
+////                    for reminder in med.reminders {
 //                        times.append(reminder.intakeTime)
 //                    }
 //                }
-//                let dosage = med.dosage
-//                AddReminderView(showAddReminderView: $showAddReminderView, med: $med, intakeType: intakeType, times: times, dosage: dosage, indices: [], permissionGranted: $permissionGranted)
-//            })
+                let dosage = med.dosage
+                AddReminderView(showAddReminderView: $showAddReminderView, med: $med, intakeType: intakeType, times: times, dosage: dosage, indices: [], permissionGranted: $permissionGranted)
+            })
             Spacer()
             Button(action: {
                 print("\(med.name) taken!")
@@ -92,6 +93,20 @@ struct RowView: View {
     func getTimes() -> [String] {
         let reminders = data.reminderData.filter {$0.medName == med.name}
         return reminders.map { dateFormatting(date: $0.intakeTime)}
+    }
+    
+    func collectReminderTimes() -> [Date] {
+        var intakeTimes: [Date] = []
+        if med.reminders != [] {
+//            ForEach(med.reminders) { reminder in
+            for reminder in med.reminders {
+                intakeTimes.append(reminder.intakeTime)
+            }
+        }
+        if intakeTimes == [] {
+            intakeTimes = [Date()]
+        }
+        return intakeTimes
     }
     
 }

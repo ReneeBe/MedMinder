@@ -83,6 +83,7 @@ struct ReminderRowView: View {
         dateFormatter.timeStyle = .short
         return dateFormatter.string(from: date)
     }
+
 }
 
 struct ReminderRowView_Previews: PreviewProvider {
