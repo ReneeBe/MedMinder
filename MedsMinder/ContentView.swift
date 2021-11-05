@@ -28,14 +28,15 @@ struct ContentView: View {
     
     var body: some View {
         TabView {
-            MedicationsView(permissionGranted: $permissionGranted)
-                .tabItem {
-                    Label("Medications", systemImage: "pills.circle.fill").font(.largeTitle)
-                }
             RemindersView(permissionGranted: $permissionGranted)
                 .tabItem {
                     Label("Reminders", systemImage: "clock.fill").font(.title)
                 }
+            MedicationsView(permissionGranted: $permissionGranted)
+                .tabItem {
+                    Label("Medications", systemImage: "pills.circle.fill").font(.largeTitle)
+                }
+
         }
 //        .font(.headline)
         

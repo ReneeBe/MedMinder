@@ -172,7 +172,7 @@ class ViewModel: ObservableObject {
     
     
     func updateAndSave(meds: [Med], completionHandler: ((Result<Void, Error>) -> Void)? = nil) {
-        var newMeds = [CKRecord(recordType: "Med")]
+        var newMeds: [CKRecord] = []
         for med in meds {
             let predicate = NSPredicate(format: "name = %@", med.name)
             let query = CKQuery(recordType: "Med", predicate: predicate)
@@ -225,7 +225,7 @@ class ViewModel: ObservableObject {
     }
     
     func saveRecord(meds: [Med], completionHandler: ((Result<Void, Error>) -> Void)? = nil) {
-        var newMeds = [CKRecord(recordType: "Med")]
+        var newMeds: [CKRecord] = []
         for med in meds {
             let newMed = CKRecord(recordType: "Med")
             newMed["name"] = med.name

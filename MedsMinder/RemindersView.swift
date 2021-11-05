@@ -24,9 +24,9 @@ struct RemindersView: View {
     //    public let saveAction: () -> Void
     
     var body: some View {
-//        NavigationView {
-//            ZStack {
-//                Color(.systemBlue).opacity(0.06).ignoresSafeArea()
+        NavigationView {
+            ZStack {
+                Color(.systemBlue).opacity(0.06).ignoresSafeArea()
                 List{
                     ForEach(0..<data.reminderData.count, id: \.self) { i in
                         let med: Med = findMed(reminder: self.data.reminderData[i])
@@ -53,9 +53,8 @@ struct RemindersView: View {
                 .foregroundColor(Color(.darkGray))
                 .listStyle(InsetListStyle())
     //                .padding(15)
-//            }
-                .navigationBarTitle("Reminder", displayMode: .inline)
-//            .navigationBarTitleDisplayMode(.large)
+            }
+                .navigationBarTitle("Reminders", displayMode: .inline)
 //            .navigationBarItems(
 //                leading:
 //                    Button( action: {
@@ -75,32 +74,6 @@ struct RemindersView: View {
 //                    }) {
 //                        Image(systemName: "plus")
 //                    }
-//                    .sheet(isPresented: $showNewMedPopover) {
-//                        NavigationView {
-//                            NewMedicationView(medData: $newMedData, color: $color)
-//                                .navigationBarTitle("New Medication", displayMode: .inline)
-//                                .navigationBarItems(
-//                                    leading:
-//                                        Button(action: {
-//                                            showNewMedPopover.toggle()
-//                                            print("hello from mainview! \(data.medData)")
-//
-//                                        }, label: {
-//                                            Text("Close")
-//                                        })
-//                                    , trailing:
-//                                        Button("Add") {
-//                                            let newMed = Med(name: newMedData.name, details: "Every Evening", format: newMedData.format, color: color, shape: newMedData.shape, engraving: newMedData.engraving, dosage: Double(1), scheduled: false, reminders: [], history: [])
-//                                            data.medData.append(newMed)
-//                                            print("we added to meds!: \(data.medData)")
-//                                            data.saveRecord(meds: [newMed])
-//    //                                            saveAction()
-//    //                                            meds.saveRecord(newMed)
-//    //                                            doSubmission(med: newMed)
-//                                            showNewMedPopover.toggle()
-//                                        })
-//                        }
-//                }
 //            )
 //            .navigationBarBackButtonHidden(true)
 //            .onChange(of: scenePhase) { phase in
@@ -117,7 +90,7 @@ struct RemindersView: View {
 //    //                doSubmission()
 //
 //            }
-//        }
+        }
     }
 
     //    private func deleteMeds(at offsets: IndexSet) {
