@@ -18,6 +18,7 @@ struct MedicationsView: View {
     @State private var color: Color = Color(.systemYellow)
     @State private var showDeleteButton = false
     @Environment(\.scenePhase) private var scenePhase
+//    @State private var addMedState =
     
     var body: some View {
         NavigationView {
@@ -38,6 +39,8 @@ struct MedicationsView: View {
                             RowView(showAddReminderView: showAddReminderView, permissionGranted: $permissionGranted, med: self.$data.medData[i])
                         }
                     }
+                    .onDelete(perform: self.deleteMeds)
+
                     
                     HStack (alignment: .top){
                         Text("On Demand")
@@ -52,7 +55,7 @@ struct MedicationsView: View {
                             RowView(showAddReminderView: showAddReminderView, permissionGranted: $permissionGranted, med: self.$data.medData[i])
                         }
                     }
-//                    .onDelete(perform: self.deleteMeds)
+                    .onDelete(perform: self.deleteMeds)
                 }
                 .listRowBackground(Color(.systemBlue).opacity(0.06))
                 .foregroundColor(Color(.darkGray))
@@ -83,6 +86,8 @@ struct MedicationsView: View {
                                         data.medData.append(newMed)
                                         print("we added to meds!: \(data.medData)")
                                         data.saveRecord(meds: [newMed])
+//                                        data.getMedData()
+//                                        data.getMedData()
 //                                            saveAction()
 //                                            meds.saveRecord(newMed)
 //                                            doSubmission(med: newMed)
@@ -92,19 +97,38 @@ struct MedicationsView: View {
             }
 //                )
                 .navigationBarBackButtonHidden(true)
-//                .onChange(of: scenePhase) { phase in
-//                    if phase == .inactive {
-//                        print("hello")
-//    //                    saveAction()
-//                    }
-//                    notificationsBuilder.scheduleNotifications(reminderData: data.reminderData, medData: data.medData)
-//    //                doSubmission(med: Med)
+//                .onChange(of: data) {  in
+//
 //                }
+                .onChange(of: scenePhase) { phase in
+                    if phase == .inactive {
+                        print("hello")
+    //                    saveAction()
+                    }
+                    data.getMedData()
+//                    notificationsBuilder.scheduleNotifications(reminderData: data.reminderData, medData: data.medData)
+    //                doSubmission(med: Med)
+                }
+                                
 
             )
         }
         
     }
+    
+    func deleteMeds(at offsets: IndexSet) {
+        guard let firstIndex = offsets.first else {
+            return
+        }
+        
+        let medName = data.medData[firstIndex].name
+        print("we are in deleteMeds in mainview, here is medName aka the one youre trying to delete: \(medName)")
+        data.medData.remove(at: firstIndex)
+        data.reminderData.removeAll {$0.medName == medName}
+        data.deleteMeds(name: medName) { _ in }
+        
+    }
+    
 }
 
 struct MedicationsView_Previews: PreviewProvider {

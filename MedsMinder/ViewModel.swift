@@ -154,7 +154,7 @@ class ViewModel: ObservableObject {
     ///   - completionHandler: An optional handler to process completion `success` or `failure`.
     
 //    func saveNewRecord(med: Med, completionHandler: ((Result<Void, Error>) -> Void)? = nil) {
-//        var newMed = CKRecord(recordType: "Med")
+//        var newMed: CKRecord
 ////        for med in meds {
 ////            let newMed = CKRecord(recordType: "Med")
 //            newMed["name"] = med.name
@@ -178,8 +178,10 @@ class ViewModel: ObservableObject {
             let query = CKQuery(recordType: "Med", predicate: predicate)
 //            var recordID = CKRecord.ID()
             
-            database.perform(query, inZoneWith: nil) { records, error in
-                guard records != nil else { return }
+            
+            
+//            database.fetch(query) { records, error in
+//                guard records != nil else { return }
 //                recordID = records[0].recordID
                 
                 let newMed = CKRecord(recordType: "Med")
@@ -213,9 +215,9 @@ class ViewModel: ObservableObject {
                         completionHandler?(.success(()))
                     }
                 }
-                self.getData()
-                self.database.add(saveOperation)
-            }
+                getMedData()
+                database.add(saveOperation)
+//            }
         }
             
             
@@ -247,16 +249,19 @@ class ViewModel: ObservableObject {
                 self.reportError(error)
             }
 
-            self.getData()
+            self.getMedData()
         }
 
-        saveOperation.modifyRecordsCompletionBlock = { _, _, error in
-            if let error = error {
-                self.reportError(error)
-                completionHandler?(.failure(error))
-            } else {
-                // If a completion was supplied, like during tests, call it back now.
-                completionHandler?(.success(()))
+        saveOperation.modifyRecordsResultBlock = { result in
+            DispatchQueue.main.async {
+                switch result {
+                    case .success(_):
+                        print("success in save record!")
+    //                    self.medData.append()
+                    case .failure(let error):
+                        self.reportError(error)
+                        completionHandler?(.failure(error))
+                }
             }
         }
 
@@ -308,7 +313,7 @@ class ViewModel: ObservableObject {
                 } else {
                     print("newReminders before updating reminderData: \(newReminders)")
                     self.reminderData = newReminders
-                    self.getData()
+                    self.getMedData()
                     print("we got the reminder data!: cloudkit\(reminderData)")
 //                    completionHandler(.success())
 //                    return
@@ -338,69 +343,69 @@ class ViewModel: ObservableObject {
     
     /// Fetches the last person record and updates the published `lastPerson` property in the VM.
     /// - Parameter completionHandler: An optional handler to process completion `success` or `failure`.
-    func getData(completionHandler: ((Result<Void, Error>) -> Void)? = nil) {
-        // Here, we will use the convenience "fetch" method on CKDatabase, instead of
-        // CKFetchRecordsOperation, which is more flexible but also more complex.
-//        var newMeds: [Med] = []
-//        getReminderData()
-        var newMeds = [Med]()
-
-        let predicate = NSPredicate(value: true)
-        
-        let medQuery = CKQuery(recordType: "Med", predicate: predicate)
-
-        medQuery.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: true)]
-        
-        let medOperation = CKQueryOperation(query: medQuery)
-        medOperation.desiredKeys = ["name", "details", "format", "color", "shape", "engraving", "dosage", "scheduled", "reminders", "reminderRef", "history"]
-        
-        medOperation.recordFetchedBlock = { record in
-            let reminders = self.reminderData.filter { $0.medName == record["name"] }
-            
-//            let reminders = record["reminderRef"].count > 0 ? [] as __CKRecordObjCValue : record["reminderRef"]
+//    func getData(completionHandler: ((Result<Void, Error>) -> Void)? = nil) {
+//        // Here, we will use the convenience "fetch" method on CKDatabase, instead of
+//        // CKFetchRecordsOperation, which is more flexible but also more complex.
+////        var newMeds: [Med] = []
+////        getReminderData()
+//        var newMeds = [Med]()
 //
-//            if reminders != [] {
-//                for reminder in reminders {
-//                    let fetchReminders =
+//        let predicate = NSPredicate(value: true)
 //
+//        let medQuery = CKQuery(recordType: "Med", predicate: predicate)
 //
+//        medQuery.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: true)]
+//
+//        let medOperation = CKQueryOperation(query: medQuery)
+//        medOperation.desiredKeys = ["name", "details", "format", "color", "shape", "engraving", "dosage", "scheduled", "reminders", "reminderRef", "history"]
+//
+//        medOperation.recordFetchedBlock = { record in
+//            let reminders = self.reminderData.filter { $0.medName == record["name"] }
+//
+////            let reminders = record["reminderRef"].count > 0 ? [] as __CKRecordObjCValue : record["reminderRef"]
+////
+////            if reminders != [] {
+////                for reminder in reminders {
+////                    let fetchReminders =
+////
+////
+////                }
+////
+////            }
+//                let med = Med(
+//                    name: record["name"] as! String,
+//                    details: record["details"] as! String,
+//                    format: record["format"] as! String,
+//                    color: record["color"] as! Color?,
+//                    shape: record["shape"] as! [String],
+//                    engraving: record["engraving"] as! String,
+//                    dosage: record["dosage"] as! Double,
+//                    scheduled: ((record["scheduled"] as! Int) != 0),
+//                    reminders: reminders.count == 0 ? [] : reminders,
+////                    reminderRef: record["reminderRef"] == nil ? [] : (record["reminderRef"] as! [CKRecord.Reference]),
+//                    history: record["history"] == nil ? [] : (record["history"] as! [History])
+//                )
+//                print(med)
+//                newMeds.append(med)
+//        }
+//
+//        medOperation.queryCompletionBlock = { [unowned self] (cursor, error) in
+//            DispatchQueue.main.async {
+//                if error == nil {
+//                    print("newMeds before updating medData: \(newMeds)")
+//                    self.medData = newMeds
+//                    print("we got the data!: \(medData)")
+////                    self.tableView.reloadData()
+//                } else {
+//                    print("we got an error in the completion block")
+//                    let ac = UIAlertController(title: "Fetch failed", message: "There was a problem fetching the list of medications; please try again: \(error!.localizedDescription)", preferredStyle: .alert)
+//                    print("please try again: \(error!.localizedDescription)")
+//                    ac.addAction(UIAlertAction(title: "OK", style: .default))
 //                }
-//
 //            }
-                let med = Med(
-                    name: record["name"] as! String,
-                    details: record["details"] as! String,
-                    format: record["format"] as! String,
-                    color: record["color"] as! Color?,
-                    shape: record["shape"] as! [String],
-                    engraving: record["engraving"] as! String,
-                    dosage: record["dosage"] as! Double,
-                    scheduled: ((record["scheduled"] as! Int) != 0),
-                    reminders: reminders.count == 0 ? [] : reminders,
-//                    reminderRef: record["reminderRef"] == nil ? [] : (record["reminderRef"] as! [CKRecord.Reference]),
-                    history: record["history"] == nil ? [] : (record["history"] as! [History])
-                )
-                print(med)
-                newMeds.append(med)
-        }
-        
-        medOperation.queryCompletionBlock = { [unowned self] (cursor, error) in
-            DispatchQueue.main.async {
-                if error == nil {
-                    print("newMeds before updating medData: \(newMeds)")
-                    self.medData = newMeds
-                    print("we got the data!: \(medData)")
-//                    self.tableView.reloadData()
-                } else {
-                    print("we got an error in the completion block")
-                    let ac = UIAlertController(title: "Fetch failed", message: "There was a problem fetching the list of medications; please try again: \(error!.localizedDescription)", preferredStyle: .alert)
-                    print("please try again: \(error!.localizedDescription)")
-                    ac.addAction(UIAlertAction(title: "OK", style: .default))
-                }
-            }
-        }
-        database.add(medOperation)
-    }
+//        }
+//        database.add(medOperation)
+//    }
     
     func deleteMeds(name: String, completionHandler: @escaping (Result<Void, Error>) -> Void) {
          // In this contrived example, Contact records only store a name, so rather than requiring the
@@ -421,9 +426,9 @@ class ViewModel: ObservableObject {
                 debugPrint("Error deleting med: \(error)")
             } else {
                 DispatchQueue.main.async {
-                    let index = self.medData.firstIndex(where: { $0.name == name })
+//                    let index = self.medData.firstIndex(where: { $0.name == name })
 //                    print("here's the index: \(index)")
-                    self.medData.remove(at: index!)
+//                    self.medData.remove(at: index!)
                     print("record deleted!")
                     completionHandler(.success(()))
                 }
@@ -569,11 +574,11 @@ class ViewModel: ObservableObject {
             let saveReminderOperation = CKModifyRecordsOperation(recordsToSave: newReminders)
             saveReminderOperation.savePolicy = .allKeys
 
-            saveReminderOperation.perRecordCompletionBlock = { record, error in
-                if let error = error {
-                    self.reportError(error)
-                }
-            }
+//            saveReminderOperation.perRecordCompletionBlock = { record, error in
+//                if let error = error {
+//                    self.reportError(error)
+//                }
+//            }
             
 
             saveReminderOperation.modifyRecordsCompletionBlock = { _, _, error in
@@ -602,7 +607,8 @@ class ViewModel: ObservableObject {
 
             self.database.add(saveReminderOperation)
 //            self.database.add(saveMedReferenceOperation)
-            self.getData()
+            self.getMedData()
+            self.getReminderData()
             
         }
         

@@ -76,20 +76,21 @@ struct RemindersView: View {
 //                    }
 //            )
 //            .navigationBarBackButtonHidden(true)
-//            .onChange(of: scenePhase) { phase in
-//                if phase == .inactive {
-//                    print("hello")
-//    //                    saveAction()
-//                }
-//                notificationsBuilder.scheduleNotifications(data: data.medData)
-//    //                doSubmission(med: Med)
-//            }
-//            .onAppear {
-//                notificationsBuilder.scheduleNotifications(data: data.medData)
-//    //                meds.getData()
-//    //                doSubmission()
-//
-//            }
+            .onChange(of: scenePhase) { phase in
+                if phase == .inactive {
+                    print("hello")
+                    data.getReminderData()
+    //                    saveAction()
+                }
+//                notificationsBuilder.scheduleNotifications(reminderData: data.reminderData, medData: data.medData)
+    //                doSubmission(med: Med)
+            }
+            .onAppear {
+//                notificationsBuilder.scheduleNotifications(reminderData: data.reminderData, medData: data.medData)
+    //                meds.getData()
+    //                doSubmission()
+
+            }
         }
     }
 
