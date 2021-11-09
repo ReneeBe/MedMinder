@@ -174,8 +174,8 @@ class ViewModel: ObservableObject {
     func updateAndSave(meds: [Med], completionHandler: ((Result<Void, Error>) -> Void)? = nil) {
         var newMeds: [CKRecord] = []
         for med in meds {
-            let predicate = NSPredicate(format: "name = %@", med.name)
-            let query = CKQuery(recordType: "Med", predicate: predicate)
+//            let predicate = NSPredicate(format: "name = %@", med.name)
+//            let query = CKQuery(recordType: "Med", predicate: predicate)
 //            var recordID = CKRecord.ID()
             
             
@@ -199,20 +199,27 @@ class ViewModel: ObservableObject {
                 let saveOperation = CKModifyRecordsOperation(recordsToSave: newMeds)
                 saveOperation.savePolicy = .changedKeys
 
-                saveOperation.perRecordCompletionBlock = { record, error in
-                    if let error = error {
-                        self.reportError(error)
+                saveOperation.perRecordSaveBlock = { recordID, result in
+                    switch result {
+                        case .success(_):
+                            print("saving new record!")
+                        case .failure(let error):
+                            print("error in perRecordSaveBlock in updateAndSaveRecord: \(error)")
+                            self.reportError(error)
                     }
-//                    medData = self.getData()
                 }
 
-                saveOperation.modifyRecordsCompletionBlock = { _, _, error in
-                    if let error = error {
-                        self.reportError(error)
-                        completionHandler?(.failure(error))
-                    } else {
-                        // If a completion was supplied, like during tests, call it back now.
-                        completionHandler?(.success(()))
+                saveOperation.modifyRecordsResultBlock = { result in
+                    DispatchQueue.main.async {
+                        switch result {
+                        case .success(_):
+                            print("saved the new record!")
+                            completionHandler?(.success(()))
+                        case .failure(let error):
+                            print("error in modifyRecordsResultBlock in saveRecord: \(error)")
+                            self.reportError(error)
+                            completionHandler?(.failure(error))
+                        }
                     }
                 }
                 getMedData()
@@ -244,11 +251,14 @@ class ViewModel: ObservableObject {
         let saveOperation = CKModifyRecordsOperation(recordsToSave: newMeds)
         saveOperation.savePolicy = .allKeys
 
-        saveOperation.perRecordCompletionBlock = { record, error in
-            if let error = error {
-                self.reportError(error)
+        saveOperation.perRecordSaveBlock = { recordID, result in
+            switch result {
+                case .success(_):
+                    print("saving new record!")
+                case .failure(let error):
+                    print("error in perRecordSaveBlock in saveRecord: \(error)")
+                    self.reportError(error)
             }
-
             self.getMedData()
         }
 
@@ -334,7 +344,7 @@ class ViewModel: ObservableObject {
 //        }
 //        database.add(medOperation)
 //    }
-    func findMedToDelete(med: Med, completionHandler: @escaping (Result<Void, Error>) -> Void) {
+    func findMedForRecID(med: Med, process: String, completionHandler: @escaping (Result<Void, Error>) -> Void) {
         let predicate = NSPredicate(format: "name = %@", med.name)
         let findQuery = CKQuery(recordType: "Med", predicate: predicate)
         let findOperation = CKQueryOperation(query: findQuery)
@@ -353,17 +363,67 @@ class ViewModel: ObservableObject {
             DispatchQueue.main.async {
                 switch result {
                     case .success(_):
-                        self.deleteMeds(recID: recID) { _ in }
+                        print("we found it!")
+                        if process == "delete" {
+                            self.deleteMeds(recID: recID) { _ in }
+                        }
                     case .failure(let error):
                         print("we got an error in the result block to find the recordID of the med to delete: \(error)")
                 }
             }
         }
         database.add(findOperation)
+//        return recID
+    }
+    
+    func findReminderForRecID(reminder: Reminder, process: String, completionHandler: @escaping (Result<Void, Error>) -> Void) {
+        
+//        let predicate = NSPredicate(format: "medName == %@ && intakeTime == %@", reminder.medName, reminder.intakeTime)
+        let predicate = NSCompoundPredicate(
+            type: .and,
+            subpredicates: [
+                NSPredicate(format: "medName = %@", reminder.medName),
+                NSPredicate(format: "intakeTime = %@", reminder.intakeTime as CVarArg)
+            ]
+        )
+        
+        let findQuery = CKQuery(recordType: "Reminder", predicate: predicate)
+        let findOperation = CKQueryOperation(query: findQuery)
+        var recID = CKRecord.ID()
+        
+        findOperation.recordMatchedBlock = { recordID, result in
+            switch result {
+                case .success(_):
+                    recID = recordID
+                case .failure(let error):
+                    print("error in fetching Med recordID to delete: \(error)")
+            }
+        }
+        
+        findOperation.queryResultBlock = { result in
+            DispatchQueue.main.async {
+                switch result {
+                    case .success(_):
+                        print("we found it!")
+                        if process == "delete" {
+                            self.deleteMeds(recID: recID) { _ in }
+                        }
+                        
+                    case .failure(let error):
+                        print("we got an error in the result block to find the recordID of the med to delete: \(error)")
+                }
+            }
+        }
+        database.add(findOperation)
+//        return recID
     }
     
     
     func deleteMeds(recID: CKRecord.ID, completionHandler: @escaping (Result<Void, Error>) -> Void) {
+//    func deleteMeds(med: Med, completionHandler: @escaping (Result<Void, Error>) -> Void) {
+//        var recID = CKRecord.ID()
+//        let recID = findMedToDelete(med: med) { _ in }
+
 
         let deleteMedRecordOperation = CKModifyRecordsOperation(recordIDsToDelete: [recID])
         deleteMedRecordOperation.perRecordDeleteBlock = {recordID, result in
@@ -390,28 +450,6 @@ class ViewModel: ObservableObject {
             }
         }
         database.add(deleteMedRecordOperation)
-        
-        
-//        self.getData()
-        
-//         let deleteOperation = CKModifyRecordsOperation(recordIDsToDelete: [recordID])
-//
-//         deleteOperation.modifyRecordsCompletionBlock = { _, _, error in
-//             if let error = error {
-//                 completionHandler(.failure(error))
-//                 debugPrint("Error deleting med: \(error)")
-//             } else {
-//                 DispatchQueue.main.async {
-//                    let currentRecord = self.medData
-//
-//                    let index = self.medData.firstIndex(where: { $0.name == name })
-//                    self.medData.remove(at: index)
-//                    print("here are the meds after the supposed deletion: \(self.medData)")
-//                     completionHandler(.success(()))
-//                 }
-//             }
-//         }
-//         database.add(deleteOperation)
      }
 
     
@@ -537,15 +575,15 @@ class ViewModel: ObservableObject {
 //            }
             
 
-            saveReminderOperation.modifyRecordsCompletionBlock = { _, _, error in
-                if let error = error {
-                    self.reportError(error)
-    //                completionHandler?(.failure(error))
-                } else {
-                    print(newReminders)
-                    print("we added a new reminder record!")
-                    // If a completion was supplied, like during tests, call it back now.
-    //                completionHandler?(.success(()))
+            saveReminderOperation.modifyRecordsResultBlock = { result in
+                DispatchQueue.main.async {
+                    switch result {
+                    case .success(_):
+                        print("we added a new reminder record!")
+                    case .failure(let error):
+                        print("error in creating a new reminder record in create reminder record: \(error)")
+                        self.reportError(error)
+                    }
                 }
             }
             

@@ -126,7 +126,7 @@ struct RemindersView: View {
         let med = data.medData[firstIndex]
         let medName = data.medData[firstIndex].name
         print("we are in deleteMeds in mainview, here is medName aka the one youre trying to delete: \(medName)")
-        data.findMedToDelete(med: med) { _ in }
+        data.findMedForRecID(med: med, process: "delete") { _ in }
     }
 }
 

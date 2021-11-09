@@ -151,7 +151,7 @@ struct AddReminderView: View {
                         med.dosage = Double(dosage)
                         med.scheduled = intakeType == "Scheduled Intake" ? true : false
                         med.update(from: med.data)
-                        data.updateAndSave(meds: [med])
+//                        data.updateAndSave(meds: [med])
                         createOrUpdateReminder(med: med, reminders: newReminders, name: med.name)
 
                         if permissionGranted == false {
