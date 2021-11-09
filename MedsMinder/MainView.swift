@@ -153,7 +153,7 @@ struct MainView: View {
         
         let medName = data.medData[firstIndex].name
         print("we are in deleteMeds in mainview, here is medName aka the one youre trying to delete: \(medName)")
-        data.deleteMeds(name: medName) { _ in }
+//        data.deleteMeds(name: medName) { _ in }
     }
     
     

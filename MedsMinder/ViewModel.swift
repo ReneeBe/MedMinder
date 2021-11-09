@@ -269,78 +269,6 @@ class ViewModel: ObservableObject {
     }
     
     
-    
-    
-    
-    
-    func getAllReminderData(completionHandler:  ((Result<Void, Error>) -> Void)? = nil) {
-//    func getReminderData(completionHandler: @escaping (Result<Void, Error>) -> ()) {
-        var newReminders = [Reminder]()
-
-        let predicate = NSPredicate(value: true)
-        
-        let reminderQuery = CKQuery(recordType: "Reminder", predicate: predicate)
-
-        reminderQuery.sortDescriptors = [NSSortDescriptor(key: "intakeTime", ascending: true)]
-        
-        let reminderOperation = CKQueryOperation(query: reminderQuery)
-        
-        reminderOperation.recordFetchedBlock = { record in
-            DispatchQueue.main.async {
-                let reminder = Reminder(
-                    medName: record["medName"] as! String,
-                    intakeType: record["intakeType"] as! String,
-                    intakeTime: record["intakeTime"] as! Date,
-                    intakeAmount: record["intakeAmount"] as! Double,
-                    delay: record["delay"] as! Int,
-                    allowSnooze: (record["allowSnooze"] as! Int) != 0,
-                    notes: record["notes"] as! String
-                )
-                print(reminder)
-                newReminders.append(reminder)
-            }
-
-        }
-        
-        reminderOperation.queryCompletionBlock = { [unowned self] (cursor, error) in
-            DispatchQueue.main.async {
-                if let error = error {
-                    print("we got an error in the completion block")
-                    let ac = UIAlertController(title: "Fetch failed", message: "There was a problem fetching the list of reminders; please try again: \(error.localizedDescription)", preferredStyle: .alert)
-                    print("please try again: \(error.localizedDescription)")
-                    ac.addAction(UIAlertAction(title: "OK", style: .default))
-//                    completionHandler(.failure())
-                } else {
-                    print("newReminders before updating reminderData: \(newReminders)")
-                    self.reminderData = newReminders
-                    self.getMedData()
-                    print("we got the reminder data!: cloudkit\(reminderData)")
-//                    completionHandler(.success())
-//                    return
-                }
-                
-//                if error == nil {
-//                    print("newReminders before updating reminderData: \(newReminders)")
-//                    self.reminderData = newReminders
-//                    print("we got the reminder data!: cloudkit\(reminderData)")
-//                    completionHandler(.success(reminderData))
-//                    self.getData()
-//                    return
-////                    self.tableView.reloadData()
-//                } else {
-//                    print("we got an error in the completion block")
-//                    let ac = UIAlertController(title: "Fetch failed", message: "There was a problem fetching the list of reminders; please try again: \(error!.localizedDescription)", preferredStyle: .alert)
-//                    print("please try again: \(error!.localizedDescription)")
-//                    ac.addAction(UIAlertAction(title: "OK", style: .default))
-////                    completionHandler(.failure())
-//                }
-            }
-        }
-        database.add(reminderOperation)
-//        getData()
-
-    }
-    
     /// Fetches the last person record and updates the published `lastPerson` property in the VM.
     /// - Parameter completionHandler: An optional handler to process completion `success` or `failure`.
 //    func getData(completionHandler: ((Result<Void, Error>) -> Void)? = nil) {
@@ -406,35 +334,63 @@ class ViewModel: ObservableObject {
 //        }
 //        database.add(medOperation)
 //    }
-    
-    func deleteMeds(name: String, completionHandler: @escaping (Result<Void, Error>) -> Void) {
-         // In this contrived example, Contact records only store a name, so rather than requiring the
-         // unique ID to delete a Contact, we'll use the first ID that matches the name to delete.
-        let predicate = NSPredicate(format: "name = %@", name)
-        let query = CKQuery(recordType: "Med", predicate: predicate)
-        var recordID = CKRecord.ID()
+    func findMedToDelete(med: Med, completionHandler: @escaping (Result<Void, Error>) -> Void) {
+        let predicate = NSPredicate(format: "name = %@", med.name)
+        let findQuery = CKQuery(recordType: "Med", predicate: predicate)
+        let findOperation = CKQueryOperation(query: findQuery)
+        var recID = CKRecord.ID()
         
-        database.perform(query, inZoneWith: nil) { records, error in
-            guard let records = records else { return }
-            recordID = records[0].recordID
-        }
-        
-        
-        database.delete(withRecordID: recordID) { (deletedRecordID, error) in
-            if let error = error {
-                completionHandler(.failure(error))
-                debugPrint("Error deleting med: \(error)")
-            } else {
-                DispatchQueue.main.async {
-//                    let index = self.medData.firstIndex(where: { $0.name == name })
-//                    print("here's the index: \(index)")
-//                    self.medData.remove(at: index!)
-                    print("record deleted!")
-                    completionHandler(.success(()))
-                }
-
+        findOperation.recordMatchedBlock = { recordID, result in
+            switch result {
+                case .success(_):
+                    recID = recordID
+                case .failure(let error):
+                    print("error in fetching Med recordID to delete: \(error)")
             }
         }
+        
+        findOperation.queryResultBlock = { result in
+            DispatchQueue.main.async {
+                switch result {
+                    case .success(_):
+                        self.deleteMeds(recID: recID) { _ in }
+                    case .failure(let error):
+                        print("we got an error in the result block to find the recordID of the med to delete: \(error)")
+                }
+            }
+        }
+        database.add(findOperation)
+    }
+    
+    
+    func deleteMeds(recID: CKRecord.ID, completionHandler: @escaping (Result<Void, Error>) -> Void) {
+
+        let deleteMedRecordOperation = CKModifyRecordsOperation(recordIDsToDelete: [recID])
+        deleteMedRecordOperation.perRecordDeleteBlock = {recordID, result in
+            switch result {
+                case.success(_):
+                    print("we're deleting the med record!")
+                case .failure(let error):
+                    print("error in deleting med record: \(error)")
+            }
+        }
+        
+        deleteMedRecordOperation.modifyRecordsResultBlock = { result in
+            DispatchQueue.main.async {
+                switch result {
+                    case .success(_):
+                        print("success in delete record!")
+                        self.getMedData()
+                        self.getReminderData()
+                case .failure(let error):
+                    self.reportError(error)
+                    print("we hit an error in the modify records result block of deleteMeds: \(error)")
+                    completionHandler(.failure(error))
+                }
+            }
+        }
+        database.add(deleteMedRecordOperation)
+        
         
 //        self.getData()
         

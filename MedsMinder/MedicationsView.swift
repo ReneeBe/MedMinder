@@ -120,12 +120,14 @@ struct MedicationsView: View {
         guard let firstIndex = offsets.first else {
             return
         }
-        
+        let med = data.medData[firstIndex]
         let medName = data.medData[firstIndex].name
         print("we are in deleteMeds in mainview, here is medName aka the one youre trying to delete: \(medName)")
+        data.findMedToDelete(med: med) { _ in }
+        
         data.medData.remove(at: firstIndex)
         data.reminderData.removeAll {$0.medName == medName}
-        data.deleteMeds(name: medName) { _ in }
+
         
     }
     

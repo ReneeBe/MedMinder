@@ -22,9 +22,11 @@ struct Med: Identifiable, Codable {
     var reminders: [Reminder]
 //    var reminderRef: [CKRecord.Reference]?
     var history: [History]
+//    var recordID: CKRecord.ID?
     
 //    init(id: UUID = UUID(), name: String, details: String, format: String, color: Color?, shape: [String], engraving: String, dosage: Double, scheduled: Bool, reminders: [Reminder] = [], reminderRef: CKRecord.Reference? = nil, history: [History] = []
     init(id: UUID = UUID(), name: String, details: String, format: String, color: Color?, shape: [String], engraving: String, dosage: Double, scheduled: Bool, reminders: [Reminder] = [], history: [History] = []
+//         , recordID: CKRecord.ID? = nil
     ) {
         self.id = id
         self.name = name
@@ -38,6 +40,7 @@ struct Med: Identifiable, Codable {
         self.reminders = reminders
 //        self.reminderRef = reminderRef
         self.history = history
+//        self.recordID = recordID
     }
 }
 
