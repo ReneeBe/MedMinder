@@ -41,7 +41,9 @@ struct AddReminderView: View {
                     Picker("Dosage Category", selection: $intakeType) {
                         ForEach(intakeTypes.allCases) { intake in
                             Text("\(intake.rawValue)").tag(intake)
-                        }
+                        }.onAppear(perform: {
+                            intakeType = "Scheduled Intake"
+                        })
                     }
                     .pickerStyle(SegmentedPickerStyle())
                     .padding()
@@ -53,12 +55,9 @@ struct AddReminderView: View {
                                         Text("Intake")
                                         Spacer()
                                         DatePicker("", selection: self.$times[i], displayedComponents:.hourAndMinute)
-                                        Button(action:
-                                                {
-                                                    hideTimes(index: i)
-
-                                                }
-                                        ) {
+                                        Button(action: {
+                                            hideTimes(index: i)
+                                        }) {
                                             Image(systemName: "minus.circle.fill").foregroundColor(Color(.systemRed))
                                                 .accessibility(label: Text("delete intake"))
                                         }
@@ -124,7 +123,6 @@ struct AddReminderView: View {
 
                         }.listRowBackground(Color(.systemGray5))
                     }.listStyle(InsetGroupedListStyle())
-
             }
             .foregroundColor(Color(.darkGray))
             .navigationBarTitle(Text("Add Reminder"), displayMode: .inline)

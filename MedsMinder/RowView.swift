@@ -97,12 +97,20 @@ struct RowView: View {
     
     func collectReminderTimes() -> [Date] {
         var intakeTimes: [Date] = []
-        if med.reminders != [] {
-//            ForEach(med.reminders) { reminder in
-            for reminder in med.reminders {
+        let reminders = data.reminderData.filter{$0.medName == med.name}
+        if reminders != [] {
+            for reminder in reminders {
                 intakeTimes.append(reminder.intakeTime)
             }
         }
+        
+        
+//        if med.reminders != []  {
+////            ForEach(med.reminders) { reminder in
+//            for reminder in med.reminders {
+//                intakeTimes.append(reminder.intakeTime)
+//            }
+//        }
         if intakeTimes == [] {
             intakeTimes = [Date()]
         }

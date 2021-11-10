@@ -344,6 +344,7 @@ class ViewModel: ObservableObject {
 //        }
 //        database.add(medOperation)
 //    }
+    
     func findMedForRecID(med: Med, process: String, completionHandler: @escaping (Result<Void, Error>) -> Void) {
         let predicate = NSPredicate(format: "name = %@", med.name)
         let findQuery = CKQuery(recordType: "Med", predicate: predicate)
