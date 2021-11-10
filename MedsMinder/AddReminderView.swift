@@ -133,8 +133,9 @@ struct AddReminderView: View {
                     }, label: {Text("Cancel")} ),
                 trailing:
                     Button(action: {
+                        print("pressed save in addreminderview")
                         indices.sort(by: >)
-                        let reminderTimes = delete() ?? [Foundation.Date()]
+                        let reminderTimes = delete() ?? []
                         var newReminders: [Reminder] = []
                         for time in reminderTimes {
                             let newReminder = Reminder(medName: med.name, intakeType: intakeType, intakeTime: time, intakeAmount: Double(dosage), delay: Int(delay), allowSnooze: allowSnooze, notes: notes)
@@ -151,6 +152,7 @@ struct AddReminderView: View {
                         med.update(from: med.data)
 //                        data.updateAndSave(meds: [med])
                         createOrUpdateReminder(med: med, reminders: newReminders, name: med.name)
+                        
 
                         if permissionGranted == false {
                             UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) { success, error in
@@ -167,8 +169,14 @@ struct AddReminderView: View {
                         }
                     }, label: {Text("Save")} )
                 )
+//            .onAppear{
+//                print(times)
+//            }
             }
+
+
         }
+
     }
 
     func hideTimes(index: Int) {
@@ -176,7 +184,8 @@ struct AddReminderView: View {
     }
 
     func createOrUpdateReminder(med: Med, reminders: [Reminder], name: String ) {
-        data.createReminderRecord(med: med, reminders: reminders)
+        data.findMedForRecID(med: med, reminders: reminders, process: "update reminders") { _ in }
+//        data.createReminderRecord(med: med, reminders: reminders)
     }
 //    let reminderComponents = Calendar.current.dateComponents([.hour, .minute], from: Foundation.Date())
 
@@ -189,8 +198,6 @@ struct AddReminderView: View {
         }
 
         var reformattedTimes = copy!.map { Calendar.current.dateComponents([.hour, .minute], from: $0) }
-
-
 
         reformattedTimes.sort {
             return ($0.hour ?? 00, $0.minute ?? 00) < ($1.hour ?? 01, $1.minute ?? 01)

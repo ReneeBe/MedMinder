@@ -81,6 +81,8 @@ struct ContentView: View {
                     print("hello")
 //                    saveAction()
                 }
+                print("we are in the else of of the onchange in contentview!")
+                
                 notificationsBuilder.scheduleNotifications(reminderData: data.reminderData, medData: data.medData)
 //                doSubmission(med: Med)
             }

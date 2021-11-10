@@ -26,6 +26,7 @@ struct MedsMinderApp: App {
         WindowGroup {
 //            NavigationView {
                 ContentView(permissionGranted: $permissionGranted) {
+                    print("RENEE we are in the save action of medsminderapp")
                     data.updateAndSave(meds: data.medData)
                     print("saved! \(data.medData)")
                     localData.save()
@@ -65,6 +66,7 @@ struct MedsMinderApp: App {
 //                data.getData()
 //                print(data.medData)
 //                print(data.reminderData)
+                print("renee we are in onappear in medsminderapp")
                 localData.load()
                 self.checkPermissions()
                 print("renee we disabled notifications builder but you cant delete anything else until you get it back its the next line below right here:")

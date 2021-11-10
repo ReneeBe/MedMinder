@@ -109,6 +109,12 @@ struct MedicationsView: View {
 //                    notificationsBuilder.scheduleNotifications(reminderData: data.reminderData, medData: data.medData)
     //                doSubmission(med: Med)
                 }
+                .onAppear{
+                    print("RENEE we are in the medicationsview onappear")
+                    data.getMedData() {_ in}
+                    data.getReminderData(){_ in}
+                }
+
                                 
 
             )
@@ -123,7 +129,7 @@ struct MedicationsView: View {
         let med = data.medData[firstIndex]
         let medName = data.medData[firstIndex].name
         print("we are in deleteMeds in mainview, here is medName aka the one youre trying to delete: \(medName)")
-        data.findMedForRecID(med: med, process: "delete") { _ in }
+        data.findMedForRecID(med: med, reminders: nil, process: "delete") { _ in }
 //        data.deleteMeds(med: med) { _ in }
         data.medData.remove(at: firstIndex)
         data.reminderData.removeAll {$0.medName == medName}

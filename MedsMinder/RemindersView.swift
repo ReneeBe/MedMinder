@@ -86,6 +86,9 @@ struct RemindersView: View {
     //                doSubmission(med: Med)
             }
             .onAppear {
+                    print("RENEE we are in the remindersview onappear")
+                    data.getMedData() {_ in}
+                    data.getReminderData(){_ in}
 //                notificationsBuilder.scheduleNotifications(reminderData: data.reminderData, medData: data.medData)
     //                meds.getData()
     //                doSubmission()
@@ -112,7 +115,7 @@ struct RemindersView: View {
         var currentMed: Med = Med.data[0]
 //        var currentMed: Med = data.medData[0] ?? Med.data[0]
         if let foundMed = data.medData.first(where: {$0.name == reminder.medName}) {
-            print("we found the med! \(foundMed)")
+//            print("we found the med! \(foundMed)")
             currentMed = foundMed
 //            return currentMed
         }
@@ -126,7 +129,7 @@ struct RemindersView: View {
         let med = data.medData[firstIndex]
         let medName = data.medData[firstIndex].name
         print("we are in deleteMeds in mainview, here is medName aka the one youre trying to delete: \(medName)")
-        data.findMedForRecID(med: med, process: "delete") { _ in }
+        data.findMedForRecID(med: med, reminders: nil, process: "delete") { _ in }
     }
 }
 
