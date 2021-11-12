@@ -10,44 +10,46 @@ import os.log
 import CloudKit
 import UIKit
 import SwiftUI
+import Combine
+
 
 class ViewModel: ObservableObject {
 
     // MARK: - Properties
     /// The CloudKit container to use. Update with your own container identifier.
-    private let container = CKContainer(identifier: Config.containerIdentifier)
+//    private let container = CKContainer(identifier: Config.containerIdentifier)
 
     /// This sample uses the private database, which requires a logged in iCloud account.
-    private lazy var database = container.privateCloudDatabase
+//    private lazy var database = container.privateCloudDatabase
 
     /// This sample uses a singleton record ID, referred to by this property.
     /// CloudKit uses `CKRecord.ID` objects to represent record IDs.
 //    private let recordName: CKRecord.ID
-
-    /// Publish the fetched last person to our view.
+    
+    // MARK: Published State
+    /// Publish the fetched med and reminder records to our view.
     @Published var medData: [Med] = []
     @Published var reminderData: [Reminder] = []
     
+    
     var oldReminderRecord = CKRecord(recordType: "Reminder")
     var reminderRecordIDToUpdate = CKRecord.ID()
-//    @Published var medData = MedData().meds
-//    let queue = OperationQueue().addOperation(getReminderData(self: self)).addOperation(getData(self.self))
+
+    // MARK: CloudKit Properties
+     /// The CloudKit container we'll use.
+     private lazy var container = CKContainer(identifier: Config.containerIdentifier)
+     /// For this sample we use the iCloud user's private database.
+     private lazy var database = container.privateCloudDatabase
+
     
 
+//MARK: - Public Functions
+    
+    
     // MARK: - Init
     init() {
-        // Use a different unique record ID if testing.
-//        lastPersonRecordID = CKRecord.ID(recordName: isTesting ? "lastPersonTest" : "lastPerson")
-//        getLastPerson()
-//        do {
-//            medData = try await getMedData()
-//////            try await getReminderData()
-//        } catch {
-//            print("error at init: /(error)")
-////            throw error
-//        }
-        getMedData()
-        getReminderData()
+        getMedData(){_ in}
+        getReminderData() {_ in}
 //        medData.map { $0 }
 //            .assign(to: &$contactNames)
     }
@@ -70,7 +72,8 @@ class ViewModel: ObservableObject {
                         name: record["name"] as! String,
                         details: record["details"] as! String,
                         format: record["format"] as! String,
-                        color: record["color"] as! Color?,
+                        color: self.ColorFromString(string: record["color"] as! String) as Color?,
+//                        color: convertStringToColor(string: record["color"] as! String) as Color?,
                         shape: record["shape"] as! [String],
                         engraving: record["engraving"] as! String,
                         dosage: record["dosage"] as! Double,
@@ -148,42 +151,13 @@ class ViewModel: ObservableObject {
         database.add(reminderOperation)
     }
     
-    /// Saves the given name as the last person in the database.
-    /// - Parameters:
-    ///   - name: Name to attach to the record as the last person.
-    ///   - completionHandler: An optional handler to process completion `success` or `failure`.
     
-//    func saveNewRecord(med: Med, completionHandler: ((Result<Void, Error>) -> Void)? = nil) {
-//        var newMed: CKRecord
-////        for med in meds {
-////            let newMed = CKRecord(recordType: "Med")
-//            newMed["name"] = med.name
-//            newMed["details"] = med.details
-//            newMed["format"] = med.format
-//    //        newMed["color"] = (UIColor(med.color!) as! __CKRecordObjCValue)
-//            newMed["shape"] = med.shape
-//            newMed["engraving"] = med.engraving
-//            newMed["dosage"] = med.dosage
-//            newMed["scheduled"] = med.scheduled == true ? 1 : 0
-////        }
-//        database.save(newMed, completionHandler: (CKRecord?, Error?) -> Void)
-//
-//    }
+    
     
     
     func updateAndSave(meds: [Med], completionHandler: ((Result<Void, Error>) -> Void)? = nil) {
         var newMeds: [CKRecord] = []
         for med in meds {
-//            let predicate = NSPredicate(format: "name = %@", med.name)
-//            let query = CKQuery(recordType: "Med", predicate: predicate)
-//            var recordID = CKRecord.ID()
-            
-            
-            
-//            database.fetch(query) { records, error in
-//                guard records != nil else { return }
-//                recordID = records[0].recordID
-                
                 let newMed = CKRecord(recordType: "Med")
                 newMed["name"] = med.name
                 newMed["details"] = med.details
@@ -224,23 +198,19 @@ class ViewModel: ObservableObject {
                 }
                 getMedData()
                 database.add(saveOperation)
-//            }
         }
-            
-            
-            
-            
-
     }
     
     func saveRecord(meds: [Med], completionHandler: ((Result<Void, Error>) -> Void)? = nil) {
         var newMeds: [CKRecord] = []
+        
         for med in meds {
             let newMed = CKRecord(recordType: "Med")
             newMed["name"] = med.name
             newMed["details"] = med.details
             newMed["format"] = med.format
-    //        newMed["color"] = (UIColor(med.color!) as! __CKRecordObjCValue)
+            newMed["color"] = self.StringFromColor(color: med.color!)
+//            newMed["color"] = convertColorToString(color: med.color ?? Color.black)
             newMed["shape"] = med.shape
             newMed["engraving"] = med.engraving
             newMed["dosage"] = med.dosage
@@ -298,11 +268,10 @@ class ViewModel: ObservableObject {
             DispatchQueue.main.async {
                 switch result {
                     case .success(_):
-                        print("we found it!")
+                        print("we found the med!")
                         if process == "delete" {
                             self.deleteMeds(recID: recID) { _ in }
                         } else if process == "update reminders" {
-//                            self.findReminderForRecID(
                             self.findAllRemindersForMed(med: med, medRecID: recID, reminders: reminders ?? [], process: "update reminders") { _ in}
                         }
                     case .failure(let error):
@@ -311,12 +280,9 @@ class ViewModel: ObservableObject {
             }
         }
         database.add(findOperation)
-//        return recID
     }
     
     func findReminderForRecID(reminder: Reminder, process: String, completionHandler: @escaping (Result<Void, Error>) -> Void) {
-        
-//        let predicate = NSPredicate(format: "medName == %@ && intakeTime == %@", reminder.medName, reminder.intakeTime)
         let predicate = NSCompoundPredicate(
             type: .and,
             subpredicates: [
@@ -342,7 +308,7 @@ class ViewModel: ObservableObject {
             DispatchQueue.main.async {
                 switch result {
                     case .success(_):
-                        print("we found it!")
+                        print("we found the reminder!")
                         if process == "delete" {
                             self.deleteMeds(recID: recID) { _ in }
                         }
@@ -353,16 +319,10 @@ class ViewModel: ObservableObject {
             }
         }
         database.add(findOperation)
-//        return recID
     }
     
     
     func deleteMeds(recID: CKRecord.ID, completionHandler: @escaping (Result<Void, Error>) -> Void) {
-//    func deleteMeds(med: Med, completionHandler: @escaping (Result<Void, Error>) -> Void) {
-//        var recID = CKRecord.ID()
-//        let recID = findMedToDelete(med: med) { _ in }
-
-
         let deleteMedRecordOperation = CKModifyRecordsOperation(recordIDsToDelete: [recID])
         deleteMedRecordOperation.perRecordDeleteBlock = {recordID, result in
             switch result {
@@ -393,65 +353,7 @@ class ViewModel: ObservableObject {
     
     
     // MARK: - Helpers
-    
-    
-    
-/// Fetches the last reminder record
-/// - Parameter completionHandler: An optional handler to process completion `success` or `failure`.
-    func getLastReminderOrCallCreateReminder(med: Med, reminders: [Reminder], name: String, completionHandler: ((Result<Void, Error>) -> Void)? = nil) {
-//        var predicate: NSPredicate = nil
-//        let predicate = NSPredicate(format: "medName =%@", name)
-        let recordID = CKRecord.ID()
-        
-//        let reminderQuery = CKQuery(recordType: "Reminder", predicate: predicate)
-//        var recordID = CKRecord.ID()
-        
-//        let reminderOperation = CKQueryOperation(query: reminderQuery)
-        
-//        database.perform(reminderQuery, inZoneWith: nil) { records, error in
-//            guard let records = records else { return }
-//            //                self.createReminderRecord(med: med, reminder: reminder)
-//
-//            recordID = records[0].recordID
-//
-////            if records[0] != nil {
-////            }
-//        }
 
-        
-//        reminderOperation.desiredKeys = ["medName", "intakeType", "intakeTimes", "intakeAmount", "delay", "allowSnooze", "notes"]
-        
-        // Here, we will use the convenience "fetch" method on CKDatabase, instead of
-        // CKFetchRecordsOperation, which is more flexible but also more complex.
-        database.fetch(withRecordID: recordID) { record, error in
-            if let record = record {
-                os_log("Record with ID \(record.recordID.recordName) was fetched.")
-                if (record["medName"] as? String) != nil {
-                    DispatchQueue.main.async {
-                        self.oldReminderRecord = record
-                        self.reminderRecordIDToUpdate = recordID
-//                        return {record, recordID}
-                    }
-                }
-            }
-            if record == nil {
-                print("renee you gotta g back to the next line because apparently this function is being used")
-//                self.createReminderRecord(med: med, reminders: reminders)
-            }
-
-            if let error = error {
-                self.reportError(error)
-
-                // If a completion was supplied, pass along the error here.
-                completionHandler?(.failure(error))
-            } else {
-                // If a completion was supplied, like during tests, call it back now.
-                completionHandler?(.success(()))
-            }
-        }
-    }
-    
-    
     func findAllRemindersForMed(med: Med, medRecID: CKRecord.ID, reminders: [Reminder], process: String, completionHandler: @escaping (Result<Void, Error>) -> Void) {
         let predicate = NSPredicate(format: "medName = %@", med.name)
         let findQuery = CKQuery(recordType: "Reminder", predicate: predicate)
@@ -529,9 +431,11 @@ class ViewModel: ObservableObject {
                 switch result {
                     case .success(_):
                         print("success in updating reminders records!")
+                        self.getMedData() {_ in}
+                        self.getReminderData() {_ in}
 //                        self.getMedData()
 //                        self.getReminderData()
-//                        print("medData: \(self.medData), reminderData: \(self.reminderData)")
+                        print("medData: \(self.medData), reminderData: \(self.reminderData)")
 
                     case .failure(let error):
                         self.reportError(error)
@@ -544,9 +448,32 @@ class ViewModel: ObservableObject {
 
         }
         self.database.add(updateAndSaveRemindersOperation)
-
     }
     
+    
+    //MARK: - Handling colors:
+    func StringFromColor(color: Color) -> String {
+        let components = color.cgColor?.components
+        return "[\(components![0]), \(components![1]), \(components![2]), \(components![3])"
+    }
+    
+
+    
+    func ColorFromString(string: String) -> Color {
+        let componentsString: String = string
+        componentsString.dropFirst(1)
+        componentsString.dropLast(1)
+        let components = componentsString.components(separatedBy: ",")
+        
+        return Color(.sRGB, red: CGFloat((components[0] as NSString).floatValue),
+                     green: CGFloat((components[1] as NSString).floatValue),
+                      blue: CGFloat((components[2] as NSString).floatValue),
+                     opacity: 1)
+    }
+    
+
+      // MARK: - Helper Error Type
+
     private func reportError(_ error: Error) {
         guard let ckerror = error as? CKError else {
             os_log("Not a CKError: \(error.localizedDescription)")

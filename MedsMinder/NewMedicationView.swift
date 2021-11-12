@@ -58,7 +58,7 @@ struct NewMedicationView: View {
                
                HStack {
                    Spacer()
-                    ColorPicker("Pill color", selection: $color)
+                    ColorPicker("Pill color", selection: $color, supportsOpacity: false)
                        .padding(.horizontal)
                }
                

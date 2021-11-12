@@ -69,16 +69,14 @@ struct MedicationsView: View {
                 }) {
                     Image(systemName: "plus")
                 }
-                .sheet(isPresented: $showNewMedPopover) {
+                .sheet(isPresented: $showNewMedPopover, onDismiss: didDismissCreateNewMed) {
                     NavigationView {
                         NewMedicationView(medData: $newMedData, color: $color)
                             .navigationBarTitle("New Medication", displayMode: .inline)
                             .navigationBarItems(
                                 leading:
-                                    Button(action: {
+                                    Button("Dismiss", action: {
                                         showNewMedPopover.toggle()
-                                    }, label: {
-                                        Text("Close")
                                     })
                                 , trailing:
                                     Button("Add") {
@@ -102,10 +100,12 @@ struct MedicationsView: View {
 //                }
                 .onChange(of: scenePhase) { phase in
                     if phase == .inactive {
-                        print("hello")
+                        print("hello from medicationsView")
     //                    saveAction()
                     }
-                    data.getMedData()
+                    print("we are in the onchange in medicationsview!!!")
+                    data.getMedData() {_ in}
+                    data.getReminderData() {_ in}
 //                    notificationsBuilder.scheduleNotifications(reminderData: data.reminderData, medData: data.medData)
     //                doSubmission(med: Med)
                 }
@@ -122,6 +122,21 @@ struct MedicationsView: View {
         
     }
     
+    func didDismissCreateNewMed() {
+        print("doing the things for when you dismiss a sheet")
+//        Task {
+//            do {
+//            } catch {
+//                print("error in dismissing create new med")
+//                
+//            }
+//            
+//        }
+        
+        data.getMedData() {_ in}
+        data.getReminderData(){_ in}
+    }
+    
     func deleteMeds(at offsets: IndexSet) {
         guard let firstIndex = offsets.first else {
             return
@@ -130,11 +145,8 @@ struct MedicationsView: View {
         let medName = data.medData[firstIndex].name
         print("we are in deleteMeds in mainview, here is medName aka the one youre trying to delete: \(medName)")
         data.findMedForRecID(med: med, reminders: nil, process: "delete") { _ in }
-//        data.deleteMeds(med: med) { _ in }
         data.medData.remove(at: firstIndex)
         data.reminderData.removeAll {$0.medName == medName}
-
-        
     }
     
 }

@@ -95,7 +95,7 @@ public class LocalNotificationManager: ObservableObject {
 
                 guard error == nil else { return }
 
-                print("Notification scheduled! --- ID = \(notification.id)")
+//                print("Notification scheduled! --- ID = \(notification.id)")
             }
         }
     }

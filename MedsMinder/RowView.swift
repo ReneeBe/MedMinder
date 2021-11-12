@@ -27,6 +27,7 @@ struct RowView: View {
             }
             Button(action: {
                 self.showAddReminderView = true
+                print("medName and medColor: \(String(describing: med.name)), \(String(describing: med.color))")
                 print("permissionGranted?: \(permissionGranted)")
             }) {
                     VStack(alignment: .leading) {
@@ -45,7 +46,7 @@ struct RowView: View {
                     .foregroundColor(Color(.darkGray))
             }
             .buttonStyle(PlainButtonStyle())
-            .sheet(isPresented: $showAddReminderView, content: {
+            .sheet(isPresented: $showAddReminderView, onDismiss: didDismissAddReminders, content: {
                 let times: [Date] = collectReminderTimes()
                 let intakeType = med.reminders != [] ? "Scheduled Intake" : "On Demand"
 //                if med.reminders != [] {
@@ -81,6 +82,11 @@ struct RowView: View {
         }
         .padding()
 //        Divider()
+    }
+    func didDismissAddReminders() {
+        print("we dismissed add reminderview")
+        data.getMedData() { _ in }
+        data.getReminderData(){ _ in }
     }
     
     func dateFormatting(date: Date) -> String {

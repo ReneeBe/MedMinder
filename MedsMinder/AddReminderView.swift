@@ -128,9 +128,9 @@ struct AddReminderView: View {
             .navigationBarTitle(Text("Add Reminder"), displayMode: .inline)
             .navigationBarItems(
                 leading:
-                    Button(action: {
+                    Button("Dismiss", action: {
                         showAddReminderView = false
-                    }, label: {Text("Cancel")} ),
+                    }),
                 trailing:
                     Button(action: {
                         print("pressed save in addreminderview")
@@ -169,9 +169,6 @@ struct AddReminderView: View {
                         }
                     }, label: {Text("Save")} )
                 )
-//            .onAppear{
-//                print(times)
-//            }
             }
 
 

@@ -48,7 +48,7 @@ extension Med {
     static var data: [Med] {
         [
             Med( name: "Medication", details: "Every Morning", format: "tablet", color: .white, shape: ["circle.fill", "1"], engraving: "ABC", dosage: 1, scheduled: true, reminders: [], history: []),
-            Med( name: "Medication", details: "3 Times A Day", format: "tablet", color: Color(.systemGreen), shape: ["circle.fill", "3"], engraving: "123", dosage: 1, scheduled: true, reminders: [], history: []),
+            Med( name: "Medication", details: "3 Times A Day", format: "tablet", color: .blue, shape: ["circle.fill", "3"], engraving: "123", dosage: 1, scheduled: true, reminders: [], history: []),
             Med( name: "1/2 Medication", details: "Taken 2 Hours Ago", format: "tablet", color: .white, shape: ["circle.fill", "2"], engraving: "XYZ", dosage: 0.5, scheduled: false, reminders: [], history: [])
 //            Med( name: "Medication", details: "Every Morning", format: "tablet", color: .white, shape: ["circle.fill", "1"], engraving: "ABC", dosage: 1, scheduled: true, reminders: [], reminderRef: [], history: []),
 //            Med( name: "Medication", details: "3 Times A Day", format: "tablet", color: Color(.systemGreen), shape: ["circle.fill", "3"], engraving: "123", dosage: 1, scheduled: true, reminders: [], reminderRef: [], history: []),

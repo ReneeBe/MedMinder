@@ -104,7 +104,7 @@ struct MainView: View {
                                         Button("Add") {
                                             let newMed = Med(name: newMedData.name, details: "Every Evening", format: newMedData.format, color: color, shape: newMedData.shape, engraving: newMedData.engraving, dosage: Double(1), scheduled: false, reminders: [], history: [])
                                             data.medData.append(newMed)
-                                            print("we added to meds!: \(data.medData)")
+//                                            print("we added to meds!: \(data.medData)")
                                             data.saveRecord(meds: [newMed])
 //                                            saveAction()
 //                                            meds.saveRecord(newMed)
