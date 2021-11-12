@@ -454,18 +454,16 @@ class ViewModel: ObservableObject {
     //MARK: - Handling colors:
     func StringFromColor(color: Color) -> String {
         let components = color.cgColor?.components
-        return "[\(components![0]), \(components![1]), \(components![2]), \(components![3])"
+        return "\(components![0]),\(components![1]),\(components![2]),\(components![3])"
     }
     
 
     
     func ColorFromString(string: String) -> Color {
-        let componentsString: String = string
-        componentsString.dropFirst(1)
-        componentsString.dropLast(1)
-        let components = componentsString.components(separatedBy: ",")
-        
-        return Color(.sRGB, red: CGFloat((components[0] as NSString).floatValue),
+//        let componentsString: String = string
+        let components = string.components(separatedBy: ",")
+        return Color(.sRGB,
+                     red: CGFloat((components[0] as NSString).floatValue),
                      green: CGFloat((components[1] as NSString).floatValue),
                       blue: CGFloat((components[2] as NSString).floatValue),
                      opacity: 1)
