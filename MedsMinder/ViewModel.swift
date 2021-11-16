@@ -254,11 +254,13 @@ class ViewModel: ObservableObject {
         let findQuery = CKQuery(recordType: "Med", predicate: predicate)
         let findOperation = CKQueryOperation(query: findQuery)
         var recID = CKRecord.ID()
+        var medRecord = CKRecord(recordType: "Med")
         
         findOperation.recordMatchedBlock = { recordID, result in
             switch result {
-                case .success(_):
+                case .success(let record):
                     recID = recordID
+                    medRecord = record
                 case .failure(let error):
                     print("error in fetching Med recordID to delete: \(error)")
             }
@@ -269,10 +271,12 @@ class ViewModel: ObservableObject {
                 switch result {
                     case .success(_):
                         print("we found the med!")
-                        if process == "delete" {
+                        if process == "deleteMed" {
                             self.deleteMeds(recID: recID) { _ in }
                         } else if process == "update reminders" {
                             self.findAllRemindersForMed(med: med, medRecID: recID, reminders: reminders ?? [], process: "update reminders") { _ in}
+                        } else if process == "deleteReminder" {
+                            self.findReminderForRecID(med: medRecord, medRecID: recID, reminder: reminders![0], process: process) { _ in }
                         }
                     case .failure(let error):
                         print("we got an error in the result block to find the recordID of the med to delete: \(error)")
@@ -282,7 +286,7 @@ class ViewModel: ObservableObject {
         database.add(findOperation)
     }
     
-    func findReminderForRecID(reminder: Reminder, process: String, completionHandler: @escaping (Result<Void, Error>) -> Void) {
+    func findReminderForRecID(med: CKRecord, medRecID: CKRecord.ID?, reminder: Reminder, process: String, completionHandler: @escaping (Result<Void, Error>) -> Void) {
         let predicate = NSCompoundPredicate(
             type: .and,
             subpredicates: [
@@ -300,7 +304,7 @@ class ViewModel: ObservableObject {
                 case .success(_):
                     recID = recordID
                 case .failure(let error):
-                    print("error in fetching Med recordID to delete: \(error)")
+                    print("error in fetching Reminder recordID: \(error)")
             }
         }
         
@@ -309,8 +313,10 @@ class ViewModel: ObservableObject {
                 switch result {
                     case .success(_):
                         print("we found the reminder!")
-                        if process == "delete" {
+                        if process == "deleteMed" {
                             self.deleteMeds(recID: recID) { _ in }
+                        } else if process == "deleteReminder"{
+                            self.deleteReminders(med: med, medRecID: medRecID!, recID: recID) { _ in }
                         }
                         
                     case .failure(let error):
@@ -337,7 +343,7 @@ class ViewModel: ObservableObject {
             DispatchQueue.main.async {
                 switch result {
                     case .success(_):
-                        print("success in delete record!")
+                        print("success in delete med record!")
                         self.getMedData()
                         self.getReminderData()
                 case .failure(let error):
@@ -348,6 +354,34 @@ class ViewModel: ObservableObject {
             }
         }
         database.add(deleteMedRecordOperation)
+     }
+    
+    func deleteReminders(med: CKRecord, medRecID: CKRecord.ID, recID: CKRecord.ID, completionHandler: @escaping (Result<Void, Error>) -> Void) {
+        let deleteRemRecordOperation = CKModifyRecordsOperation(recordIDsToDelete: [recID])
+        deleteRemRecordOperation.perRecordDeleteBlock = {recordID, result in
+            switch result {
+                case.success(_):
+                    print("we're deleting the reminder record!")
+                case .failure(let error):
+                    print("error in deleting reminder record: \(error)")
+            }
+        }
+        
+        deleteRemRecordOperation.modifyRecordsResultBlock = { result in
+            DispatchQueue.main.async {
+                switch result {
+                    case .success(_):
+                        print("success in delete reminder record!")
+                        self.getMedData()
+                        self.getReminderData()
+                case .failure(let error):
+                    self.reportError(error)
+                    print("we hit an error in the modify records result block of deleteReminders: \(error)")
+                    completionHandler(.failure(error))
+                }
+            }
+        }
+        database.add(deleteRemRecordOperation)
      }
 
     

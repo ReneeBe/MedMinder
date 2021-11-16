@@ -25,11 +25,13 @@ struct MedsMinderApp: App {
     var body: some Scene {
         WindowGroup {
 //            NavigationView {
-                ContentView(permissionGranted: $permissionGranted) {
+            ContentView(meds: $localData.meds, permissionGranted: $permissionGranted) {
                     print("RENEE we are in the save action of medsminderapp")
-                    data.updateAndSave(meds: data.medData)
+//                    data.updateAndSave(meds: data.medData)
                     print("saved! \(data.medData)")
+                    localData.meds = data.medData                
                     localData.save()
+
                 }
                 .environmentObject(data)
 //                ContentView().environmentObject(data)
@@ -71,6 +73,8 @@ struct MedsMinderApp: App {
                 self.checkPermissions()
                 print("renee we disabled notifications builder but you cant delete anything else until you get it back its the next line below right here:")
                 notificationsBuilder.scheduleNotifications(reminderData: data.reminderData, medData: data.medData)
+//                print("localData from medsminderapp: \(localData)")
+
             }
 //            .onAppear {
 //                MedsMinderApp.data.getData()

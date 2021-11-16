@@ -12,7 +12,7 @@ import CloudKit
 
 struct ContentView: View {
     @EnvironmentObject var data: ViewModel
-//    @Binding var meds: [Med]
+    @Binding var meds: [Med]
     @ObservedObject var notificationsBuilder = LocalNotificationManager()
     @Environment(\.scenePhase) private var scenePhase
     @Binding var permissionGranted: Bool
@@ -28,7 +28,7 @@ struct ContentView: View {
     
     var body: some View {
         TabView {
-            RemindersView(permissionGranted: $permissionGranted)
+            RemindersView(meds: $meds, permissionGranted: $permissionGranted)
                 .tabItem {
                     Label("Reminders", systemImage: "clock.fill").font(.title)
                 }
@@ -79,7 +79,7 @@ struct ContentView: View {
             .onChange(of: scenePhase) { phase in
                 if phase == .inactive {
                     print("hello")
-//                    saveAction()
+                    saveAction()
                 }
                 print("we are in the else of of the onchange in contentview!")
                 
@@ -91,6 +91,7 @@ struct ContentView: View {
 //                data.getAllData()
                 data.getMedData()
                 data.getReminderData()
+                print("localData from ContentView: \(meds)")
                 notificationsBuilder.requestAuthorization(reminderData: data.reminderData, medData: data.medData)
                 notificationsBuilder.scheduleNotifications(reminderData: data.reminderData, medData: data.medData)
 //                meds.getData()
@@ -131,6 +132,6 @@ struct ContentView: View {
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView(permissionGranted: .constant(true), saveAction: {})
+        ContentView(meds: .constant(MedData().meds), permissionGranted: .constant(true), saveAction: {})
     }
 }

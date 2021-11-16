@@ -30,7 +30,6 @@ struct NewMedicationView: View {
                Group {
                     TextField("Input Medication Name", text: $medData.name)
                          .padding(.horizontal)
-//                         .padding(.top, 25)
                     Image(systemName: medData.shape[0] != "" ? medData.shape[0] : "pills")
                          .resizable()
                          .scaledToFit()
@@ -43,15 +42,13 @@ struct NewMedicationView: View {
                                         .shadow(color: Color.white, radius: 3)
                               }
                          )
-//                         .padding(.vertical)
-
                     Picker("Medication Format", selection: $medData.format) {
                          ForEach(medType.allCases) { med in
                               Text(med.rawValue)
                          }
                     }
                     .pickerStyle(SegmentedPickerStyle())
-                   .padding()
+//                   .padding()
                }
                
                Divider()
@@ -123,8 +120,7 @@ struct NewMedicationView: View {
                          .padding(.horizontal, 50)
                }
           }
-          .foregroundColor(Color(.darkGray))
-
+//          .foregroundColor(Color(.darkGray))
         }
     }
 }

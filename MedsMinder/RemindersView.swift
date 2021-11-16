@@ -11,7 +11,7 @@ import CloudKit
 
 struct RemindersView: View {
     @EnvironmentObject var data: ViewModel
-    //    @Binding var meds: [Med]
+    @Binding var meds: [Med]
     @ObservedObject var notificationsBuilder = LocalNotificationManager()
     @Environment(\.scenePhase) private var scenePhase
     @State private var showNewMedPopover = false
@@ -20,8 +20,7 @@ struct RemindersView: View {
     @State private var newMedData = Med.Data(format: "tablet")
     @State private var color: Color = Color(.systemYellow)
     @State private var showDeleteButton = false
-
-    //    public let saveAction: () -> Void
+//    public let saveAction: () -> Void
     
     var body: some View {
         NavigationView {
@@ -32,8 +31,8 @@ struct RemindersView: View {
                         let med: Med = findMed(reminder: self.data.reminderData[i])
                         ReminderRowView(showAddReminderView: showAddReminderView, permissionGranted: $permissionGranted, reminder: self.$data.reminderData[i], med: med)
                     }
-//                    }.onDelete(perform: deleteMeds)
-//
+                    .onDelete(perform: self.deleteReminder)
+                }
 //                    HStack (alignment: .top){
 //                        Text("On Demand")
 //                        Spacer()
@@ -48,34 +47,15 @@ struct RemindersView: View {
 //                        }
 //                    }
 //                    .onDelete(perform: self.deleteMeds)
-                }
+//                }
                 .listRowBackground(Color(.systemBlue).opacity(0.06))
                 .foregroundColor(Color(.darkGray))
                 .listStyle(InsetListStyle())
     //                .padding(15)
             }
-                .navigationBarTitle("Reminders", displayMode: .inline)
-//            .navigationBarItems(
-//                leading:
-//                    Button( action: {
-//                        showDeleteButton.toggle()
-//                    }) {
-//                        if showDeleteButton {
-//                            Text("Done")
-//                        } else {
-//                            Text("Edit")
-//                        }
-//                    },
-//
-//    //                EditButton(),
-//                trailing:
-//                    Button(action: {
-//                            showNewMedPopover.toggle()
-//                    }) {
-//                        Image(systemName: "plus")
-//                    }
-//            )
-//            .navigationBarBackButtonHidden(true)
+//        }
+            .navigationBarTitle("Reminders", displayMode: .inline)
+        }
             .onChange(of: scenePhase) { phase in
                 if phase == .inactive {
                     print("hello")
@@ -89,22 +69,26 @@ struct RemindersView: View {
                     print("RENEE we are in the remindersview onappear")
                     data.getMedData() {_ in}
                     data.getReminderData(){_ in}
-//                notificationsBuilder.scheduleNotifications(reminderData: data.reminderData, medData: data.medData)
+//                    notificationsBuilder.scheduleNotifications(reminderData: data.reminderData, medData: data.medData)
     //                meds.getData()
     //                doSubmission()
-
             }
         }
-    }
 
-    //    private func deleteMeds(at offsets: IndexSet) {
-    //        guard let firstIndex = offsets.first else {
-    //            return
-    //        }
-    //
-    //        let medName = data.medData[firstIndex].name
-    //        data.deleteMeds(name: medName) { _ in }
-    //    }
+    func deleteReminder(at offsets: IndexSet) {
+        print("attempting to delete reminder")
+        guard let firstIndex = offsets.first else {
+            return
+        }
+        let reminder = data.reminderData[firstIndex]
+//        let med = data.medData.first(where: {$0.name == reminder.medName})
+        let med = findMed(reminder: reminder)
+        data.findMedForRecID(med: med, reminders: [reminder], process: "deleteReminder") { _ in }
+//        data.findReminderForRecID(reminder: reminder, process: "deleteReminder") { _ in }
+//        data.medData.remove(at: firstIndex)
+        data.reminderData.remove(at: firstIndex)
+//        data.deleteReminders(name: medName) { _ in }
+    }
 
     //    func createReminder(med: Med, reminder: Reminder, name: String) {
     //        data.getLastReminderOrCallCreateReminder(med: med, reminder: reminder, name: name)
@@ -121,21 +105,11 @@ struct RemindersView: View {
         }
         return currentMed
     }
-    
-    func deleteMeds(at offsets: IndexSet) {
-        guard let firstIndex = offsets.first else {
-            return
-        }
-        let med = data.medData[firstIndex]
-        let medName = data.medData[firstIndex].name
-        print("we are in deleteMeds in mainview, here is medName aka the one youre trying to delete: \(medName)")
-        data.findMedForRecID(med: med, reminders: nil, process: "delete") { _ in }
-    }
 }
 
 struct RemindersView_Previews: PreviewProvider {
     static var previews: some View {
-        RemindersView(permissionGranted: .constant(true))
+        RemindersView(meds: .constant(MedData().meds), permissionGranted: .constant(true))
     }
 }
 
