@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct NewMedicationView: View {
+//     @ObservedObject var keyboardResponder = KeyboardResponder()
      @Binding var medData: Med.Data
      @Binding var color: Color
      enum medType:String, CaseIterable, Identifiable {
@@ -24,8 +25,8 @@ struct NewMedicationView: View {
     public var fourColumnGrid = [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())]
     
     var body: some View {
-        ZStack {
-          Rectangle().fill(Color(.systemGray5).opacity(0.06)).ignoresSafeArea()
+//        ZStack {
+//          Rectangle().fill(Color(.systemGray5).opacity(0.06)).ignoresSafeArea()
           VStack {
                Group {
                     TextField("Input Medication Name", text: $medData.name)
@@ -50,79 +51,87 @@ struct NewMedicationView: View {
                     .pickerStyle(SegmentedPickerStyle())
 //                   .padding()
                }
-               
                Divider()
-               
-               HStack {
-                   Spacer()
-                    ColorPicker("Pill color", selection: $color, supportsOpacity: false)
-                       .padding(.horizontal)
-               }
-               
-               Divider()
-               
-               Group {
-                   HStack {
-                       Text("Shape")
-                           .fontWeight(.bold)
-                           .padding()
-                       Spacer()
-                   }
-                   LazyVGrid(columns: fourColumnGrid, alignment: .center, spacing: 10) {
-                       ForEach(medShapes, id: \.self) {
-                         let shape = $0[0]
-                         let size = $0[1]
-//                         let sizeDescription = size == "3" ? "large" : size == "1" ? "small" : "medium"
-                         let selected: Bool = medData.shape == [shape, size]
-                         Button(action: {
-                              medData.shape = [shape, size]
-                         }) {
-                              ZStack {
-                                   Image(systemName: shape)
-                                       .foregroundColor(.white)
-                                       .font(.title)
-                                       .imageScale(size == "3" ? .large : size == "1" ? .small : .medium)
-                                   Image(systemName: "\(shape)")
-                                        .foregroundColor(.gray)
-                                        .font(.largeTitle)
-                                        .imageScale(size == "3" ? .large : size == "1" ? .small : .medium)
-                                        .shadow(color: Color.black.opacity(0.3), radius: 5, x: 0, y: 0)
-                                        .padding(12)
-                               }
-                               .background(
-                                   RoundedRectangle(cornerRadius: 15, style: .continuous)
-                                        .strokeBorder(selected ? Color(.systemGray3) : Color.white, lineWidth: 3)
-                               )
-                           }
-                       }
-                   }
-               }
-               
-               Divider()
-               
-               Group {
+               ScrollView {
                     HStack {
-                         Text("Engraving")
-                              .fontWeight(.bold)
-                              .padding()
-                         Spacer()
+                        Spacer()
+                         ColorPicker("Pill color", selection: $color, supportsOpacity: false)
+                            .padding(.horizontal)
                     }
-                    TextField("ABC", text: $medData.engraving)
-                         .foregroundColor(Color(.darkGray))
-                         .font(.title)
-                         .padding()
-                         .padding(.horizontal, 100)
-                         .overlay(
-                              Capsule()
-                                   .stroke(Color(.systemGray3), lineWidth: 3)
-                                   .frame(width: 80, height: 45)
-                         )
-                         .padding(.horizontal, 50)
+                    
+                    Divider()
+                    
+                    Group {
+                        HStack {
+                            Text("Shape")
+                                .fontWeight(.bold)
+                                .padding()
+                            Spacer()
+                        }
+                        LazyVGrid(columns: fourColumnGrid, alignment: .center, spacing: 10) {
+                            ForEach(medShapes, id: \.self) {
+                              let shape = $0[0]
+                              let size = $0[1]
+     //                         let sizeDescription = size == "3" ? "large" : size == "1" ? "small" : "medium"
+                              let selected: Bool = medData.shape == [shape, size]
+                              Button(action: {
+                                   medData.shape = [shape, size]
+                              }) {
+                                   ZStack {
+                                        Image(systemName: shape)
+                                            .foregroundColor(.white)
+                                            .font(.title)
+                                            .imageScale(size == "3" ? .large : size == "1" ? .small : .medium)
+                                        Image(systemName: "\(shape)")
+                                             .foregroundColor(.gray)
+                                             .font(.largeTitle)
+                                             .imageScale(size == "3" ? .large : size == "1" ? .small : .medium)
+                                             .shadow(color: Color.black.opacity(0.3), radius: 5, x: 0, y: 0)
+                                             .padding(12)
+                                    }
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 15, style: .continuous)
+                                             .strokeBorder(selected ? Color(.systemGray3) : Color.white, lineWidth: 3)
+                                    )
+                                }
+                            }
+                        }
+                    }
+                    
+                    Divider()
+                    
+                    Group {
+                         HStack {
+                              Text("Engraving")
+                                   .fontWeight(.bold)
+                                   .padding()
+                              Spacer()
+                         }
+                         TextField("ABC", text: $medData.engraving)
+                              .foregroundColor(Color(.darkGray))
+                              .multilineTextAlignment(.center)
+                              .font(.title)
+                              .padding()
+                              .overlay(
+                                   Capsule()
+                                        .stroke(Color(.systemGray3), lineWidth: 3)
+                              )
+                              .padding(.horizontal, calcPaddingForEngraving(engraving: self.medData.engraving))
+                    }
+
+                    
                }
+               
           }
-//          .foregroundColor(Color(.darkGray))
-        }
+//          .offset(y: -keyboardResponder.currentHeight*0.9)
+//        }
     }
+     
+     func calcPaddingForEngraving(engraving: String) -> CGFloat {
+          let stringLength = engraving.count
+          return CGFloat(105-stringLength)
+     
+     }
 }
 
 struct NewMedicationView_Previews: PreviewProvider {

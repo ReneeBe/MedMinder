@@ -152,8 +152,7 @@ struct AddReminderView: View {
                         med.update(from: med.data)
 //                        data.updateAndSave(meds: [med])
                         createOrUpdateReminder(med: med, reminders: newReminders, name: med.name)
-                        
-
+            
                         if permissionGranted == false {
                             UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) { success, error in
                                 if success {
@@ -170,10 +169,7 @@ struct AddReminderView: View {
                     }, label: {Text("Save")} )
                 )
             }
-
-
         }
-
     }
 
     func hideTimes(index: Int) {
