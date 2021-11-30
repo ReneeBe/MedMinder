@@ -19,10 +19,12 @@ struct ReminderRowView: View {
         HStack {
             if med.dosage == 0.5 {
                 MedImage(med: med)
+                    .frame(width: 75, height: 75)
                     .padding()
                     .mask(Rectangle().padding(.top, 35))
             } else {
                 MedImage(med: med)
+                    .frame(width: 75, height: 75)
                     .padding()
             }
             Button(action: {
@@ -51,7 +53,13 @@ struct ReminderRowView: View {
                 if var currentMed = data.medData.first(where: {$0.name == reminder.medName}) {
                     currentMed.history.append(newHistory)
                     print(currentMed.history)
+//                    data.saveHistoryRecord(history: newHistory) { _ in }
+                    data.findMedForRecID(med: currentMed, reminders: nil, history: newHistory, process: "createHistory") { _ in }
                 }
+                
+//                data.findMedForRecID(med: currentMed, reminders: <#T##[Reminder]?#>, process: <#T##String#>, completionHandler: <#T##(Result<Void, Error>) -> Void#>)
+                
+                
 //                currentMed.history.append(newHistory)
 //                print(currentMed.history)
             }, label: {

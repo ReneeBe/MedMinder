@@ -144,7 +144,7 @@ struct MedicationsView: View {
         let med = data.medData[firstIndex]
         let medName = data.medData[firstIndex].name
         print("we are in deleteMeds in medicationsView, here is medName aka the one youre trying to delete: \(medName)")
-        data.findMedForRecID(med: med, reminders: nil, process: "deleteMed") { _ in }
+        data.findMedForRecID(med: med, reminders: nil, history: nil, process: "deleteMed") { _ in }
         data.medData.remove(at: firstIndex)
         data.reminderData.removeAll {$0.medName == medName}
     }

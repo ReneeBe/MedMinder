@@ -231,25 +231,9 @@ class ViewModel: ObservableObject {
             }
             self.getMedData()
         }
-
-        saveOperation.modifyRecordsResultBlock = { result in
-            DispatchQueue.main.async {
-                switch result {
-                    case .success(_):
-                        print("success in save record!")
-    //                    self.medData.append()
-                    case .failure(let error):
-                        self.reportError(error)
-                        completionHandler?(.failure(error))
-                }
-            }
-        }
-
-        database.add(saveOperation)
     }
-    
         
-    func findMedForRecID(med: Med, reminders: [Reminder]?, process: String, completionHandler: @escaping (Result<Void, Error>) -> Void) {
+    func findMedForRecID(med: Med, reminders: [Reminder]?,  history: History?, process: String, completionHandler: @escaping (Result<Void, Error>) -> Void) {
         let predicate = NSPredicate(format: "name = %@", med.name)
         let findQuery = CKQuery(recordType: "Med", predicate: predicate)
         let findOperation = CKQueryOperation(query: findQuery)
@@ -277,6 +261,8 @@ class ViewModel: ObservableObject {
                             self.findAllRemindersForMed(med: med, medRecID: recID, reminders: reminders ?? [], process: "update reminders") { _ in}
                         } else if process == "deleteReminder" {
                             self.findReminderForRecID(med: medRecord, medRecID: recID, reminder: reminders![0], process: process) { _ in }
+                        } else if process == "createHistory" {
+                            self.saveHistoryRecord(medRecID: recID, history: history!) { _ in }
                         }
                     case .failure(let error):
                         print("we got an error in the result block to find the recordID of the med to delete: \(error)")
@@ -407,7 +393,7 @@ class ViewModel: ObservableObject {
             DispatchQueue.main.async {
                 switch result {
                     case .success(_):
-                    self.createReminderRecord(med: med, medRecID: medRecID, reminders: reminders, reminderRecIDs: reminderRecIDs) {_ in}
+                        self.createReminderRecord(med: med, medRecID: medRecID, reminders: reminders, reminderRecIDs: reminderRecIDs) {_ in}
                     case .failure(let error):
                         print("we got an error in the result block of findAllRemindersForMed to find the recordID of all the meds we need to delete: \(error)")
                 }
@@ -484,6 +470,41 @@ class ViewModel: ObservableObject {
         self.database.add(updateAndSaveRemindersOperation)
     }
     
+    func saveHistoryRecord(medRecID: CKRecord.ID, history: History, completionHandler: ((Result<Void, Error>) -> Void)? = nil) {
+        let newHistory = CKRecord(recordType: "History")
+        newHistory["date"] = history.date
+        newHistory["dosage"] = String(history.dosage)
+        newHistory["medReference"] = CKRecord.Reference(recordID: medRecID, action: .deleteSelf)
+        
+        let saveHistoryOperation = CKModifyRecordsOperation(recordsToSave: [newHistory])
+//        saveHistoryOperation.savePolicy = .allKeys
+
+        saveHistoryOperation.perRecordSaveBlock = { recordID, result in
+            switch result {
+                case .success(_):
+                    print("saving new record!")
+                case .failure(let error):
+                    print("error in perRecordSaveBlock in saveRecord: \(error)")
+                    self.reportError(error)
+            }
+            self.getMedData()
+        }
+
+        saveHistoryOperation.modifyRecordsResultBlock = { result in
+            DispatchQueue.main.async {
+                switch result {
+                    case .success(_):
+                        print("success in save record!")
+    //                    self.medData.append()
+                    case .failure(let error):
+                        self.reportError(error)
+                        completionHandler?(.failure(error))
+                }
+            }
+        }
+
+        database.add(saveHistoryOperation)
+    }
     
     //MARK: - Handling colors:
     func StringFromColor(color: Color) -> String {

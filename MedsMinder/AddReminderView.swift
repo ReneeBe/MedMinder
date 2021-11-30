@@ -11,6 +11,7 @@ import Foundation
 struct AddReminderView: View {
     @Binding var showAddReminderView: Bool
     @Binding var med: Med
+    @State var title: String
     @State var intakeType: String
     @State var times: [Date]
     @State var dosage: Double
@@ -125,7 +126,7 @@ struct AddReminderView: View {
                     }.listStyle(InsetGroupedListStyle())
             }
             .foregroundColor(Color(.darkGray))
-            .navigationBarTitle(Text("Add Reminder"), displayMode: .inline)
+            .navigationBarTitle(Text(title), displayMode: .inline)
             .navigationBarItems(
                 leading:
                     Button("Dismiss", action: {
@@ -177,7 +178,7 @@ struct AddReminderView: View {
     }
 
     func createOrUpdateReminder(med: Med, reminders: [Reminder], name: String ) {
-        data.findMedForRecID(med: med, reminders: reminders, process: "update reminders") { _ in }
+        data.findMedForRecID(med: med, reminders: reminders, history: nil, process: "update reminders") { _ in }
 //        data.createReminderRecord(med: med, reminders: reminders)
     }
 //    let reminderComponents = Calendar.current.dateComponents([.hour, .minute], from: Foundation.Date())

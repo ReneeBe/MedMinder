@@ -83,7 +83,7 @@ struct RemindersView: View {
         let reminder = data.reminderData[firstIndex]
 //        let med = data.medData.first(where: {$0.name == reminder.medName})
         let med = findMed(reminder: reminder)
-        data.findMedForRecID(med: med, reminders: [reminder], process: "deleteReminder") { _ in }
+        data.findMedForRecID(med: med, reminders: [reminder], history: nil, process: "deleteReminder") { _ in }
 //        data.findReminderForRecID(reminder: reminder, process: "deleteReminder") { _ in }
 //        data.medData.remove(at: firstIndex)
         data.reminderData.remove(at: firstIndex)

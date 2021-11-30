@@ -19,11 +19,13 @@ struct RowView: View {
         HStack {
             if med.dosage == 0.5 {
                 MedImage(med: med)
+                    .frame(width: 75, height: 75)
                     .padding()
                     .mask(Rectangle().padding(.top, 35))
             } else {
                 MedImage(med: med)
-                    .padding()
+//                    .padding()
+                    .frame(width: 60, height: 60)
             }
             Button(action: {
                 self.showAddReminderView = true
@@ -56,7 +58,7 @@ struct RowView: View {
 //                    }
 //                }
                 let dosage = med.dosage
-                AddReminderView(showAddReminderView: $showAddReminderView, med: $med, intakeType: intakeType, times: times, dosage: dosage, indices: [], permissionGranted: $permissionGranted)
+                AddReminderView(showAddReminderView: $showAddReminderView, med: $med, title: "Medication Details", intakeType: intakeType, times: times, dosage: dosage, indices: [], permissionGranted: $permissionGranted)
             })
             Spacer()
             Button(action: {
