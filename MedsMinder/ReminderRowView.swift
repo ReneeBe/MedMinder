@@ -19,12 +19,12 @@ struct ReminderRowView: View {
         HStack {
             if med.dosage == 0.5 {
                 MedImage(med: med)
-                    .frame(width: 75, height: 75)
+                    .frame(width: 60, height: 60)
                     .padding()
                     .mask(Rectangle().padding(.top, 35))
             } else {
                 MedImage(med: med)
-                    .frame(width: 75, height: 75)
+                    .frame(width: 60, height: 60)
                     .padding()
             }
             Button(action: {

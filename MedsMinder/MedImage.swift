@@ -31,47 +31,16 @@ struct MedImage: View {
              .shadow(color: .gray, radius: 5)
              .background(
                 Image(systemName: med.shape[0])
-//                    .foregroundColor(Color(.systemGray))
-//                    .font(Font.largeTitle.weight(.black))
-//                    .shadow(radius: 1)
-//                    .shadow(color: Color.gray.opacity(0.05), radius: 0.5)
-//                    .shadow(color: .gray, radius: 5)
+                    .foregroundColor(Color(.systemGray))
+                    .shadow(radius: 1)
 
              )
              .overlay(
-//                Label(getString(string: med.engraving, color: med.color ?? Color.gray))
-//                  ZStack {
-//                Text(getString(string: med.engraving).string)
+//                Label(getString(string: med.engraving))
                 AttributedText(getString(string: med.engraving))
-//                            .bold()
 //                            .shadow(color: Color.white, radius: 2)
 //                            .shadow(color: Color.white, radius: 1)
-//                  }
              )
-//        ZStack {
-//            Image(systemName: med.shape[0])
-////                .stroke()
-//                .resizable()
-//                .scaledToFit()
-//                .foregroundColor(med.color)
-//
-////                .font(Font.largeTitle.weight(.ultraLight))
-//                .background(
-//                        Image(systemName: med.shape[0])
-//                            .foregroundColor(Color(.systemGray))
-////                            .font(Font.largeTitle.weight(.black))
-//                            .shadow(color: .gray, radius: 3)
-//                )
-//            Text(med.engraving)
-////                .padding(5)
-//                .scaledToFit()
-////                .scaledToFill()
-//    //                    .font()
-////                .foregroundColor(Color(.systemGray))
-////                    .shadow(color: .pink, radius: 20)
-//                .shadow(color: Color(.systemGray), radius: 5)
-            
-//        }
     }
     func getString(string: String) -> NSAttributedString {
         return NSAttributedString(string: string, attributes: attrs)
