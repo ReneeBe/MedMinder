@@ -18,7 +18,8 @@ struct MedImage: View {
     var body: some View {
         let attrs = [
 //                    NSAttributedString.Key.foregroundColor: UIColor.gray,
-            NSAttributedString.Key.foregroundColor: colorDarknessCalculator(color: med.color ?? Color.yellow) == true ? UIColor.black.withAlphaComponent(0.2) : UIColor.white.withAlphaComponent(0.2),
+            NSAttributedString.Key.foregroundColor: colorDarknessCalculator(color: med.color ?? Color.yellow) == true ? UIColor.black.withAlphaComponent(0.2) : UIColor.white.withAlphaComponent(0.4),
+//            NSAttributedString.Key.foregroundColor: colorDarknessCalculator(color: med.color ?? Color.yellow) == true ? UIColor.black : UIColor.white,
     //      NSAttributedString.Key.font: UIFont(name: "Georgia-Bold", size: 24)!,
             NSAttributedString.Key.textEffect: NSAttributedString.TextEffectStyle.letterpressStyle as NSString
         ] as [NSAttributedString.Key : Any]
@@ -42,6 +43,7 @@ struct MedImage: View {
 //                Label(getString(string: med.engraving))
                 AttributedText(getString(string: med.engraving, attrs: attrs))
                     .scaledToFit()
+//                    .aspectRatio(contentMode: .fit)
 //                            .shadow(color: Color.white, radius: 2)
 //                            .shadow(color: Color.white, radius: 1)
              )
@@ -80,7 +82,7 @@ struct MedImage: View {
     func StringFromColor(color: Color) -> [CGFloat] {
         let components = color.cgColor?.components
         print("we are in stringFromColor:")
-        print(components)
+        print(components as Any)
 //        if components == nil {
 //            components = color.getRed(color)
 //        }
