@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		AE17A36E2745997900173734 /* KeyboardResponder.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE17A36D2745997900173734 /* KeyboardResponder.swift */; };
 		AE17A373274ED99700173734 /* TabletsOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE17A372274ED99700173734 /* TabletsOptions.swift */; };
+		AE17A3752756780000173734 /* zigZagRectangle.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE17A3742756780000173734 /* zigZagRectangle.swift */; };
 		E70BBE47272706A80067EFD2 /* RemindersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E70BBE46272706A80067EFD2 /* RemindersView.swift */; };
 		E70BBE4B2727077C0067EFD2 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E70BBE4A2727077C0067EFD2 /* ContentView.swift */; };
 		E70BBE4E272742930067EFD2 /* ReminderRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E70BBE4D272742930067EFD2 /* ReminderRowView.swift */; };
@@ -37,6 +38,7 @@
 /* Begin PBXFileReference section */
 		AE17A36D2745997900173734 /* KeyboardResponder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardResponder.swift; sourceTree = "<group>"; };
 		AE17A372274ED99700173734 /* TabletsOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TabletsOptions.swift; path = MedicationConfigurators/TabletsOptions.swift; sourceTree = "<group>"; };
+		AE17A3742756780000173734 /* zigZagRectangle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = zigZagRectangle.swift; sourceTree = "<group>"; };
 		E70BBE46272706A80067EFD2 /* RemindersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemindersView.swift; sourceTree = "<group>"; };
 		E70BBE4A2727077C0067EFD2 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		E70BBE4D272742930067EFD2 /* ReminderRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderRowView.swift; sourceTree = "<group>"; };
@@ -114,6 +116,7 @@
 				E72FAEEA270CAEE70016C80D /* ViewModel.swift */,
 				E75070DC27232F6A0001F259 /* MedicationsView.swift */,
 				E74C6DCC26E004B7001FE596 /* RowView.swift */,
+				AE17A3742756780000173734 /* zigZagRectangle.swift */,
 				E70BBE46272706A80067EFD2 /* RemindersView.swift */,
 				E70BBE4D272742930067EFD2 /* ReminderRowView.swift */,
 				E7AFF6F426E180B8003B37B2 /* NewMedicationView.swift */,
@@ -222,6 +225,7 @@
 			files = (
 				E7AFF6F526E180B8003B37B2 /* NewMedicationView.swift in Sources */,
 				E74C6DAD26DFD8A1001FE596 /* MainView.swift in Sources */,
+				AE17A3752756780000173734 /* zigZagRectangle.swift in Sources */,
 				AE17A36E2745997900173734 /* KeyboardResponder.swift in Sources */,
 				E74C6DCD26E004B8001FE596 /* RowView.swift in Sources */,
 				E736FF7426F8CB0C00A16653 /* Reminder.swift in Sources */,

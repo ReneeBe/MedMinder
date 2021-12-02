@@ -21,7 +21,11 @@ struct RowView: View {
                 MedImage(med: med)
                     .frame(width: 60, height: 60)
                     .padding()
-                    .mask(Rectangle().padding(.top, 35))
+                    .mask(Rectangle().padding(.top, 45))
+                    .shadow(radius: 2)
+                    .shadow(radius: 1)
+//                    .mask(zigZagRectangle().padding(.top, 30))
+
             } else {
                 MedImage(med: med)
                     .frame(width: 60, height: 60)
@@ -30,6 +34,7 @@ struct RowView: View {
             Button(action: {
                 self.showAddReminderView = true
                 print("medName and medColor: \(String(describing: med.name)), \(String(describing: med.color))")
+                print(med.color ?? UIColor.green)
                 print("permissionGranted?: \(permissionGranted)")
             }) {
                     VStack(alignment: .leading) {

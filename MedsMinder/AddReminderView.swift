@@ -37,6 +37,7 @@ struct AddReminderView: View {
                     .fill(Color(.systemGray5).opacity(0.06)).ignoresSafeArea()
                 VStack {
                     MedImage(med: med)
+                        .frame(width: 75, height: 75)
                         .padding()
                     Text(med.name)
                     Picker("Dosage Category", selection: $intakeType) {
@@ -85,6 +86,7 @@ struct AddReminderView: View {
                                     Text("1 Tablet").tag(1.0)
                                     Text("2 Tablets").tag(2.0)
                                 }.accessibility(label: Text("Dosage Per Intake"))
+                                    .pickerStyle(MenuPickerStyle())
                             }
                             HStack {
                                 Toggle(isOn: $allowSnooze) {

@@ -91,14 +91,14 @@ class ViewModel: ObservableObject {
         medOperation.queryResultBlock = { result in
             DispatchQueue.main.async {
                 switch result {
-                case .success(_):
-                        self.medData = newMeds
-//                        print("we got the data for meds!: \(self.medData)")
-                case .failure(let error):
-                    print("we got an error in the completion block med operation")
-                    let ac = UIAlertController(title: "Fetch failed", message: "There was a problem fetching the list of medications; please try again: \(error.localizedDescription)", preferredStyle: .alert)
-                    print("please try again: \(error.localizedDescription)")
-                    ac.addAction(UIAlertAction(title: "OK", style: .default))
+                    case .success(_):
+                            self.medData = newMeds
+//                            print("we got the data for meds!: \(self.medData)")
+                    case .failure(let error):
+                        print("we got an error in the completion block med operation")
+                        let ac = UIAlertController(title: "Fetch failed", message: "There was a problem fetching the list of medications; please try again: \(error.localizedDescription)", preferredStyle: .alert)
+                        print("please try again: \(error.localizedDescription)")
+                        ac.addAction(UIAlertAction(title: "OK", style: .default))
                 }
             }
         }
@@ -231,6 +231,7 @@ class ViewModel: ObservableObject {
             }
             self.getMedData()
         }
+        database.add(saveOperation)
     }
         
     func findMedForRecID(med: Med, reminders: [Reminder]?,  history: History?, process: String, completionHandler: @escaping (Result<Void, Error>) -> Void) {

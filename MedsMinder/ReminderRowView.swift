@@ -21,7 +21,9 @@ struct ReminderRowView: View {
                 MedImage(med: med)
                     .frame(width: 60, height: 60)
                     .padding()
-                    .mask(Rectangle().padding(.top, 35))
+                    .mask(Rectangle().padding(.top, 45))
+                    .shadow(radius: 2)
+                    .shadow(radius: 1)
             } else {
                 MedImage(med: med)
                     .frame(width: 60, height: 60)

@@ -8,6 +8,7 @@
 import SwiftUI
 import UserNotifications
 import CloudKit
+//import UIKit
 
 struct MedicationsView: View {
     @EnvironmentObject var data: ViewModel
@@ -15,7 +16,7 @@ struct MedicationsView: View {
     @State private var showNewMedPopover = false
     @State private var showAddReminderView = false
     @State private var newMedData = Med.Data(format: "tablet")
-    @State private var color: Color = Color(.systemYellow)
+    @State private var color: Color = Color(.blue)
     @State private var showDeleteButton = false
     @Environment(\.scenePhase) private var scenePhase
 //    @State private var addMedState =
