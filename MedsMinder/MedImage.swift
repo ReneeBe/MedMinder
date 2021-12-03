@@ -37,7 +37,6 @@ struct MedImage: View {
                 Image(systemName: med.shape[0])
                     .foregroundColor(Color(.systemGray))
                     .shadow(radius: 1)
-
              )
              .overlay(
 //                Label(getString(string: med.engraving))

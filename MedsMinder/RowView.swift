@@ -20,16 +20,15 @@ struct RowView: View {
             if med.dosage == 0.5 {
                 MedImage(med: med)
                     .frame(width: 60, height: 60)
-                    .padding()
-                    .mask(Rectangle().padding(.top, 45))
+                    .padding(.trailing)
+                    .mask(Rectangle().padding(.top, 30))
                     .shadow(radius: 2)
                     .shadow(radius: 1)
 //                    .mask(zigZagRectangle().padding(.top, 30))
-
             } else {
                 MedImage(med: med)
                     .frame(width: 60, height: 60)
-                    .padding()
+                    .padding(.trailing)
             }
             Button(action: {
                 self.showAddReminderView = true
@@ -90,6 +89,7 @@ struct RowView: View {
         .padding()
 //        Divider()
     }
+    
     func didDismissAddReminders() {
         print("we dismissed add reminderview")
         data.getMedData() { _ in }
