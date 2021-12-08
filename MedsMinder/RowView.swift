@@ -20,14 +20,15 @@ struct RowView: View {
             if med.dosage == 0.5 {
                 MedImage(med: med)
                     .frame(width: 60, height: 60)
-                    .padding(.trailing)
-                    .mask(Rectangle().padding(.top, 30))
+                    .mask(Rectangle().padding(.top, 28))
                     .shadow(radius: 2)
                     .shadow(radius: 1)
-//                    .mask(zigZagRectangle().padding(.top, 30))
+//                    .border(.red, width:2)
+                    .padding(.trailing)
             } else {
                 MedImage(med: med)
                     .frame(width: 60, height: 60)
+//                    .border(.red, width: 2)
                     .padding(.trailing)
             }
             Button(action: {

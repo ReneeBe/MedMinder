@@ -34,19 +34,19 @@ struct NewMedicationView: View {
 //                              .resizable()
 //                              .scaledToFit()
                               .frame(width: 75, height: 75)
-                         Image(systemName: medData.shape[0] != "" ? medData.shape[0] : "pills")
-                              .resizable()
-                              .scaledToFit()
-                              .foregroundColor(color)
-                              .frame(width: 75, height: 75)
-                              .overlay(
-                                   ZStack {
-                                        Text(medData.engraving)
-                                             .bold()
-                                             .shadow(color: Color.white, radius: 2)
-                                             .shadow(color: Color.white, radius: 1)
-                                   }
-                              )
+//                         Image(systemName: medData.shape[0] != "" ? medData.shape[0] : "pills")
+//                              .resizable()
+//                              .scaledToFit()
+//                              .foregroundColor(color)
+//                              .frame(width: 75, height: 75)
+//                              .overlay(
+//                                   ZStack {
+//                                        Text(medData.engraving)
+//                                             .bold()
+//                                             .shadow(color: Color.white, radius: 2)
+//                                             .shadow(color: Color.white, radius: 1)
+//                                   }
+//                              )
                     }
 
                     Picker("Medication Format", selection: $medData.format) {

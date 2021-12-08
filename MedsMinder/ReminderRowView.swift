@@ -20,19 +20,15 @@ struct ReminderRowView: View {
             if med.dosage == 0.5 {
                 MedImage(med: med)
                     .frame(width: 60, height: 60)
-                    .padding(.trailing)
-                    .mask(Rectangle().padding(.top, 30))
-
-//                    .padding()
-//                    .mask(Rectangle().padding(.top, 45))
+                    .mask(Rectangle().padding(.top, 28))
                     .shadow(radius: 2)
                     .shadow(radius: 1)
+                    .padding(.trailing)
             } else {
                 MedImage(med: med)
                     .frame(width: 60, height: 60)
                     .padding(.trailing)
             }
-//            Spacer()
             Button(action: {
                 self.showAddReminderView = true
                 print("permissionGranted?: \(permissionGranted)")
