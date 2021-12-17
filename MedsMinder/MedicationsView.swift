@@ -16,7 +16,7 @@ struct MedicationsView: View {
     @State private var showNewMedPopover = false
     @State private var showAddReminderView = false
     @State private var newMedData = Med.Data(format: "tablet")
-    @State private var color: Color = Color(.blue)
+    @State private var color: [Color] = [Color(.blue), Color(.white)]
     @State private var showDeleteButton = false
     @Environment(\.scenePhase) private var scenePhase
 //    @State private var addMedState =
@@ -81,7 +81,13 @@ struct MedicationsView: View {
                                     })
                                 , trailing:
                                     Button("Add") {
-                                        let newMed = Med(name: newMedData.name, details: "Every Evening", format: newMedData.format, color: color, shape: newMedData.shape, engraving: newMedData.engraving, dosage: Double(1), scheduled: false, reminders: [], history: [])
+//                                        if newMedData.format == "liquid" {
+//                                            newMedData.shape = ["drop.fill"]
+//                                            newMedData.engraving = ""
+//                                        } else if newMedData.format == "capsule" {
+//                                            newMedData.shape = ["capsule.lefthalf.filled"]
+//                                        }
+                                        let newMed = Med(name: newMedData.name, details: "Every Evening", format: newMedData.format, color: color, shape: newMedData.shape, engraving: newMedData.engraving , dosage: Double(1), scheduled: false, reminders: [], history: [])
                                         data.medData.append(newMed)
                                         print("we added to meds!: \(data.medData)")
                                         data.saveRecord(meds: [newMed])

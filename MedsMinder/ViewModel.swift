@@ -72,8 +72,14 @@ class ViewModel: ObservableObject {
                         name: record["name"] as! String,
                         details: record["details"] as! String,
                         format: record["format"] as! String,
-                        color: self.ColorFromString(string: record["color"] as! String) as Color?,
-//                        color: convertStringToColor(string: record["color"] as! String) as Color?,
+                        color: record["color"] != nil ? self.MakeColors(colors: record["color"] as! [String]) : [Color.red],
+//                        for color in record["color"] {
+                            
+//                        }
+//                        color: record["color"] != nil ? [self.ColorFromString(string: record["color"][0] as String), self.ColorFromString(string: record["color"][1] as String)] as [Color?] : [Color.red],
+//                        color: record["color"] != nil ? [Color.green, Color.blue] : [Color.red],
+                        
+//                        color: record["format"] as! String != "capsule" ? [self.ColorFromString(string: record["color"][0] as! String)] as [Color?] : [self.ColorFromString(string: record["color"][0] as! String), self.ColorFromString(string: record["color"][1] as! String)] as [Color?],
                         shape: record["shape"] as! [String],
                         engraving: record["engraving"] as! String,
                         dosage: record["dosage"] as! Double,
@@ -209,8 +215,8 @@ class ViewModel: ObservableObject {
             newMed["name"] = med.name
             newMed["details"] = med.details
             newMed["format"] = med.format
-            newMed["color"] = self.StringFromColor(color: med.color!)
-//            newMed["color"] = convertColorToString(color: med.color ?? Color.black)
+//            newMed["color"] = med.format != "capsule" ? [self.StringFromColor(color: med.color[0])] : [self.StringFromColor(color: med.color[0]), self.StringFromColor(color: med.color[1])]
+            newMed["color"] = [self.StringFromColor(color: med.color[0]!), self.StringFromColor(color: med.color[1] ?? Color.white)]
             newMed["shape"] = med.shape
             newMed["engraving"] = med.engraving
             newMed["dosage"] = med.dosage
@@ -523,6 +529,14 @@ class ViewModel: ObservableObject {
                      green: CGFloat((components[1] as NSString).floatValue),
                       blue: CGFloat((components[2] as NSString).floatValue),
                      opacity: 1)
+    }
+    
+    func MakeColors(colors: [String]) -> [Color] {
+        var colorArray: [Color] = []
+        for color in colors {
+            colorArray.append(ColorFromString(string: color))
+        }
+        return colorArray
     }
     
 

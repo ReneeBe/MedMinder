@@ -105,6 +105,7 @@ public class LocalNotificationManager: ObservableObject {
         let today = Foundation.Date()
         let todayComponents = Calendar.current.dateComponents([.year, .month, .day], from: today)
         print(todayComponents)
+        print("reminders.count: \(reminders.count) and meds.count: \(meds.count)")
         
         if reminders.count > 0 {
             for reminder in reminders {
@@ -112,9 +113,10 @@ public class LocalNotificationManager: ObservableObject {
 //                    let reminders = med.reminders
 //                    for reminder in reminders {
                 let med = meds.filter{ $0.name == reminder.medName}
-//                print("this is the med: \(med)")
+                print("this is the med: \(med) and this is the reminder: \(reminder)")
                 count += 1
                 let reminderComponents = Calendar.current.dateComponents([.hour, .minute], from: reminder.intakeTime)
+                print("hello renee we are in the getnotifications function in notifications", med)
                 let newTime = Notification(id: "reminder #\(count)", title: "Take \(reminder.medName)", datetime: DateComponents(calendar: Calendar.current, year: todayComponents.year, month: todayComponents.month, day: todayComponents.day, hour: reminderComponents.hour, minute: reminderComponents.minute), image: med[0])
                 notifications.append(newTime)
             }

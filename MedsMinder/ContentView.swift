@@ -92,6 +92,7 @@ struct ContentView: View {
                 data.getMedData()
                 data.getReminderData()
                 print("localData from ContentView: \(meds)")
+                print("data from web: \(data.medData)")
                 notificationsBuilder.requestAuthorization(reminderData: data.reminderData, medData: data.medData)
                 notificationsBuilder.scheduleNotifications(reminderData: data.reminderData, medData: data.medData)
 //                meds.getData()

@@ -19,7 +19,7 @@ struct MainView: View {
     @State private var showAddReminderView = false
     @Binding var permissionGranted: Bool
     @State private var newMedData = Med.Data(format: "tablet")
-    @State private var color: Color = Color(.systemYellow)
+    @State private var color: [Color] = [Color(.systemYellow), Color(.white)]
     @State private var showDeleteButton = false
     
 //    public let saveAction: () -> Void

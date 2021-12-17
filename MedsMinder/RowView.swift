@@ -34,7 +34,9 @@ struct RowView: View {
             Button(action: {
                 self.showAddReminderView = true
                 print("medName and medColor: \(String(describing: med.name)), \(String(describing: med.color))")
-                print(med.color ?? UIColor.green)
+//                print(med.color ?? UIColor.green)
+                print(med.color )
+
                 print("permissionGranted?: \(permissionGranted)")
             }) {
                     VStack(alignment: .leading) {
