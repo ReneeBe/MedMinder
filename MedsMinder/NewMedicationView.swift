@@ -47,7 +47,6 @@ struct NewMedicationView: View {
                if medData.format == "tablet" {
                     TabletOptions(medData: $medData, color: $color)
                } else if medData.format == "capsule" {
-//                    medData.shape = ["capsule.lefthalf.filled"]
                     CapsuleOptions(medData: $medData, color: $color)
                } else if medData.format == "liquid" {
                     LiquidOptions(medData: $medData, color: $color)

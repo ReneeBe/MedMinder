@@ -16,10 +16,9 @@ struct MedicationsView: View {
     @State private var showNewMedPopover = false
     @State private var showAddReminderView = false
     @State private var newMedData = Med.Data(format: "tablet")
-    @State private var color: [Color] = [Color(.blue), Color(.white)]
+    @State private var color: [Color] = [Color(.blue), Color(.blue)]
     @State private var showDeleteButton = false
     @Environment(\.scenePhase) private var scenePhase
-//    @State private var addMedState =
     
     var body: some View {
         NavigationView {
@@ -34,7 +33,6 @@ struct MedicationsView: View {
                     .font(.headline)
                     .padding(.leading)
                     .padding(.top)
-    //                    Divider()
                     ForEach(0..<data.medData.count, id: \.self) { i in
                         if data.medData[i].scheduled! {
                             RowView(showAddReminderView: showAddReminderView, permissionGranted: $permissionGranted, med: self.$data.medData[i])
@@ -50,7 +48,6 @@ struct MedicationsView: View {
                     .font(.headline)
                     .padding(.leading)
                     .padding(.top)
-    //                    Divider()
                     ForEach(0..<data.medData.count, id: \.self) { i in
                         if data.medData[i].scheduled! == false {
                             RowView(showAddReminderView: showAddReminderView, permissionGranted: $permissionGranted, med: self.$data.medData[i])
@@ -61,7 +58,6 @@ struct MedicationsView: View {
                 .listRowBackground(Color(.systemBlue).opacity(0.06))
                 .foregroundColor(Color(.darkGray))
                 .listStyle(InsetListStyle())
-    //                .padding(15)
             }
             .navigationBarTitle("Medications", displayMode: .inline)
             .navigationBarItems(trailing:
@@ -81,13 +77,16 @@ struct MedicationsView: View {
                                     })
                                 , trailing:
                                     Button("Add") {
-//                                        if newMedData.format == "liquid" {
-//                                            newMedData.shape = ["drop.fill"]
-//                                            newMedData.engraving = ""
-//                                        } else if newMedData.format == "capsule" {
-//                                            newMedData.shape = ["capsule.lefthalf.filled"]
-//                                        }
-                                        let newMed = Med(name: newMedData.name, details: "Every Evening", format: newMedData.format, color: color, shape: newMedData.shape, engraving: newMedData.engraving , dosage: Double(1), scheduled: false, reminders: [], history: [])
+                                        var newMed = Med(name: newMedData.name, details: "Every Evening", format: newMedData.format, color: color, shape: newMedData.shape, engraving: newMedData.engraving , dosage: Double(1), scheduled: false, reminders: [], history: [])
+                                        if newMed.format == "liquid" {
+                                            newMed.shape = ["drop.fill"]
+                                        } else if newMed.format == "capsule" {
+                                            newMed.shape = ["capsule.lefthalf.filled"]
+                                        }
+                                        if newMed.format != "capsule" {
+                                            newMed.color[1] = newMed.color[0]
+                                        
+                                        }
                                         data.medData.append(newMed)
                                         print("we added to meds!: \(data.medData)")
                                         data.saveRecord(meds: [newMed])
@@ -117,7 +116,6 @@ struct MedicationsView: View {
     //                doSubmission(med: Med)
                 }
                 .onAppear{
-                    print("RENEE we are in the medicationsview onappear")
                     data.getMedData() {_ in}
                     data.getReminderData(){_ in}
                 }
@@ -130,16 +128,6 @@ struct MedicationsView: View {
     }
     
     func didDismissCreateNewMed() {
-        print("doing the things for when you dismiss a sheet")
-//        Task {
-//            do {
-//            } catch {
-//                print("error in dismissing create new med")
-//                
-//            }
-//            
-//        }
-        
         data.getMedData() {_ in}
         data.getReminderData(){_ in}
     }
@@ -150,7 +138,7 @@ struct MedicationsView: View {
         }
         let med = data.medData[firstIndex]
         let medName = data.medData[firstIndex].name
-        print("we are in deleteMeds in medicationsView, here is medName aka the one youre trying to delete: \(medName)")
+//        print("we are in deleteMeds in medicationsView, here is medName aka the one youre trying to delete: \(medName)")
         data.findMedForRecID(med: med, reminders: nil, history: nil, process: "deleteMed") { _ in }
         data.medData.remove(at: firstIndex)
         data.reminderData.removeAll {$0.medName == medName}

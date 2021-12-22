@@ -33,27 +33,10 @@ struct RemindersView: View {
                     }
                     .onDelete(perform: self.deleteReminder)
                 }
-//                    HStack (alignment: .top){
-//                        Text("On Demand")
-//                        Spacer()
-//                    }
-//                    .font(.headline)
-//                    .padding(.leading)
-//                    .padding(.top)
-//    //                    Divider()
-//                    ForEach(0..<data.medData.count, id: \.self) { i in
-//                        if data.medData[i].scheduled! == false {
-//                            RowView(showAddReminderView: showAddReminderView, permissionGranted: $permissionGranted, med: self.$data.medData[i])
-//                        }
-//                    }
-//                    .onDelete(perform: self.deleteMeds)
-//                }
                 .listRowBackground(Color(.systemBlue).opacity(0.06))
                 .foregroundColor(Color(.darkGray))
                 .listStyle(InsetListStyle())
-    //                .padding(15)
             }
-//        }
             .navigationBarTitle("Reminders", displayMode: .inline)
         }
             .onChange(of: scenePhase) { phase in
@@ -66,7 +49,6 @@ struct RemindersView: View {
     //                doSubmission(med: Med)
             }
             .onAppear {
-                    print("RENEE we are in the remindersview onappear")
                     data.getMedData() {_ in}
                     data.getReminderData(){_ in}
 //                    notificationsBuilder.scheduleNotifications(reminderData: data.reminderData, medData: data.medData)

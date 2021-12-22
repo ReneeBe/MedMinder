@@ -77,6 +77,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		AEC2BBF6276D179E00BC2E4F /* ToBeDeleted */ = {
+			isa = PBXGroup;
+			children = (
+				E754287226EA787E0041D5DF /* MainNavigationBar.swift */,
+			);
+			path = ToBeDeleted;
+			sourceTree = "<group>";
+		};
 		E736FF7F26FB6E6000A16653 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -122,7 +130,7 @@
 				E7AFF6F126E180A7003B37B2 /* AddReminderView.swift */,
 				E7AFF6F726E2DBAB003B37B2 /* ProgressBar.swift */,
 				E7DE71AC26F239CA00BA7C95 /* MedImage.swift */,
-				E754287226EA787E0041D5DF /* MainNavigationBar.swift */,
+				AEC2BBF6276D179E00BC2E4F /* ToBeDeleted */,
 				E7D2EE7926FD024B00DE882D /* Model */,
 				E74C6DAE26DFD8A6001FE596 /* Assets.xcassets */,
 				E74C6DB326DFD8A6001FE596 /* Info.plist */,

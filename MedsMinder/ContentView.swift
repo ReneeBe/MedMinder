@@ -38,70 +38,36 @@ struct ContentView: View {
                 }
 
         }
-//        .font(.headline)
-        
-//        NavigationView {
-//            ZStack {
-//                Color(.systemBlue).opacity(0.06).ignoresSafeArea()
-////                RemindersView(permissionGranted: $permissionGranted)
-//                if showAllReminders == true {
-//                    RemindersView(permissionGranted: $permissionGranted)
-//                } else {
-//                    MedicationsView(permissionGranted: $permissionGranted)
-//                }
-//
-//            }
-//            .navigationBarTitle(showAllReminders ? "Reminders" : "All Medications")
-//            .navigationBarTitleDisplayMode(.large)
-//            .navigationBarItems(
-//                leading: Button(action: {
-//                    showAllReminders.toggle()
-//                    showAllMedications.toggle()
-//                }, label: {
-//                    if showAllReminders == false {
-//                        Text("Reminders")
-//                    } else {
-//                        Text("Medications")
-//                    }
-//                }),
-//                trailing: Button(action: {
-//                    print("pushed the add button")
-//                }, label: {
-//                    if showAllMedications == true {
-//                        Image(systemName: "plus").accessibilityLabel(Text("Add Medication"))
-//
-//
-//                    } else if showAllReminders == true {
-//                        Image(systemName: "plus").accessibilityLabel(Text("Add Reminder"))
-//                    }
-//                })
-//            )
             .onChange(of: scenePhase) { phase in
                 if phase == .inactive {
                     print("hello")
                     saveAction()
                 }
-                print("we are in the else of of the onchange in contentview!")
+                print("WE ARE IN THE ELSE: we are in the else of of the onchange in contentview!")
                 
                 notificationsBuilder.scheduleNotifications(reminderData: data.reminderData, medData: data.medData)
-//                doSubmission(med: Med)
+    //                doSubmission(med: Med)
             }
-            .onAppear {
+//        .onChange(of: data) { med in
+//            print("we are in the onchange of data in contentview")
+//            data.getMedData()
+//            data.getReminderData()
+//        }
+        .onAppear {
 //                data.init()
 //                data.getAllData()
-                data.getMedData()
-                data.getReminderData()
-                print("localData from ContentView: \(meds)")
-                print("data from web: \(data.medData)")
-                notificationsBuilder.requestAuthorization(reminderData: data.reminderData, medData: data.medData)
-                notificationsBuilder.scheduleNotifications(reminderData: data.reminderData, medData: data.medData)
+            data.getMedData()
+            data.getReminderData()
+            print("localData from ContentView: \(meds)")
+            print("data from web: \(data.medData)")
+            notificationsBuilder.requestAuthorization(reminderData: data.reminderData, medData: data.medData)
+            notificationsBuilder.scheduleNotifications(reminderData: data.reminderData, medData: data.medData)
 //                meds.getData()
 //                doSubmission()
 
-            }
-            .environmentObject(data)
-//        }
-//            .environmentObject(data)
+        }
+        .environmentObject(data)
+
     }
     
 //    private func deleteMeds(at offsets: IndexSet) {

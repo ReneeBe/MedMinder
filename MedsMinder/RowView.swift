@@ -23,27 +23,22 @@ struct RowView: View {
                     .mask(Rectangle().padding(.top, 28))
                     .shadow(radius: 2)
                     .shadow(radius: 1)
-//                    .border(.red, width:2)
                     .padding(.trailing)
             } else {
                 MedImage(med: med)
                     .frame(width: 60, height: 60)
-//                    .border(.red, width: 2)
                     .padding(.trailing)
             }
             Button(action: {
                 self.showAddReminderView = true
-                print("medName and medColor: \(String(describing: med.name)), \(String(describing: med.color))")
-//                print(med.color ?? UIColor.green)
-                print(med.color )
+//                print("medName and medColor: \(String(describing: med.name)), \(String(describing: med.color))")
+//                print(med.color)
 
                 print("permissionGranted?: \(permissionGranted)")
             }) {
                     VStack(alignment: .leading) {
                         Text(med.name)
                             .font(.title2).fontWeight(.semibold)
-//                        Text(med.details)
-//                            .font(.callout)
                         let times = getTimes()
                         LazyHGrid(rows: timeRows, alignment: .top) {
                             ForEach(0..<times.count, id: \.self) { i in
@@ -58,12 +53,6 @@ struct RowView: View {
             .sheet(isPresented: $showAddReminderView, onDismiss: didDismissAddReminders, content: {
                 let times: [Date] = collectReminderTimes()
                 let intakeType = med.reminders != [] ? "Scheduled Intake" : "On Demand"
-//                if med.reminders != [] {
-//                    ForEach(med.reminders) { reminder in
-////                    for reminder in med.reminders {
-//                        times.append(reminder.intakeTime)
-//                    }
-//                }
                 let dosage = med.dosage
                 AddReminderView(showAddReminderView: $showAddReminderView, med: $med, title: "Medication Details", intakeType: intakeType, times: times, dosage: dosage, indices: [], permissionGranted: $permissionGranted)
             })
@@ -90,7 +79,6 @@ struct RowView: View {
             .buttonStyle(BorderlessButtonStyle())
         }
         .padding()
-//        Divider()
     }
     
     func didDismissAddReminders() {
@@ -119,14 +107,6 @@ struct RowView: View {
                 intakeTimes.append(reminder.intakeTime)
             }
         }
-        
-        
-//        if med.reminders != []  {
-////            ForEach(med.reminders) { reminder in
-//            for reminder in med.reminders {
-//                intakeTimes.append(reminder.intakeTime)
-//            }
-//        }
         if intakeTimes == [] {
             intakeTimes = [Date()]
         }

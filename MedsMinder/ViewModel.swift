@@ -216,7 +216,7 @@ class ViewModel: ObservableObject {
             newMed["details"] = med.details
             newMed["format"] = med.format
 //            newMed["color"] = med.format != "capsule" ? [self.StringFromColor(color: med.color[0])] : [self.StringFromColor(color: med.color[0]), self.StringFromColor(color: med.color[1])]
-            newMed["color"] = [self.StringFromColor(color: med.color[0]!), self.StringFromColor(color: med.color[1] ?? Color.white)]
+            newMed["color"] = [self.StringFromColor(color: med.color[0]!), self.StringFromColor(color: med.color[1] ?? med.color[0]!)]
             newMed["shape"] = med.shape
             newMed["engraving"] = med.engraving
             newMed["dosage"] = med.dosage
