@@ -3,7 +3,7 @@
 //  MedsMinder
 //
 //  Created by Renee Berger on 9/2/21.
-//
+
 
 import SwiftUI
 import Foundation
@@ -11,6 +11,7 @@ import Foundation
 struct AddReminderView: View {
     @Binding var showAddReminderView: Bool
     @Binding var med: Med
+    @State var title: String
     @State var intakeType: String
     @State var times: [Date]
     @State var dosage: Double
@@ -18,14 +19,17 @@ struct AddReminderView: View {
     @State var allowSnooze: Bool = true
     @State var notes: String = ""
     @State var indices: [Int] = []
-    
+    @Binding var permissionGranted: Bool
+    @EnvironmentObject var data: ViewModel
+
+
     enum intakeTypes: String, CaseIterable, Identifiable {
         case scheduled = "Scheduled Intake"
         case demand = "On Demand"
 
         var id: String { self.rawValue }
     }
-    
+
     var body: some View {
         NavigationView {
             ZStack {
@@ -33,12 +37,15 @@ struct AddReminderView: View {
                     .fill(Color(.systemGray5).opacity(0.06)).ignoresSafeArea()
                 VStack {
                     MedImage(med: med)
+                        .frame(width: 75, height: 75)
                         .padding()
                     Text(med.name)
                     Picker("Dosage Category", selection: $intakeType) {
                         ForEach(intakeTypes.allCases) { intake in
                             Text("\(intake.rawValue)").tag(intake)
-                        }
+                        }.onAppear(perform: {
+                            intakeType = "Scheduled Intake"
+                        })
                     }
                     .pickerStyle(SegmentedPickerStyle())
                     .padding()
@@ -50,11 +57,9 @@ struct AddReminderView: View {
                                         Text("Intake")
                                         Spacer()
                                         DatePicker("", selection: self.$times[i], displayedComponents:.hourAndMinute)
-                                        Button(action:
-                                                {
-                                                    hideTimes(index: i)
-                                                }
-                                        ) {
+                                        Button(action: {
+                                            hideTimes(index: i)
+                                        }) {
                                             Image(systemName: "minus.circle.fill").foregroundColor(Color(.systemRed))
                                                 .accessibility(label: Text("delete intake"))
                                         }
@@ -81,6 +86,7 @@ struct AddReminderView: View {
                                     Text("1 Tablet").tag(1.0)
                                     Text("2 Tablets").tag(2.0)
                                 }.accessibility(label: Text("Dosage Per Intake"))
+                                    .pickerStyle(MenuPickerStyle())
                             }
                             HStack {
                                 Toggle(isOn: $allowSnooze) {
@@ -110,38 +116,69 @@ struct AddReminderView: View {
                                 Spacer()
                                 TextEditor(text: $notes)
                             }
-                        }.listRowBackground(Color(.systemGray5))
-                    }.listStyle(InsetGroupedListStyle())
+                            if med.history.count > 0 {
+                                HStack {
+                                    Text("History:")
+                                    Spacer()
+                                    Text(verbatim: String(med.history[0].dosage))
+                                }
+                            }
+                        }
+                        .listRowBackground(Color(.systemGray5))
+                    }
+                    .listStyle(InsetGroupedListStyle())
             }
             .foregroundColor(Color(.darkGray))
-            .navigationBarTitle(Text("Add Reminder"), displayMode: .inline)
+            .navigationBarTitle(Text(title), displayMode: .inline)
             .navigationBarItems(
                 leading:
-                    Button(action: { showAddReminderView = false }, label: {Text("Cancel")}
-                    ),
+                    Button("Dismiss", action: {
+                        showAddReminderView = false
+                    }),
                 trailing:
                     Button(action: {
-                        print("save")
                         indices.sort(by: >)
-                        let tidiedTimes = delete()
-                        let newReminder = Reminder(medName: med.name, intakeType: intakeType, intakeTimes: tidiedTimes ?? [Foundation.Date()], intakeAmount: Double(dosage), delay: Int(delay), allowSnooze: allowSnooze, notes: notes)
-//                        let newReminder = Reminder(medName: med.name, intakeType: intakeType, intakeTimes: times, intakeAmount: Double(dosage), delay: Int(delay), allowSnooze: allowSnooze, notes: notes)
-                        med.reminders.insert(newReminder, at: 0)
+                        let reminderTimes = delete() ?? []
+                        var newReminders: [Reminder] = []
+                        for time in reminderTimes {
+                            let newReminder = Reminder(medName: med.name, intakeType: intakeType, intakeTime: time, intakeAmount: Double(dosage), delay: Int(delay), allowSnooze: allowSnooze, notes: notes)
+                            newReminders.append(newReminder)
+                        }
+                        if med.reminders == [] {
+                            med.reminders = newReminders
+                        } else {
+                            med.reminders.insert(contentsOf: newReminders, at: 0)
+                        }
                         med.dosage = Double(dosage)
                         med.scheduled = intakeType == "Scheduled Intake" ? true : false
-                        showAddReminderView = false
                         med.update(from: med.data)
-                        print(med.reminders[0].intakeTimes)
-                    }) {
-                        Text("Save")
-                    }
+                        createOrUpdateReminder(med: med, reminders: newReminders, name: med.name)
+                        if permissionGranted == false {
+                            UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) { success, error in
+                                if success {
+                                    permissionGranted = true
+                                    showAddReminderView = false
+                                } else if let error = error {
+                                    print(error.localizedDescription)
+                                }
+                            }
+                        } else {
+                            showAddReminderView = false
+                        }
+                    }, label: {Text("Save")} )
                 )
             }
         }
     }
+
     func hideTimes(index: Int) {
         indices.append(index)
     }
+
+    func createOrUpdateReminder(med: Med, reminders: [Reminder], name: String ) {
+        data.findMedForRecID(med: med, reminders: reminders, history: nil, process: "update reminders") { _ in }
+    }
+
     func delete() -> [Date]? {
         var copy: [Date]? = []
         for index in 0..<times.count {
@@ -149,7 +186,15 @@ struct AddReminderView: View {
                 copy?.append(times[index])
             }
         }
-        copy!.sort()
+
+        var reformattedTimes = copy!.map { Calendar.current.dateComponents([.hour, .minute], from: $0) }
+
+        reformattedTimes.sort {
+            return ($0.hour ?? 00, $0.minute ?? 00) < ($1.hour ?? 01, $1.minute ?? 01)
+        }
+
+        copy = reformattedTimes.map { (Calendar.current.date(from: $0) ?? Foundation.Date())}
+        
         return copy
     }
 }
@@ -157,9 +202,9 @@ struct AddReminderView: View {
 
 struct AddReminderView_Previews: PreviewProvider {
     static var pill: Med = Med.data[1]
-    static var previousReminders: [Date] = Med.data[1].reminders[0].intakeTimes != [] ? Med.data[1].reminders[0].intakeTimes : [Foundation.Date()]
-    
+    static var previousReminders: [Date] = [Date()]
+
     static var previews: some View {
-        AddReminderView(showAddReminderView: .constant(true), med: .constant(pill), intakeType: "Scheduled Intake", times: previousReminders, dosage: 1.0, indices: [])
+        AddReminderView(showAddReminderView: .constant(true), med: .constant(pill), title: "Medication Details", intakeType: "Scheduled Intake", times: previousReminders, dosage: 1.0, indices: [], permissionGranted: .constant(true))
     }
 }

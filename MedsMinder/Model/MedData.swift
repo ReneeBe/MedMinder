@@ -60,6 +60,7 @@
 
 
 import Foundation
+import CloudKit
 
 class MedData: ObservableObject {
     private static var documentsFolder: URL {
@@ -91,7 +92,7 @@ class MedData: ObservableObject {
             }
             do {
                 let medications = try JSONDecoder().decode([Med].self, from: data)
-
+                print("hello from MedData: \(MedData.fileURL)")
                 print(try! FileManager.default.url(for: .documentDirectory,
                                               in: .userDomainMask,
                                               appropriateFor: nil,
@@ -112,6 +113,7 @@ class MedData: ObservableObject {
             do {
                 let outfile = Self.fileURL
                 try data.write(to: outfile)
+                print("hello from save, heres outfile: \(outfile)")
             } catch {
                 fatalError("Can't write to file")
             }
