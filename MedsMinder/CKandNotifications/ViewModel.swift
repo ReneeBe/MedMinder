@@ -50,8 +50,6 @@ class ViewModel: ObservableObject {
     init() {
         getMedData(){_ in}
         getReminderData() {_ in}
-//        medData.map { $0 }
-//            .assign(to: &$contactNames)
     }
 
     // MARK: - API
@@ -73,13 +71,6 @@ class ViewModel: ObservableObject {
                         details: record["details"] as! String,
                         format: record["format"] as! String,
                         color: record["color"] != nil ? self.MakeColors(colors: record["color"] as! [String]) : [Color.red],
-//                        for color in record["color"] {
-                            
-//                        }
-//                        color: record["color"] != nil ? [self.ColorFromString(string: record["color"][0] as String), self.ColorFromString(string: record["color"][1] as String)] as [Color?] : [Color.red],
-//                        color: record["color"] != nil ? [Color.green, Color.blue] : [Color.red],
-                        
-//                        color: record["format"] as! String != "capsule" ? [self.ColorFromString(string: record["color"][0] as! String)] as [Color?] : [self.ColorFromString(string: record["color"][0] as! String), self.ColorFromString(string: record["color"][1] as! String)] as [Color?],
                         shape: record["shape"] as! [String],
                         engraving: record["engraving"] as! String,
                         dosage: record["dosage"] as! Double,
@@ -87,7 +78,6 @@ class ViewModel: ObservableObject {
 //                        reminders: ((record["reminderRef"].count) as! Int),
                         history: record["history"] == nil ? [] : (record["history"] as! [History])
                     )
-//                    print(med)
                     newMeds.append(med)
             case .failure(let error):
                 print("error in fetching med record: \(error)")
@@ -98,8 +88,7 @@ class ViewModel: ObservableObject {
             DispatchQueue.main.async {
                 switch result {
                     case .success(_):
-                            self.medData = newMeds
-//                            print("we got the data for meds!: \(self.medData)")
+                        self.medData = newMeds
                     case .failure(let error):
                         print("we got an error in the completion block med operation")
                         let ac = UIAlertController(title: "Fetch failed", message: "There was a problem fetching the list of medications; please try again: \(error.localizedDescription)", preferredStyle: .alert)
@@ -132,7 +121,6 @@ class ViewModel: ObservableObject {
                         allowSnooze: (record["allowSnooze"] as! Int) != 0,
                         notes: record["notes"] as! String? ?? ""
                     )
-//                    print(reminder)
                     newReminders.append(reminder)
                 case .failure(let error):
                     print("error in fetching reminder record: \(error)")
@@ -144,7 +132,6 @@ class ViewModel: ObservableObject {
                 switch result {
                 case .success(_):
                     self.reminderData = newReminders
-//                    print("we got the data for reminders: \(self.reminderData)")
                 case .failure(let error):
                     print("we got an error in the completion block reminder operation")
                     let ac = UIAlertController(title: "Fetch failed", message: "There was a problem fetching the list of reminders; please try again: \(error.localizedDescription)", preferredStyle: .alert)
@@ -153,13 +140,8 @@ class ViewModel: ObservableObject {
                 }
             }
         }
-        
         database.add(reminderOperation)
     }
-    
-    
-    
-    
     
     func updateAndSave(meds: [Med], completionHandler: ((Result<Void, Error>) -> Void)? = nil) {
         var newMeds: [CKRecord] = []
@@ -193,7 +175,6 @@ class ViewModel: ObservableObject {
                     DispatchQueue.main.async {
                         switch result {
                         case .success(_):
-                            print("saved the new record!")
                             completionHandler?(.success(()))
                         case .failure(let error):
                             print("error in modifyRecordsResultBlock in saveRecord: \(error)")
@@ -202,7 +183,7 @@ class ViewModel: ObservableObject {
                         }
                     }
                 }
-                getMedData()
+            getMedData(){_ in}
                 database.add(saveOperation)
         }
     }
@@ -215,7 +196,6 @@ class ViewModel: ObservableObject {
             newMed["name"] = med.name
             newMed["details"] = med.details
             newMed["format"] = med.format
-//            newMed["color"] = med.format != "capsule" ? [self.StringFromColor(color: med.color[0])] : [self.StringFromColor(color: med.color[0]), self.StringFromColor(color: med.color[1])]
             newMed["color"] = [self.StringFromColor(color: med.color[0]!), self.StringFromColor(color: med.color[1] ?? med.color[0]!)]
             newMed["shape"] = med.shape
             newMed["engraving"] = med.engraving
@@ -261,7 +241,6 @@ class ViewModel: ObservableObject {
             DispatchQueue.main.async {
                 switch result {
                     case .success(_):
-                        print("we found the med!")
                         if process == "deleteMed" {
                             self.deleteMeds(recID: recID) { _ in }
                         } else if process == "update reminders" {
@@ -305,7 +284,6 @@ class ViewModel: ObservableObject {
             DispatchQueue.main.async {
                 switch result {
                     case .success(_):
-                        print("we found the reminder!")
                         if process == "deleteMed" {
                             self.deleteMeds(recID: recID) { _ in }
                         } else if process == "deleteReminder"{
@@ -336,7 +314,6 @@ class ViewModel: ObservableObject {
             DispatchQueue.main.async {
                 switch result {
                     case .success(_):
-                        print("success in delete med record!")
                         self.getMedData()
                         self.getReminderData()
                 case .failure(let error):
@@ -364,9 +341,9 @@ class ViewModel: ObservableObject {
             DispatchQueue.main.async {
                 switch result {
                     case .success(_):
-                        print("success in delete reminder record!")
-                        self.getMedData()
-                        self.getReminderData()
+                        print("RENEE WE ARE DELETING A REMINDERS RECORD")
+                        self.getMedData() {_ in}
+                        self.getReminderData(){_ in}
                 case .failure(let error):
                     self.reportError(error)
                     print("we hit an error in the modify records result block of deleteReminders: \(error)")
@@ -416,7 +393,6 @@ class ViewModel: ObservableObject {
         
         
         for reminder in reminders {
-    //        var recordID = CKRecord.ID(rec)
             let newReminder = CKRecord(recordType: "Reminder")
             newReminder["medName"] = reminder.medName
             newReminder["intakeType"] = reminder.intakeType
@@ -426,8 +402,8 @@ class ViewModel: ObservableObject {
             newReminder["allowSnooze"] = reminder.allowSnooze
             newReminder["notes"] = reminder.notes
             newReminder["medReference"] = [referenceToMedRecord]
-//            newReminder.setParent(medRecord)
             newReminders.append(newReminder)
+            
             let referenceToReminder = CKRecord.Reference(recordID: newReminder.recordID, action: .none)
             newReferencesToReminders.append(referenceToReminder)
         }
@@ -442,8 +418,6 @@ class ViewModel: ObservableObject {
         medRecord["engraving"] = med.engraving
         medRecord["dosage"] = med.dosage
         medRecord["scheduled"] = med.scheduled == true ? 1 : 0
-//            medRecord["reminders"] = med.reminders as __CKRecordObjCValue
-//            newMeds.append(newMed)
         medRecord["reminderRef"] = newReferencesToReminders
         print("here is medRecord: \(medRecord)")
         newReminders.append(medRecord)
@@ -457,22 +431,14 @@ class ViewModel: ObservableObject {
             DispatchQueue.main.async {
                 switch result {
                     case .success(_):
-                        print("success in updating reminders records!")
                         self.getMedData() {_ in}
                         self.getReminderData() {_ in}
-//                        self.getMedData()
-//                        self.getReminderData()
-                        print("medData: \(self.medData), reminderData: \(self.reminderData)")
-
+                    
                     case .failure(let error):
                         self.reportError(error)
                         print("we hit an error in the modify records result block of createReminderRecord: \(error)")
-//                        completionHandler(.failure(error))
-                    
                 }
-                    
             }
-
         }
         self.database.add(updateAndSaveRemindersOperation)
     }
@@ -484,7 +450,6 @@ class ViewModel: ObservableObject {
         newHistory["medReference"] = CKRecord.Reference(recordID: medRecID, action: .deleteSelf)
         
         let saveHistoryOperation = CKModifyRecordsOperation(recordsToSave: [newHistory])
-//        saveHistoryOperation.savePolicy = .allKeys
 
         saveHistoryOperation.perRecordSaveBlock = { recordID, result in
             switch result {
@@ -502,7 +467,6 @@ class ViewModel: ObservableObject {
                 switch result {
                     case .success(_):
                         print("success in save record!")
-    //                    self.medData.append()
                     case .failure(let error):
                         self.reportError(error)
                         completionHandler?(.failure(error))
@@ -522,7 +486,6 @@ class ViewModel: ObservableObject {
 
     
     func ColorFromString(string: String) -> Color {
-//        let componentsString: String = string
         let components = string.components(separatedBy: ",")
         return Color(.sRGB,
                      red: CGFloat((components[0] as NSString).floatValue),

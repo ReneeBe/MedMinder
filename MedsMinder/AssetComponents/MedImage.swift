@@ -68,11 +68,8 @@ struct MedImage: View {
     }
 
     func colorDarknessCalculator(color: Color) -> Bool {
-//        print(color)
         let stringified = StringFromColor(color: color)
-//        print("hello renee this is stringified: \(stringified)")
         let isDark = isLightColor(red: stringified[0], green: stringified[1], blue: stringified[2])
-//        print("hello renee from colordarknesscalculator! \(isDark)")
         return isDark
     }
 
@@ -87,16 +84,11 @@ struct MedImage: View {
 
     func StringFromColor(color: Color) -> [CGFloat] {
         var components = color.cgColor?.components
-//        print("we are in stringFromColor:")
-//        print(components as Any)
         if components == nil {
             components = Color(.red).cgColor?.components
         }
         return components!
-//        return "\(components![0]),\(components![1]),\(components![2]),\(components![3])"
     }
-
-
 }
 
 struct AttributedText: View {
@@ -136,8 +128,6 @@ struct AttributedText: View {
         }
     }
 }
-
-
 
 struct MedImage_Previews: PreviewProvider {
     static var medOne: Med = Med.data[1]

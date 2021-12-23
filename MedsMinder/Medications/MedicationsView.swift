@@ -8,7 +8,6 @@
 import SwiftUI
 import UserNotifications
 import CloudKit
-//import UIKit
 
 struct MedicationsView: View {
     @EnvironmentObject var data: ViewModel
@@ -17,7 +16,6 @@ struct MedicationsView: View {
     @State private var showAddReminderView = false
     @State private var newMedData = Med.Data(format: "tablet")
     @State private var color: [Color] = [Color(.blue), Color(.blue)]
-    @State private var showDeleteButton = false
     @Environment(\.scenePhase) private var scenePhase
     
     var body: some View {
@@ -40,7 +38,6 @@ struct MedicationsView: View {
                     }
                     .onDelete(perform: self.deleteMeds)
 
-                    
                     HStack (alignment: .top){
                         Text("On Demand")
                         Spacer()
@@ -88,40 +85,24 @@ struct MedicationsView: View {
                                         
                                         }
                                         data.medData.append(newMed)
-                                        print("we added to meds!: \(data.medData)")
                                         data.saveRecord(meds: [newMed])
-//                                        data.getMedData()
-//                                        data.getMedData()
-//                                            saveAction()
-//                                            meds.saveRecord(newMed)
-//                                            doSubmission(med: newMed)
                                         showNewMedPopover.toggle()
                                     })
                     }
             }
-//                )
                 .navigationBarBackButtonHidden(true)
-//                .onChange(of: data) {  in
-//
-//                }
+
                 .onChange(of: scenePhase) { phase in
                     if phase == .inactive {
-                        print("hello from medicationsView")
     //                    saveAction()
                     }
-                    print("we are in the onchange in medicationsview!!!")
                     data.getMedData() {_ in}
                     data.getReminderData() {_ in}
-//                    notificationsBuilder.scheduleNotifications(reminderData: data.reminderData, medData: data.medData)
-    //                doSubmission(med: Med)
                 }
                 .onAppear{
                     data.getMedData() {_ in}
                     data.getReminderData(){_ in}
                 }
-
-                                
-
             )
         }
         
@@ -138,7 +119,6 @@ struct MedicationsView: View {
         }
         let med = data.medData[firstIndex]
         let medName = data.medData[firstIndex].name
-//        print("we are in deleteMeds in medicationsView, here is medName aka the one youre trying to delete: \(medName)")
         data.findMedForRecID(med: med, reminders: nil, history: nil, process: "deleteMed") { _ in }
         data.medData.remove(at: firstIndex)
         data.reminderData.removeAll {$0.medName == medName}

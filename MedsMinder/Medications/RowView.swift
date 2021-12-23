@@ -31,10 +31,6 @@ struct RowView: View {
             }
             Button(action: {
                 self.showAddReminderView = true
-//                print("medName and medColor: \(String(describing: med.name)), \(String(describing: med.color))")
-//                print(med.color)
-
-                print("permissionGranted?: \(permissionGranted)")
             }) {
                     VStack(alignment: .leading) {
                         Text(med.name)
@@ -58,7 +54,6 @@ struct RowView: View {
             })
             Spacer()
             Button(action: {
-                print("\(med.name) taken!")
                 let newHistory = History(date: Date(), dosage: med.dosage)
                 med.history.append(newHistory)
             }, label: {
@@ -82,7 +77,6 @@ struct RowView: View {
     }
     
     func didDismissAddReminders() {
-        print("we dismissed add reminderview")
         data.getMedData() { _ in }
         data.getReminderData(){ _ in }
     }
@@ -112,7 +106,6 @@ struct RowView: View {
         }
         return intakeTimes
     }
-    
 }
 
 struct RowView_Previews: PreviewProvider {

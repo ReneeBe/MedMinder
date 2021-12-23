@@ -36,7 +36,7 @@ extension Reminder {
     struct Data {
         var medName: String = ""
         var intakeType: String = ""
-        var intakeTime: Date = Date(     )
+        var intakeTime: Date = Date()
         var intakeAmount: Double = 0.00
         var delay: Int = 300
         var allowSnooze: Bool = false

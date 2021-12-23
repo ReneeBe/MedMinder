@@ -28,7 +28,6 @@ struct ProgressBar: View {
             TimerPiece(start: .degrees(45), end: .degrees(progress))
                 .frame(width: 35, height: 35)
                 .foregroundColor(Color(.systemBlue))
-//                .padding()
                 .background(
                     Circle()
                         .fill(Color(.systemGray5))

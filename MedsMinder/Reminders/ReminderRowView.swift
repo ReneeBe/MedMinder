@@ -31,7 +31,6 @@ struct ReminderRowView: View {
             }
             Button(action: {
                 self.showAddReminderView = true
-                print("permissionGranted?: \(permissionGranted)")
             }) {
                     VStack(alignment: .leading) {
                         Text(reminder.medName)
@@ -45,52 +44,32 @@ struct ReminderRowView: View {
             .sheet(isPresented: $showAddReminderView,onDismiss: didDismissAddReminders, content: {
                 let times: [Date] = collectReminderTimes()
                 let intakeType = med.reminders != [] ? "Scheduled Intake" : "On Demand"
-
-//                let intakeType = med.reminders != [] ? med.reminders[0].intakeType : "Scheduled Intake"
                 let dosage = med.dosage
                 AddReminderView(showAddReminderView: $showAddReminderView, med: $med, title: "Medication Details", intakeType: intakeType, times: times, dosage: dosage, indices: [], permissionGranted: $permissionGranted)
             })
             Spacer()
             Button(action: {
-                print("\(reminder.medName) taken!")
                 let newHistory = History(date: Date(), dosage: reminder.intakeAmount)
                 if var currentMed = data.medData.first(where: {$0.name == reminder.medName}) {
                     currentMed.history.append(newHistory)
-                    print(currentMed.history)
-//                    data.saveHistoryRecord(history: newHistory) { _ in }
                     data.findMedForRecID(med: currentMed, reminders: nil, history: newHistory, process: "createHistory") { _ in }
                 }
-                
-//                data.findMedForRecID(med: currentMed, reminders: <#T##[Reminder]?#>, process: <#T##String#>, completionHandler: <#T##(Result<Void, Error>) -> Void#>)
-                
-                
-//                currentMed.history.append(newHistory)
-//                print(currentMed.history)
             }, label: {
-//                if med[0].scheduled! {
-                    Text("TAKE")
-                        .padding(7)
-                        .font(Font.body.weight(.bold))
-                        .foregroundColor(Color(.systemBlue))
-                        .background(
-                            RoundedRectangle(cornerRadius: 15, style: .continuous)
-                                .fill(Color(.systemGray5))
-                        )
-//                } else {
-//                    ProgressBar(progress: progress)
-//                        .padding(.horizontal, -20)
-//                }
+                Text("TAKE")
+                    .padding(7)
+                    .font(Font.body.weight(.bold))
+                    .foregroundColor(Color(.systemBlue))
+                    .background(
+                        RoundedRectangle(cornerRadius: 15, style: .continuous)
+                            .fill(Color(.systemGray5))
+                    )
             })
             .buttonStyle(BorderlessButtonStyle())
-
         }
         .padding()
-//        Divider()
-//    }
     }
     
     func didDismissAddReminders() {
-        print("we dismissed add reminderview")
         data.getMedData() { _ in }
         data.getReminderData(){ _ in }
     }

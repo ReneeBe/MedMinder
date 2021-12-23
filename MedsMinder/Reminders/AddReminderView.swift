@@ -123,9 +123,10 @@ struct AddReminderView: View {
                                     Text(verbatim: String(med.history[0].dosage))
                                 }
                             }
-
-                        }.listRowBackground(Color(.systemGray5))
-                    }.listStyle(InsetGroupedListStyle())
+                        }
+                        .listRowBackground(Color(.systemGray5))
+                    }
+                    .listStyle(InsetGroupedListStyle())
             }
             .foregroundColor(Color(.darkGray))
             .navigationBarTitle(Text(title), displayMode: .inline)
@@ -136,7 +137,6 @@ struct AddReminderView: View {
                     }),
                 trailing:
                     Button(action: {
-                        print("pressed save in addreminderview")
                         indices.sort(by: >)
                         let reminderTimes = delete() ?? []
                         var newReminders: [Reminder] = []
@@ -149,17 +149,13 @@ struct AddReminderView: View {
                         } else {
                             med.reminders.insert(contentsOf: newReminders, at: 0)
                         }
-//                        med.reminders.insert(newReminder, at: 0)
                         med.dosage = Double(dosage)
                         med.scheduled = intakeType == "Scheduled Intake" ? true : false
                         med.update(from: med.data)
-//                        data.updateAndSave(meds: [med])
                         createOrUpdateReminder(med: med, reminders: newReminders, name: med.name)
-            
                         if permissionGranted == false {
                             UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) { success, error in
                                 if success {
-                                    print("All set!")
                                     permissionGranted = true
                                     showAddReminderView = false
                                 } else if let error = error {
@@ -181,9 +177,7 @@ struct AddReminderView: View {
 
     func createOrUpdateReminder(med: Med, reminders: [Reminder], name: String ) {
         data.findMedForRecID(med: med, reminders: reminders, history: nil, process: "update reminders") { _ in }
-//        data.createReminderRecord(med: med, reminders: reminders)
     }
-//    let reminderComponents = Calendar.current.dateComponents([.hour, .minute], from: Foundation.Date())
 
     func delete() -> [Date]? {
         var copy: [Date]? = []
@@ -200,19 +194,17 @@ struct AddReminderView: View {
         }
 
         copy = reformattedTimes.map { (Calendar.current.date(from: $0) ?? Foundation.Date())}
-
-//        }
+        
         return copy
     }
 }
 
-//
-//struct AddReminderView_Previews: PreviewProvider {
-//    static var pill: Med = Med.data[1]
-//    static var previousReminders: [Date] = Med.data[1].reminders[0].intakeTime != [] ? [Med.data[1].reminders[0].intakeTime] : [Foundation.Date()]
-////    static var previousReminders: Date = Med.data[1].reminders[0].intakeTime != [] ? [Med.data[1].reminders[0].intakeTime] : [Foundation.Date()]
-//
-//    static var previews: some View {
-//        AddReminderView(showAddReminderView: .constant(true), med: .constant(pill), intakeType: "Scheduled Intake", times: previousReminders, dosage: 1.0, indices: [], permissionGranted: .constant(true))
-//    }
-//}
+
+struct AddReminderView_Previews: PreviewProvider {
+    static var pill: Med = Med.data[1]
+    static var previousReminders: [Date] = [Date()]
+
+    static var previews: some View {
+        AddReminderView(showAddReminderView: .constant(true), med: .constant(pill), title: "Medication Details", intakeType: "Scheduled Intake", times: previousReminders, dosage: 1.0, indices: [], permissionGranted: .constant(true))
+    }
+}
