@@ -15,7 +15,6 @@ struct MedsMinderApp: App {
     @ObservedObject var localData = MedData()
     @State var permissionGranted: Bool = false
     @ObservedObject var notificationsBuilder = LocalNotificationManager()
-//  @ObservedObject var data = ViewModel()
     @StateObject var data = ViewModel()
     
     var body: some Scene {
