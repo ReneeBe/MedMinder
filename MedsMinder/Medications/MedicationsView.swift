@@ -5,129 +5,121 @@
 //  Created by Renee Berger on 10/22/21.
 //
 
+import CloudKit
 import SwiftUI
 import UserNotifications
-import CloudKit
+import os.log
 
 struct MedicationsView: View {
-    @EnvironmentObject var data: ViewModel
-    @Binding var permissionGranted: Bool
-    @State private var showNewMedPopover = false
-    @State private var showAddReminderView = false
-    @State private var newMedData = Med.Data(format: "tablet")
-    @State private var color: [Color] = [Color(.blue), Color(.blue)]
-    @Environment(\.scenePhase) private var scenePhase
-    
-    var body: some View {
-        NavigationView {
-            ZStack {
-                Color(.systemBlue).opacity(0.06).ignoresSafeArea()
-                List{
-                    HStack (alignment: .top) {
-                        Image(systemName: "timer")
-                        Text("Scheduled")
-                        Spacer()
-                    }
-                    .font(.headline)
-                    .padding(.leading)
-                    .padding(.top)
-                    ForEach(0..<data.medData.count, id: \.self) { i in
-                        if data.medData[i].scheduled! {
-                            RowView(showAddReminderView: showAddReminderView, permissionGranted: $permissionGranted, med: self.$data.medData[i])
-                        }
-                    }
-                    .onDelete(perform: self.deleteMeds)
+  @EnvironmentObject var eventHandler: EventHandler
+  var viewModel: ViewModel
+  @State private var showNewMedPopover = false
+  @State private var showAddReminderView = false
+  @State private var newMedicationData = Medication.Data(format: .tablet)
+  @State private var color: [Color] = [Color(.blue), Color(.blue)]
+  @Environment(\.scenePhase) private var scenePhase
 
-                    HStack (alignment: .top){
-                        Text("On Demand")
-                        Spacer()
-                    }
-                    .font(.headline)
-                    .padding(.leading)
-                    .padding(.top)
-                    ForEach(0..<data.medData.count, id: \.self) { i in
-                        if data.medData[i].scheduled! == false {
-                            RowView(showAddReminderView: showAddReminderView, permissionGranted: $permissionGranted, med: self.$data.medData[i])
-                        }
-                    }
-                    .onDelete(perform: self.deleteMeds)
-                }
-                .listRowBackground(Color(.systemBlue).opacity(0.06))
-                .foregroundColor(Color(.darkGray))
-                .listStyle(InsetListStyle())
+  var body: some View {
+    NavigationView {
+      // TODO: Pull this out into a list view class?
+      ZStack {
+        if viewModel.medications.count == 0 {
+          Text("No medications\n You can add medcations by tapping the \"+\" icon above")
+            .multilineTextAlignment(.center)
+            .padding().padding().font(.title).foregroundColor(.secondary)
+        } else {
+          List {
+            Section(header: Text("Scheduled \(Image(systemName: "timer"))")) {
+              ForEach(viewModel.scheduledMedications) { medication in
+                RowView(
+                  showAddReminderView: showAddReminderView,
+                  medication: medication, viewModel: viewModel)
+              }
+              .onDelete(perform: { offsets in
+                let medicationsToDelete = offsets.map { viewModel.scheduledMedications[$0] }
+                eventHandler.deleteMedications(medications: medicationsToDelete)
+              })
             }
-            .navigationBarTitle("Medications", displayMode: .inline)
-            .navigationBarItems(trailing:
-                Button(action: {
+            Section(header: Text("On Demand")) {
+              ForEach(viewModel.onDemandMedications) { medication in
+                RowView(
+                  showAddReminderView: showAddReminderView,
+                  medication: medication, viewModel: viewModel)
+              }
+              .onDelete(perform: { offsets in
+                let medicationsToDelete = offsets.map { viewModel.onDemandMedications[$0] }
+                eventHandler.deleteMedications(medications: medicationsToDelete)
+              })
+            }
+          }
+          .listRowBackground(Color(.systemBlue).opacity(0.06))
+          .foregroundColor(.primary)
+          .listStyle(InsetListStyle())
+        }
+      }
+      .navigationBarTitle("Medications", displayMode: .automatic)
+      .navigationBarItems(
+        trailing:
+          Button(action: {
+            showNewMedPopover.toggle()
+          }) {
+            Image(systemName: "plus")
+          }
+          .sheet(isPresented: $showNewMedPopover) {
+            // TODO: Can this be factored into another view somehow?
+            NavigationView {
+              NewMedicationView(medData: $newMedicationData, color: $color)
+                .navigationBarTitle("New Medication", displayMode: .inline)
+                .navigationBarItems(
+                  leading:
+                    Button(
+                      "Dismiss",
+                      action: {
                         showNewMedPopover.toggle()
-                }) {
-                    Image(systemName: "plus")
-                }
-                .sheet(isPresented: $showNewMedPopover, onDismiss: didDismissCreateNewMed) {
-                    NavigationView {
-                        NewMedicationView(medData: $newMedData, color: $color)
-                            .navigationBarTitle("New Medication", displayMode: .inline)
-                            .navigationBarItems(
-                                leading:
-                                    Button("Dismiss", action: {
-                                        showNewMedPopover.toggle()
-                                    })
-                                , trailing:
-                                    Button("Add") {
-                                        var newMed = Med(name: newMedData.name, details: "Every Evening", format: newMedData.format, color: color, shape: newMedData.shape, engraving: newMedData.engraving , dosage: Double(1), scheduled: false, reminders: [], history: [])
-                                        if newMed.format == "liquid" {
-                                            newMed.shape = ["drop.fill"]
-                                        } else if newMed.format == "capsule" {
-                                            newMed.shape = ["capsule.lefthalf.filled"]
-                                        }
-                                        if newMed.format != "capsule" {
-                                            newMed.color[1] = newMed.color[0]
-                                        
-                                        }
-                                        data.medData.append(newMed)
-                                        data.saveRecord(meds: [newMed])
-                                        showNewMedPopover.toggle()
-                                    })
-                    }
-            }
-                .navigationBarBackButtonHidden(true)
+                      }),
+                  trailing:
+                    // TODO: Disable this when there is no med name
+                    Button("Add") {
+                      var newMedication = Medication(
+                        name: newMedicationData.name, details: "Every Evening",
+                        format: newMedicationData.format,
+                        color: color, shape: newMedicationData.shape,
+                        engraving: newMedicationData.engraving,
+                        dosage: Double(1), reminders: [],
+                        history: [])
+                      switch newMedication.format {
+                      case .liquid:
+                        newMedication.shape = ["drop.fill"]
+                      case .capsule:
+                        newMedication.shape = ["capsule.lefthalf.filled"]
+                      case .tablet: break
 
-                .onChange(of: scenePhase) { phase in
-                    if phase == .inactive {
-    //                    saveAction()
-                    }
-                    data.getMedData() {_ in}
-                    data.getReminderData() {_ in}
-                }
-                .onAppear{
-                    data.getMedData() {_ in}
-                    data.getReminderData(){_ in}
-                }
-            )
-        }
-        
+                      }
+
+                      if newMedication.format != .capsule {
+                        newMedication.color[1] = newMedication.color[0]
+
+                      }
+                      eventHandler.createMedication(medication: newMedication)
+                      showNewMedPopover.toggle()
+                    })
+            }.onDisappear(perform: {
+              newMedicationData = Medication.Data()
+            })
+          }
+          .navigationBarBackButtonHidden(true)
+      )
     }
-    
-    func didDismissCreateNewMed() {
-        data.getMedData() {_ in}
-        data.getReminderData(){_ in}
-    }
-    
-    func deleteMeds(at offsets: IndexSet) {
-        guard let firstIndex = offsets.first else {
-            return
-        }
-        let med = data.medData[firstIndex]
-        let medName = data.medData[firstIndex].name
-        data.findMedForRecID(med: med, reminders: nil, history: nil, process: "deleteMed") { _ in }
-        data.medData.remove(at: firstIndex)
-        data.reminderData.removeAll {$0.medName == medName}
-    }
-    
+  }
 }
 
 struct MedicationsView_Previews: PreviewProvider {
-    static var previews: some View {
-        MedicationsView(permissionGranted: .constant(false))
+  static var previews: some View {
+    Group {
+      MedicationsView(viewModel: ViewModel.data)
+        .environmentObject(EventHandler(model: PreviewModel()))
+      MedicationsView(viewModel: ViewModel())
+        .environmentObject(EventHandler(model: PreviewModel()))
     }
+  }
 }

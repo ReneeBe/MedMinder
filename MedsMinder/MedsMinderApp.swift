@@ -5,61 +5,115 @@
 //  Created by Renee Berger on 9/1/21.
 //
 
-import SwiftUI
 import CloudKit
+import SwiftUI
 import UIKit
 import UserNotifications
 
 @main
 struct MedsMinderApp: App {
-    @ObservedObject var localData = MedData()
-    @State var permissionGranted: Bool = false
-    @ObservedObject var notificationsBuilder = LocalNotificationManager()
-    @StateObject var data = ViewModel()
-    
-    var body: some Scene {
-        WindowGroup {
-            ContentView(meds: $localData.meds, permissionGranted: $permissionGranted) {
-                //inside here is the save action for the whole app -- which is called when the app window is exited
-                    localData.meds = data.medData
-                    localData.save()
-                }
-                .environmentObject(data)
-            .onAppear {
-                localData.load()
-                self.checkPermissions()
-                notificationsBuilder.scheduleNotifications(reminderData: data.reminderData, medData: data.medData)
-            }
-        }
-    }
+  // This is a static instance that is only intended to be used in the app delegate below. In general
+  // doing this is a bad idea, you should directly pass down your dependencies or
+  // use @EnvironmentObject when you can and this makes it so there are implicit dependencies you
+  // may need to preview or test a component. Keep this isolated just to this file.
+  static var sharedModel: Model = CloudBackedModel()
+  //  static var sharedModel: Model = PreviewModel() // -- uncomment this out and comment above for preview model
+  @StateObject var model: Model = (MedsMinderApp.sharedModel)
+  @StateObject var eventHandler: EventHandler
+  @Environment(\.scenePhase) private var scenePhase
 
-    func checkPermissions() {
-        let center = UNUserNotificationCenter.current()
-        center.getNotificationSettings { settings in
-            guard (settings.authorizationStatus == .authorized) ||
-                  (settings.authorizationStatus == .provisional) else { return }
-            if settings.alertSetting == .enabled {
-                permissionGranted = true
-            } else {
-                permissionGranted = false
-            }
+  /// We use an AppDelegate class to handle push notification registration and handling.
+  @UIApplicationDelegateAdaptor(MedsMinderAppDelegate.self) private var appDelegate
+
+  init() {
+    // Init here since it depends on another ivar
+    _eventHandler = StateObject(wrappedValue: EventHandler(model: MedsMinderApp.sharedModel))
+  }
+
+  var body: some Scene {
+    WindowGroup {
+      ContentView(viewModel: self.model.viewModel)
+        .environmentObject(eventHandler)
+        .environmentObject(model)
+        .onAppear {
+          LocalNotificationManager.sharedNotificationManager.requestAuthorization()
+          Task {
+            try await self.model.startSync()
+            LocalNotificationManager.sharedNotificationManager.schedule(
+              viewModel: self.model.viewModel)
+          }
+        }.onChange(of: scenePhase) { phase in
+          Task {
+            try await self.model.startSync()
+            LocalNotificationManager.sharedNotificationManager.schedule(
+              viewModel: self.model.viewModel)
+          }
         }
     }
+  }
 }
 
-extension View {
-    func snapshot() -> UIImage {
-        let controller = UIHostingController(rootView: self)
-        let view = controller.view
+// MARK: MedsMinderAppDelegate
 
-        let targetSize = controller.view.intrinsicContentSize
-        view?.bounds = CGRect(origin: .zero, size: targetSize)
-        view?.backgroundColor = .clear
+// Added this here so that we can trigger a refresh when we get a notification.
+final class MedsMinderAppDelegate: NSObject, UIApplicationDelegate {
+  func application(
+    _ application: UIApplication,
+    didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
+  ) -> Bool {
+    application.registerForRemoteNotifications()
+    UNUserNotificationCenter.current().delegate = self
+    return true
+  }
 
-        let renderer = UIGraphicsImageRenderer(size: targetSize)
+  func application(
+    _ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data
+  ) {
+    debugPrint("Did register for remote notifications")
+  }
 
-        return renderer.image { _ in
-            view?.drawHierarchy(in: controller.view.bounds, afterScreenUpdates: true)
-        }
+  func application(
+    _ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error
+  ) {
+    debugPrint("ERROR: Failed to register for notifications: \(error.localizedDescription)")
+  }
+
+  func application(
+    _ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any],
+    fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void
+  ) {
+    guard
+      let zoneNotification = CKNotification(fromRemoteNotificationDictionary: userInfo)
+        as? CKRecordZoneNotification
+    else {
+      completionHandler(.noData)
+      return
     }
+
+    debugPrint("Received zone notification: \(zoneNotification)")
+
+    Task {
+      do {
+        try await MedsMinderApp.sharedModel.startSync()
+        completionHandler(.newData)
+      } catch {
+        debugPrint("Error in fetchLatestChanges: \(error)")
+        completionHandler(.failed)
+      }
+    }
+  }
+}
+
+// Conform to UNUserNotificationCenterDelegate
+extension MedsMinderAppDelegate: UNUserNotificationCenterDelegate {
+
+  func userNotificationCenter(
+    _ center: UNUserNotificationCenter,
+    willPresent notification: UNNotification,
+    withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
+  ) {
+    // Allow presentation of alerts while the app is running.
+    completionHandler([.banner, .sound])
+  }
+
 }
