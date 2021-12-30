@@ -20,6 +20,7 @@ public class LocalNotificationManager {
       switch settings.authorizationStatus {
       case .notDetermined:
         self.requestAuthorization()
+        self.schedule(viewModel: viewModel)
       case .authorized, .provisional:
         self.scheduleNotifications(viewModel: viewModel)
       default:

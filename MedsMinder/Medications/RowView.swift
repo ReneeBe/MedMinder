@@ -132,20 +132,17 @@ struct RowView_Previews: PreviewProvider {
       RowView(
         showAddReminderView: false,
         medication: medOne,
-        viewModel: ViewModel.data,
-        progress: 0.7)
+        viewModel: ViewModel.data)
 
       RowView(
         showAddReminderView: false,
         medication: medTwo,
-        viewModel: ViewModel.data, progress: 0.7)
+        viewModel: ViewModel.data)
 
-      // TODO: Make this show reminder text
       RowView(
         showAddReminderView: false,
         medication: Medication.data[3],
-        viewModel: ViewModel.data,
-        progress: 0.7
+        viewModel: ViewModel.data
       )
       .preferredColorScheme(.dark)
     }

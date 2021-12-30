@@ -101,7 +101,7 @@ struct ReminderRowView_Previews: PreviewProvider {
     VStack {
       RowView(
         showAddReminderView: false, medication: medOne,
-        viewModel: ViewModel.data, progress: 270)
+        viewModel: ViewModel.data)
       RowView(
         showAddReminderView: false,
         medication: medTwo,
