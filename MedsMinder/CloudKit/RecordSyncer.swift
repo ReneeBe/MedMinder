@@ -141,6 +141,9 @@ actor RecordSyncer {
     } catch let functionError {  // Handle per-function error
       ErrorReporter.reportCKError(functionError)
 
+      // Delete anything from pendingAdditions that has been delteted after `await`
+      pendingAdditions = pendingAdditions.filter({ !currentDeletions.contains($0.target.recordID) })
+      
       // Restore the pending items after a failure
       pendingAdditions = pendingAdditions.map({
         currentAdditions.contains($0.target)
