@@ -70,9 +70,9 @@ struct RecordProcessor {
           processedRecords.append(processedRecord)
         }
       }
-      processedRecordData = ProcessedRecordData(
-        processedRecords: processedRecords, recordToUUID: recordToUUID, uuidToRecord: uuidToRecord)
-      recordPublisher(processedRecordData)
     }
+    processedRecordData = ProcessedRecordData(
+      processedRecords: processedRecords, recordToUUID: recordToUUID, uuidToRecord: uuidToRecord)
+    recordPublisher(processedRecordData)
   }
 }
