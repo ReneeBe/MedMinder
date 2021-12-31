@@ -25,9 +25,12 @@ struct ViewModel: Hashable, Equatable {
     self.history = history.sorted()
   }
 
+  // for previews
   static var data: ViewModel {
     return ViewModel(medications: Medication.data, reminders: Reminder.data, history: History.data)
   }
+
+  // MARK: Non-mutating convenience methods
 
   func medication(for reminder: Reminder) -> Medication? {
     if let medication = medications.first(where: { $0.id == reminder.medicationID }) {

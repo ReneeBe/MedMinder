@@ -59,6 +59,7 @@ actor RecordSyncer {
     self.recordProcessor = recordProcessor
     self.zoneID = zoneID
 
+    // TODO: Move this to an async method and call before fetch and sync in the CloudBackedModel -- but only do this once!
     // Load saved data but don't sync since we don't want to block too much on init.. probably
     // shouldn't even be doing this much.
     self.loadLastChangeToken()
@@ -143,7 +144,7 @@ actor RecordSyncer {
 
       // Delete anything from pendingAdditions that has been delteted after `await`
       pendingAdditions = pendingAdditions.filter({ !currentDeletions.contains($0.target.recordID) })
-      
+
       // Restore the pending items after a failure
       pendingAdditions = pendingAdditions.map({
         currentAdditions.contains($0.target)
@@ -270,7 +271,7 @@ actor RecordSyncer {
 
         if zone == nil {
           let newZone = CKRecordZone(zoneID: zoneID)
-          try await database.modifyRecordZones(saving: [newZone], deleting: [])
+          let _ = try await database.modifyRecordZones(saving: [newZone], deleting: [])
           try await fetchZoneObjectIfPresent()
         }
       }
@@ -298,7 +299,7 @@ actor RecordSyncer {
       notificationInfo.shouldSendContentAvailable = true
       subscription.notificationInfo = notificationInfo
 
-      try await database.modifySubscriptions(saving: [subscription], deleting: [])
+      _ = try await database.modifySubscriptions(saving: [subscription], deleting: [])
     }
   }
 

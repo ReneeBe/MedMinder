@@ -62,27 +62,15 @@ import Foundation
     }
   }
 
-  nonisolated func deleteMedications(medications: [Medication]) {
-    Task {
-      await MainActor.run {
-        self.model.delete(medications: medications)
-      }
-    }
+  func deleteMedications(medications: [Medication]) {
+    self.model.delete(medications: medications)
   }
 
-  nonisolated func deleteHistory(history: [History]) {
-    Task {
-      await MainActor.run {
-        self.model.delete(history: history)
-      }
-    }
+  func deleteHistory(history: [History]) {
+    self.model.delete(history: history)
   }
 
-  nonisolated func deleteReminders(reminders: [Reminder]) {
-    Task {
-      await MainActor.run {
-        self.model.delete(reminders: reminders)
-      }
-    }
+  func deleteReminders(reminders: [Reminder]) {
+    self.model.delete(reminders: reminders)
   }
 }

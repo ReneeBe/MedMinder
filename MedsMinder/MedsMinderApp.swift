@@ -17,7 +17,7 @@ struct MedsMinderApp: App {
   // use @EnvironmentObject when you can and this makes it so there are implicit dependencies you
   // may need to preview or test a component. Keep this isolated just to this file.
   static var sharedModel: Model = CloudBackedModel()
-  //  static var sharedModel: Model = PreviewModel() // -- uncomment this out and comment above for preview model
+//    static var sharedModel: Model = PreviewModel() // -- uncomment this out and comment above for preview model
   @StateObject var model: Model = (MedsMinderApp.sharedModel)
   @StateObject var eventHandler: EventHandler
   @Environment(\.scenePhase) private var scenePhase

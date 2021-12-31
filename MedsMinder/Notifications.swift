@@ -16,7 +16,6 @@ public class LocalNotificationManager {
 
   func schedule(viewModel: ViewModel) {
     UNUserNotificationCenter.current().getNotificationSettings { settings in
-      // TODO: This is probably the wrong place for this? It also won't fall through?
       switch settings.authorizationStatus {
       case .notDetermined:
         self.requestAuthorization()
@@ -38,7 +37,6 @@ public class LocalNotificationManager {
 
         if granted == true && error == nil {
           self.permissionGranted = true
-          // as part of the todo above we likely don't need to schedule on requesting auth
         }
       }
     }
