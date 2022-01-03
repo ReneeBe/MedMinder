@@ -24,7 +24,7 @@ struct MedicationsView: View {
       // TODO: Pull this out into a list view class?
       ZStack {
         if viewModel.medications.count == 0 {
-          Text("No medications\n You can add medcations by tapping the \"+\" icon above")
+          Text("No medications\n You can add medications by tapping the \"+\" icon above")
             .multilineTextAlignment(.center)
             .padding().padding().font(.title).foregroundColor(.secondary)
         } else {
