@@ -47,22 +47,14 @@ struct MedImage: View {
         .aspectRatio(contentMode: .fit)
         .foregroundColor(med.color[0])
         .shadow(radius: 2)
-        .background(
-          Image(systemName: med.shape[0])
-            .foregroundColor(Color(.systemGray))
-            .shadow(radius: 1)
-        )
+        .shadow(radius: 2)
     case .tablet:
       Image(systemName: med.shape[0] != "" ? med.shape[0] : "pills")
         .resizable()
         .aspectRatio(contentMode: .fit)
         .foregroundColor(med.color[0])
         .shadow(radius: 2)
-        .background(
-          Image(systemName: med.shape[0])
-            .foregroundColor(Color(.systemGray))
-            .shadow(radius: 1)
-        )
+        .shadow(radius: 2)
         .overlay(
           AttributedText(getString(string: med.engraving, attrs: attrs))
             .scaledToFit()
