@@ -23,10 +23,9 @@ struct RemindersView: View {
 
   var body: some View {
     NavigationView {
-      ZStack {
         if viewModel.reminders.count == 0 {
           Text(
-            "No reminders\n You can add reminders by tapping a medication in the \"Medications\" tab"
+            "No reminders\n You can add reminders by tapping a medication in the \"Medications\" tab" 
           ).multilineTextAlignment(.center)
             .padding().padding().font(.title).foregroundColor(.secondary)
         } else {
@@ -89,12 +88,11 @@ struct RemindersView: View {
           .listRowBackground(Color(.systemBlue).opacity(0.06))
           .foregroundColor(.primary)
           .listStyle(InsetListStyle())
+          .navigationBarTitle("Reminders", displayMode: .automatic)
+          .onReceive(timer) { input in
+            currentDate = input
+          }
         }
-      }
-      .navigationBarTitle("Reminders", displayMode: .automatic)
-      .onReceive(timer) { input in
-        currentDate = input
-      }
     }
   }
 }

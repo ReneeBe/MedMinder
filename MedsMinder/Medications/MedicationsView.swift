@@ -22,43 +22,40 @@ struct MedicationsView: View {
   var body: some View {
     NavigationView {
       // TODO: Pull this out into a list view class?
-      ZStack {
-        if viewModel.medications.count == 0 {
-          Text("No medications\n You can add medications by tapping the \"+\" icon above")
-            .multilineTextAlignment(.center)
-            .padding().padding().font(.title).foregroundColor(.secondary)
-        } else {
-          List {
-            Section(header: Text("Scheduled \(Image(systemName: "timer"))")) {
-              ForEach(viewModel.scheduledMedications) { medication in
-                RowView(
-                  showAddReminderView: showAddReminderView,
-                  medication: medication, viewModel: viewModel)
-              }
-              .onDelete(perform: { offsets in
-                let medicationsToDelete = offsets.map { viewModel.scheduledMedications[$0] }
-                eventHandler.deleteMedications(medications: medicationsToDelete)
-              })
+      if viewModel.medications.count == 0 {
+        Text("No medications\n You can add medications by tapping the \"+\" icon above")
+          .multilineTextAlignment(.center)
+          .padding().padding().font(.title).foregroundColor(.secondary)
+      } else {
+        List {
+          Section(header: Text("Scheduled \(Image(systemName: "timer"))")) {
+            ForEach(viewModel.scheduledMedications) { medication in
+              RowView(
+                showAddReminderView: showAddReminderView,
+                medication: medication, viewModel: viewModel)
             }
-            Section(header: Text("On Demand")) {
-              ForEach(viewModel.onDemandMedications) { medication in
-                RowView(
-                  showAddReminderView: showAddReminderView,
-                  medication: medication, viewModel: viewModel)
-              }
-              .onDelete(perform: { offsets in
-                let medicationsToDelete = offsets.map { viewModel.onDemandMedications[$0] }
-                eventHandler.deleteMedications(medications: medicationsToDelete)
-              })
-            }
+            .onDelete(perform: { offsets in
+              let medicationsToDelete = offsets.map { viewModel.scheduledMedications[$0] }
+              eventHandler.deleteMedications(medications: medicationsToDelete)
+            })
           }
-          .listRowBackground(Color(.systemBlue).opacity(0.06))
-          .foregroundColor(.primary)
-          .listStyle(InsetListStyle())
+          Section(header: Text("On Demand")) {
+            ForEach(viewModel.onDemandMedications) { medication in
+              RowView(
+                showAddReminderView: showAddReminderView,
+                medication: medication, viewModel: viewModel)
+            }
+            .onDelete(perform: { offsets in
+              let medicationsToDelete = offsets.map { viewModel.onDemandMedications[$0] }
+              eventHandler.deleteMedications(medications: medicationsToDelete)
+            })
+          }
         }
-      }
-      .navigationBarTitle("Medications", displayMode: .automatic)
-      .navigationBarItems(
+        .listRowBackground(Color(.systemBlue).opacity(0.06))
+        .foregroundColor(.primary)
+        .listStyle(InsetListStyle())
+        .navigationBarTitle("Medications", displayMode: .automatic)
+        .navigationBarItems(
         trailing:
           Button(action: {
             showNewMedPopover.toggle()
@@ -108,7 +105,8 @@ struct MedicationsView: View {
             })
           }
           .navigationBarBackButtonHidden(true)
-      )
+        )
+      }
     }
   }
 }
