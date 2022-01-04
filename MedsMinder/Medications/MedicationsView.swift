@@ -12,6 +12,7 @@ import os.log
 
 struct MedicationsView: View {
   @EnvironmentObject var eventHandler: EventHandler
+  @EnvironmentObject var model: Model
   var viewModel: ViewModel
   @State private var showNewMedPopover = false
   @State private var showAddReminderView = false
@@ -106,6 +107,14 @@ struct MedicationsView: View {
           }
           .navigationBarBackButtonHidden(true)
         )
+        .refreshable {
+          do {
+            print("hello its a refresh here!")
+            try await model.startSync()
+          } catch let error {
+            print("error with refresh: \(error)")
+          }
+        }
       }
     }
   }
