@@ -91,30 +91,30 @@ struct MedicationsView: View {
                       case .capsule:
                         newMedication.shape = ["capsule.lefthalf.filled"]
                       case .tablet: break
-
                       }
 
                       if newMedication.format != .capsule {
                         newMedication.color[1] = newMedication.color[0]
-
                       }
                       eventHandler.createMedication(medication: newMedication)
                       showNewMedPopover.toggle()
-                    })
+                    }
+                    .disabled(newMedicationData.name == "")
+                )
             }.onDisappear(perform: {
               newMedicationData = Medication.Data()
             })
           }
           .navigationBarBackButtonHidden(true)
         )
-        .refreshable {
-          do {
-            print("hello its a refresh here!")
-            try await model.startSync()
-          } catch let error {
-            print("error with refresh: \(error)")
-          }
-        }
+//        .refreshable {
+//          do {
+//            print("hello its a refresh here!")
+//            try await model.startSync()
+//          } catch let error {
+//            print("error with refresh: \(error)")
+//          }
+//        }
       }
     }
   }

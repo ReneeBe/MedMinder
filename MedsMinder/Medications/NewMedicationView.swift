@@ -22,8 +22,13 @@ struct NewMedicationView: View {
   var body: some View {
     VStack {
       Group {
-        TextField("Input Medication Name", text: $medData.name)
-          .padding(.horizontal)
+           HStack {
+                Text("*")
+                TextField("Input Medication Name", text: $medData.name)
+                Spacer()
+           }
+           .padding(.leading)
+           
         let newMed = Medication(
           name: medData.name, details: "Every Evening", format: medData.format,
           color: color,
@@ -52,6 +57,11 @@ struct NewMedicationView: View {
       case .liquid:
         LiquidOptions(medData: $medData, color: $color)
       }
+     HStack {
+          Text("*Indicates Required Fields")
+               .padding(.leading)
+          Spacer()
+     }
     }
   }
 
@@ -63,7 +73,13 @@ struct NewMedicationView: View {
 
 struct NewMedicationView_Previews: PreviewProvider {
   static var previews: some View {
-    NewMedicationView(
-      medData: .constant(Medication.data[0].data), color: .constant([Color(.systemGreen)]))
+     Group {
+          NewMedicationView(
+               medData: .constant(Medication.data[0].data), color: .constant([Color(.systemGreen)]))
+          NewMedicationView(
+               medData: .constant(Medication.Data(format: .tablet)), color: .constant([Color(.systemGreen)]))
+
+            
+       }
   }
 }
