@@ -12,6 +12,8 @@ import os.log
 
 struct RemindersView: View {
   @EnvironmentObject var eventHandler: EventHandler
+  //MARK: added the line below to enable pull to refresh
+  @EnvironmentObject var model: Model
   var viewModel: ViewModel
   var notificationsBuilder = LocalNotificationManager()
   @Environment(\.scenePhase) private var scenePhase
@@ -91,6 +93,15 @@ struct RemindersView: View {
           .navigationBarTitle("Reminders", displayMode: .automatic)
           .onReceive(timer) { input in
             currentDate = input
+          }
+          //MARK: PULL-TO-REFRESH ENABLED HERE
+          .refreshable {
+            do {
+              print("hello its a refresh here!")
+              try await model.startSync()
+            } catch let error {
+              print("error with refresh: \(error)")
+            }
           }
         }
     }

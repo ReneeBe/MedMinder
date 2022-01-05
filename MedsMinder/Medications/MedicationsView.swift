@@ -12,6 +12,7 @@ import os.log
 
 struct MedicationsView: View {
   @EnvironmentObject var eventHandler: EventHandler
+  //MARK: added the line below to enable pull to refresh
   @EnvironmentObject var model: Model
   var viewModel: ViewModel
   @State private var showNewMedPopover = false
@@ -107,14 +108,15 @@ struct MedicationsView: View {
           }
           .navigationBarBackButtonHidden(true)
         )
-//        .refreshable {
-//          do {
-//            print("hello its a refresh here!")
-//            try await model.startSync()
-//          } catch let error {
-//            print("error with refresh: \(error)")
-//          }
-//        }
+        //MARK: PULL-TO-REFRESH ENABLED HERE
+        .refreshable {
+          do {
+            print("hello its a refresh here!")
+            try await model.startSync()
+          } catch let error {
+            print("error with refresh: \(error)")
+          }
+        }
       }
     }
   }
