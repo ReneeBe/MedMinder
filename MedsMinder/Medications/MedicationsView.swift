@@ -108,15 +108,6 @@ struct MedicationsView: View {
           }
           .navigationBarBackButtonHidden(true)
         )
-//        //MARK: PULL-TO-REFRESH ENABLED HERE
-//        .refreshable {
-//          do {
-//            print("hello its a refresh here!")
-//            try await model.startSync()
-//          } catch let error {
-//            print("error with refresh: \(error)")
-//          }
-//        } 
       }
     }
   }

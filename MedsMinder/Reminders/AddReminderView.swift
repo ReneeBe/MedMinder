@@ -147,13 +147,6 @@ struct AddReminderView: View {
           .listStyle(InsetGroupedListStyle())
         }
         .foregroundColor(.primary)
-//        //MARK: PULL-TO-REFRESH DISABLED HERE
-//        .refreshable{
-//          if showAddReminderView == true {
-//            print("we're trying this thing")
-//          }
-//        }
-//        .disabled(true)
         .navigationBarTitle(Text(title), displayMode: .inline)
         .navigationBarItems(
           leading:
