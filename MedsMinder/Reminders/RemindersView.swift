@@ -67,7 +67,9 @@ struct RemindersView: View {
                     reminder: reminder, viewModel: viewModel, medication: medication)
                 }
                 .onDelete(perform: { offsets in
-                  let remindersToDelete = offsets.map { remindersForUpComingSection[$0].0 }
+                  let remindersToDelete = offsets.map {
+                    remindersForUpComingSection[$0].0
+                  }
                   eventHandler.deleteReminders(reminders: remindersToDelete)
                 })
               }
@@ -94,15 +96,15 @@ struct RemindersView: View {
           .onReceive(timer) { input in
             currentDate = input
           }
-          //MARK: PULL-TO-REFRESH ENABLED HERE
-          .refreshable {
-            do {
-              print("hello its a refresh here!")
-              try await model.startSync()
-            } catch let error {
-              print("error with refresh: \(error)")
-            }
-          }
+//         MARK: PULL-TO-REFRESH ENABLED HERE
+//          .refreshable {
+//            do {
+//              print("hello its a refresh here!")
+//              try await model.startSync()
+//            } catch let error {
+//              print("error with refresh: \(error)")
+//            }
+//          }
         }
     }
   }
