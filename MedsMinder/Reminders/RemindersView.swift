@@ -23,77 +23,77 @@ struct RemindersView: View {
 
   var body: some View {
     NavigationView {
-      ZStack {
-        if viewModel.reminders.count == 0 {
-          Text(
-            "No reminders\n You can add reminders by tapping a medication in the \"Medications\" tab"
-          ).multilineTextAlignment(.center)
-            .padding().padding().font(.title).foregroundColor(.secondary)
-        } else {
-          List {
-            // TODO: Reduce duplication here
-            if remindersForLateSection.count > 0 {
-              Section(header: Text("Late")) {
-                ForEach(remindersForLateSection, id: \.0.id) { (reminder, medication) in
-                  ReminderRowView(
-                    showAddReminderView: showAddReminderView, rowViewState: .late,
-                    reminder: reminder, viewModel: viewModel, medication: medication)
-                }
-                .onDelete(perform: { offsets in
-                  let remindersToDelete = offsets.map { remindersForLateSection[$0].0 }
-                  eventHandler.deleteReminders(reminders: remindersToDelete)
-                })
+      if viewModel.reminders.count == 0 {
+        Text(
+          "No reminders\n You can add reminders by tapping a medication in the \"Medications\" tab"
+        ).multilineTextAlignment(.center)
+          .padding().padding().font(.title).foregroundColor(.secondary)
+      } else {
+        List {
+          // TODO: Reduce duplication here
+          if remindersForLateSection.count > 0 {
+            Section(header: Text("Late")) {
+              ForEach(remindersForLateSection, id: \.0.id) { (reminder, medication) in
+                ReminderRowView(
+                  showAddReminderView: showAddReminderView, rowViewState: .late,
+                  reminder: reminder, viewModel: viewModel, medication: medication)
               }
-            }
-            if remindersForNowSection.count > 0 {
-              Section(header: Text("Now")) {
-                ForEach(remindersForNowSection, id: \.0.id) { (reminder, medication) in
-                  ReminderRowView(
-                    showAddReminderView: showAddReminderView, rowViewState: .now,
-                    reminder: reminder, viewModel: viewModel, medication: medication)
-                }
-                .onDelete(perform: { offsets in
-                  let remindersToDelete = offsets.map { remindersForNowSection[$0].0 }
-                  eventHandler.deleteReminders(reminders: remindersToDelete)
-                })
-              }
-            }
-            if remindersForUpComingSection.count > 0 {
-              Section(header: Text("Upcoming")) {
-                ForEach(remindersForUpComingSection, id: \.0.id) { (reminder, medication) in
-                  ReminderRowView(
-                    showAddReminderView: showAddReminderView, rowViewState: .upcoming,
-                    reminder: reminder, viewModel: viewModel, medication: medication)
-                }
-                .onDelete(perform: { offsets in
-                  let remindersToDelete = offsets.map { remindersForUpComingSection[$0].0 }
-                  eventHandler.deleteReminders(reminders: remindersToDelete)
-                })
-              }
-            }
-            if remindersForUpCompletedSection.count > 0 {
-              Section(header: Text("Completed")) {
-                ForEach(remindersForUpCompletedSection, id: \.0.id) { (reminder, medication) in
-                  ReminderRowView(
-                    showAddReminderView: showAddReminderView, rowViewState: .completed,
-                    reminder: reminder, viewModel: viewModel, medication: medication
-                  ).grayscale(1.0).opacity(0.5)
-                }
-                .onDelete(perform: { offsets in
-                  let remindersToDelete = offsets.map { remindersForUpCompletedSection[$0].0 }
-                  eventHandler.deleteReminders(reminders: remindersToDelete)
-                })
-              }
+              .onDelete(perform: { offsets in
+                let remindersToDelete = offsets.map { remindersForLateSection[$0].0 }
+                eventHandler.deleteReminders(reminders: remindersToDelete)
+              })
             }
           }
-          .listRowBackground(Color(.systemBlue).opacity(0.06))
-          .foregroundColor(.primary)
-          .listStyle(InsetListStyle())
+          if remindersForNowSection.count > 0 {
+            Section(header: Text("Now")) {
+              ForEach(remindersForNowSection, id: \.0.id) { (reminder, medication) in
+                ReminderRowView(
+                  showAddReminderView: showAddReminderView, rowViewState: .now,
+                  reminder: reminder, viewModel: viewModel, medication: medication)
+              }
+              .onDelete(perform: { offsets in
+                let remindersToDelete = offsets.map { remindersForNowSection[$0].0 }
+                eventHandler.deleteReminders(reminders: remindersToDelete)
+              })
+            }
+          }
+          if remindersForUpComingSection.count > 0 {
+            Section(header: Text("Upcoming")) {
+              ForEach(remindersForUpComingSection, id: \.0.id) { (reminder, medication) in
+                ReminderRowView(
+                  showAddReminderView: showAddReminderView, rowViewState: .upcoming,
+                  reminder: reminder, viewModel: viewModel, medication: medication)
+              }
+              .onDelete(perform: { offsets in
+                let remindersToDelete = offsets.map {
+                  remindersForUpComingSection[$0].0
+                }
+                eventHandler.deleteReminders(reminders: remindersToDelete)
+              })
+            }
+          }
+          if remindersForUpCompletedSection.count > 0 {
+            Section(header: Text("Completed")) {
+              ForEach(remindersForUpCompletedSection, id: \.0.id) { (reminder, medication) in
+                ReminderRowView(
+                  showAddReminderView: showAddReminderView, rowViewState: .completed,
+                  reminder: reminder, viewModel: viewModel, medication: medication
+                ).grayscale(1.0).opacity(0.5)
+              }
+              .onDelete(perform: { offsets in
+                let remindersToDelete = offsets.map { remindersForUpCompletedSection[$0].0 }
+                eventHandler.deleteReminders(reminders: remindersToDelete)
+              })
+            }
+          }
         }
-      }
-      .navigationBarTitle("Reminders", displayMode: .automatic)
-      .onReceive(timer) { input in
-        currentDate = input
+        .listRowBackground(Color(.systemBlue).opacity(0.06))
+        .foregroundColor(.primary)
+        .listStyle(InsetListStyle())
+        .navigationBarTitle("Reminders", displayMode: .automatic)
+        .onReceive(timer) { input in
+          currentDate = input
+        }
       }
     }
   }
