@@ -12,8 +12,6 @@ import os.log
 
 struct MedicationsView: View {
   @EnvironmentObject var eventHandler: EventHandler
-  //MARK: added the line below to enable pull to refresh
-  @EnvironmentObject var model: Model
   var viewModel: ViewModel
   @State private var showNewMedPopover = false
   @State private var showAddReminderView = false
@@ -58,55 +56,55 @@ struct MedicationsView: View {
         .listStyle(InsetListStyle())
         .navigationBarTitle("Medications", displayMode: .automatic)
         .navigationBarItems(
-        trailing:
-          Button(action: {
-            showNewMedPopover.toggle()
-          }) {
-            Image(systemName: "plus")
-          }
-          .sheet(isPresented: $showNewMedPopover) {
-            // TODO: Can this be factored into another view somehow?
-            NavigationView {
-              NewMedicationView(medData: $newMedicationData, color: $color)
-                .navigationBarTitle("New Medication", displayMode: .inline)
-                .navigationBarItems(
-                  leading:
-                    Button(
-                      "Dismiss",
-                      action: {
-                        showNewMedPopover.toggle()
-                      }),
-                  trailing:
-                    // TODO: Disable this when there is no med name
-                    Button("Add") {
-                      var newMedication = Medication(
-                        name: newMedicationData.name, details: "Every Evening",
-                        format: newMedicationData.format,
-                        color: color, shape: newMedicationData.shape,
-                        engraving: newMedicationData.engraving,
-                        dosage: Double(1), reminders: [],
-                        history: [])
-                      switch newMedication.format {
-                      case .liquid:
-                        newMedication.shape = ["drop.fill"]
-                      case .capsule:
-                        newMedication.shape = ["capsule.lefthalf.filled"]
-                      case .tablet: break
-                      }
+          trailing:
+            Button(action: {
+              showNewMedPopover.toggle()
+            }) {
+              Image(systemName: "plus")
+            }
+            .sheet(isPresented: $showNewMedPopover) {
+              // TODO: Can this be factored into another view somehow?
+              NavigationView {
+                NewMedicationView(medData: $newMedicationData, color: $color)
+                  .navigationBarTitle("New Medication", displayMode: .inline)
+                  .navigationBarItems(
+                    leading:
+                      Button(
+                        "Dismiss",
+                        action: {
+                          showNewMedPopover.toggle()
+                        }),
+                    trailing:
+                      // TODO: Disable this when there is no med name
+                      Button("Add") {
+                        var newMedication = Medication(
+                          name: newMedicationData.name, details: "Every Evening",
+                          format: newMedicationData.format,
+                          color: color, shape: newMedicationData.shape,
+                          engraving: newMedicationData.engraving,
+                          dosage: Double(1), reminders: [],
+                          history: [])
+                        switch newMedication.format {
+                        case .liquid:
+                          newMedication.shape = ["drop.fill"]
+                        case .capsule:
+                          newMedication.shape = ["capsule.lefthalf.filled"]
+                        case .tablet: break
+                        }
 
-                      if newMedication.format != .capsule {
-                        newMedication.color[1] = newMedication.color[0]
+                        if newMedication.format != .capsule {
+                          newMedication.color[1] = newMedication.color[0]
+                        }
+                        eventHandler.createMedication(medication: newMedication)
+                        showNewMedPopover.toggle()
                       }
-                      eventHandler.createMedication(medication: newMedication)
-                      showNewMedPopover.toggle()
-                    }
-                    .disabled(newMedicationData.name == "")
-                )
-            }.onDisappear(perform: {
-              newMedicationData = Medication.Data()
-            })
-          }
-          .navigationBarBackButtonHidden(true)
+                      .disabled(newMedicationData.name == "")
+                  )
+              }.onDisappear(perform: {
+                newMedicationData = Medication.Data()
+              })
+            }
+            .navigationBarBackButtonHidden(true)
         )
       }
     }
