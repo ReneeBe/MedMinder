@@ -20,7 +20,7 @@ struct ContentView: View {
         .tabItem {
           Label("Reminders", systemImage: "clock.fill").font(.title)
         }
-      MedicationsView(viewModel: viewModel)
+      MedicationsNavBar(viewModel: viewModel)
         .tabItem {
           Label("Medications", systemImage: "pills.circle.fill").font(.largeTitle)
         }
