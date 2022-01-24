@@ -13,10 +13,7 @@ import os.log
 struct MedicationsView: View {
   @EnvironmentObject var eventHandler: EventHandler
   var viewModel: ViewModel
-  @State private var showNewMedPopover = false
   @State private var showAddReminderView = false
-  @State private var newMedicationData = Medication.Data(format: .tablet)
-  @State private var color: [Color] = [Color(.blue), Color(.blue)]
   @Environment(\.scenePhase) private var scenePhase
 
   var body: some View {
