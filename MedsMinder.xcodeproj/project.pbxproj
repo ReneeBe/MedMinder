@@ -477,7 +477,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = bergerlrenee.MedsMinder;
 				PRODUCT_NAME = Tabs;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -500,7 +500,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = bergerlrenee.MedsMinder;
 				PRODUCT_NAME = Tabs;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
