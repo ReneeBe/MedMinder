@@ -50,7 +50,7 @@ struct AddReminderView: View {
             Section {
               ForEach($reminders) { reminder in
                 HStack {
-                  Text("Intake")
+                  Text("Reminder")
                   Spacer()
                   DatePicker(
                     "", selection: reminder.intakeTime,
@@ -77,7 +77,7 @@ struct AddReminderView: View {
                   HStack {
                     Image(systemName: "plus.circle.fill").foregroundColor(
                       Color(.systemGreen))
-                    Text("Add Intake")
+                    Text("Add Reminder")
                   }
                 }
               }
